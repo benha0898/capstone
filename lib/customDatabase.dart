@@ -13,15 +13,15 @@ class CustomData extends StatefulWidget {
 
 class _CustomDataState extends State<CustomData> {
   final referenceDatabase = FirebaseDatabase.instance;
-  final movieName = 'Movie';
-  final movieController = TextEditingController();
+  final questionName = 'Question';
+  final questionController = TextEditingController();
 
-  DatabaseReference _moviesRef;
+  DatabaseReference _questionsRef;
 
   @override
   void initState() {
     final FirebaseDatabase database = FirebaseDatabase(app: widget.app);
-    _moviesRef = database.reference().child('Movies');
+    _questionsRef = database.reference().child('Questions');
 
     super.initState();
   }
@@ -31,7 +31,7 @@ class _CustomDataState extends State<CustomData> {
     final ref = referenceDatabase.reference();
     return Scaffold(
       appBar: AppBar(
-        title: Text('Movies That I Love'),
+        title: Text('All Questions'),
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -44,7 +44,7 @@ class _CustomDataState extends State<CustomData> {
                 child: Column(
                   children: [
                     Text(
-                      'List of Movies',
+                      'List of Questions',
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         fontSize: 25,
@@ -52,27 +52,27 @@ class _CustomDataState extends State<CustomData> {
                       ),
                     ),
                     TextField(
-                      controller: movieController,
+                      controller: questionController,
                       textAlign: TextAlign.center,
                     ),
                     FlatButton(
                       color: Colors.grey,
                       onPressed: () {
                         ref
-                            .child('Movies')
+                            .child('Questions')
                             .push()
-                            .child(movieName)
-                            .set(movieController.text)
+                            .child(questionName)
+                            .set(questionController.text)
                             .asStream();
-                        movieController.clear();
+                        questionController.clear();
                       },
-                      child: Text('Save Movie'),
+                      child: Text('Add Question'),
                       textColor: Colors.white,
                     ),
                     Flexible(
                       child: new FirebaseAnimatedList(
                           shrinkWrap: true,
-                          query: _moviesRef,
+                          query: _questionsRef,
                           itemBuilder: (BuildContext context,
                               DataSnapshot snapshot,
                               Animation<double> animation,
@@ -81,9 +81,9 @@ class _CustomDataState extends State<CustomData> {
                               trailing: IconButton(
                                 icon: Icon(Icons.delete),
                                 onPressed: () =>
-                                    _moviesRef.child(snapshot.key).remove(),
+                                    _questionsRef.child(snapshot.key).remove(),
                               ),
-                              title: new Text(snapshot.value[movieName]),
+                              title: new Text(snapshot.value[questionName]),
                             );
                           }),
                     ),
