@@ -29,70 +29,65 @@ class _CustomDataState extends State<CustomData> {
   @override
   Widget build(BuildContext context) {
     final ref = referenceDatabase.reference();
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('All Questions'),
-      ),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            Center(
-              child: Container(
-                color: Colors.green,
-                width: MediaQuery.of(context).size.width,
-                height: MediaQuery.of(context).size.height,
-                child: Column(
-                  children: [
-                    Text(
-                      'List of Questions',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontSize: 25,
-                        fontWeight: FontWeight.bold,
-                      ),
+    return SingleChildScrollView(
+      child: Column(
+        children: [
+          Center(
+            child: Container(
+              color: Colors.green,
+              width: MediaQuery.of(context).size.width,
+              height: MediaQuery.of(context).size.height,
+              child: Column(
+                children: [
+                  Text(
+                    'List of Questions',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 25,
+                      fontWeight: FontWeight.bold,
                     ),
-                    TextField(
-                      controller: questionController,
-                      textAlign: TextAlign.center,
-                    ),
-                    FlatButton(
-                      color: Colors.grey,
-                      onPressed: () {
-                        ref
-                            .child('Questions')
-                            .push()
-                            .child(questionName)
-                            .set(questionController.text)
-                            .asStream();
-                        questionController.clear();
-                      },
-                      child: Text('Add Question'),
-                      textColor: Colors.white,
-                    ),
-                    Flexible(
-                      child: new FirebaseAnimatedList(
-                          shrinkWrap: true,
-                          query: _questionsRef,
-                          itemBuilder: (BuildContext context,
-                              DataSnapshot snapshot,
-                              Animation<double> animation,
-                              int index) {
-                            return new ListTile(
-                              trailing: IconButton(
-                                icon: Icon(Icons.delete),
-                                onPressed: () =>
-                                    _questionsRef.child(snapshot.key).remove(),
-                              ),
-                              title: new Text(snapshot.value[questionName]),
-                            );
-                          }),
-                    ),
-                  ],
-                ),
+                  ),
+                  TextField(
+                    controller: questionController,
+                    textAlign: TextAlign.center,
+                  ),
+                  FlatButton(
+                    color: Colors.grey,
+                    onPressed: () {
+                      ref
+                          .child('Questions')
+                          .push()
+                          .child(questionName)
+                          .set(questionController.text)
+                          .asStream();
+                      questionController.clear();
+                    },
+                    child: Text('Add Question'),
+                    textColor: Colors.white,
+                  ),
+                  Flexible(
+                    child: new FirebaseAnimatedList(
+                        shrinkWrap: true,
+                        query: _questionsRef,
+                        itemBuilder: (BuildContext context,
+                            DataSnapshot snapshot,
+                            Animation<double> animation,
+                            int index) {
+                          return new ListTile(
+                            trailing: IconButton(
+                              icon: Icon(Icons.delete),
+                              onPressed: () =>
+                                  _questionsRef.child(snapshot.key).remove(),
+                            ),
+                            title: new Text(snapshot.value[questionName]),
+                          );
+                        }),
+                  ),
+                ],
               ),
-            )
-          ],
-        ),
+            ),
+          )
+        ],
       ),
     );
   }
