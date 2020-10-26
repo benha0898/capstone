@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-
+import 'authentication/signin.dart';
+import 'authentication/signup.dart';
 import 'customDatabase.dart';
 
 void main() => runApp(MyApp());
@@ -12,21 +13,22 @@ class MyApp extends StatelessWidget {
         length: 4,
         child: Scaffold(
           appBar: AppBar(
+            backgroundColor: Colors.pink[400] ,
             title: Text("Card Game App"),
             bottom: TabBar(
               tabs: [
                 Tab(icon: Icon(Icons.home)),
-                Tab(icon: Icon(Icons.view_carousel_rounded)),
-                Tab(icon: Icon(Icons.message_rounded)),
+                Tab(icon: Icon(Icons.view_carousel)),
+                Tab(icon: Icon(Icons.message)),
                 Tab(icon: Icon(Icons.settings)),
               ],
             ),
           ),
           body: TabBarView(
             children: [
-              Text("Home Tab"),
+              SignUp(),
               CustomData(),
-              Text("Conversations Tab"),
+              SignIn(),
               Text("Settings Tab"),
             ],
           ),
