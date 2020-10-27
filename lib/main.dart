@@ -1,5 +1,6 @@
-import 'package:CapstoneProject/authentication/signin.dart';
+//import 'package:CapstoneProject/authentication/signin.dart';
 //import 'package:CapstoneProject/authentication/signup.dart';
+import 'package:CapstoneProject/authentication/signUpScreen.dart';
 import 'package:flutter/material.dart';
 
 
@@ -9,7 +10,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: SignIn(),
+      home: SignUpScreen(),
     );
   }
 }
