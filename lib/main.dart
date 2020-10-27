@@ -1,6 +1,7 @@
+import 'package:CapstoneProject/authentication/signin.dart';
+//import 'package:CapstoneProject/authentication/signup.dart';
 import 'package:flutter/material.dart';
 
-import 'customDatabase.dart';
 
 void main() => runApp(MyApp());
 
@@ -8,7 +9,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: CustomData(),
+      home: SignIn(),
     );
   }
 }
