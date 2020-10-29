@@ -1,10 +1,15 @@
 import 'package:flutter/material.dart';
 
 import 'core/consts.dart';
-import 'screens/browse_decks_screen.dart';
+
+//import 'screens/browse_decks_screen.dart';
 import 'screens/conversations_screen.dart';
-import 'screens/home_screen.dart';
+//import 'screens/home_screen.dart';
 import 'screens/settings_screen.dart';
+
+import 'package:CapstoneProject/authentication/signin.dart';
+import 'package:CapstoneProject/authentication/signUpScreen.dart';
+
 
 class CustomNavigatorHomePage extends StatefulWidget {
   @override
@@ -15,8 +20,11 @@ class CustomNavigatorHomePage extends StatefulWidget {
 class _CustomNavigatorHomePageState extends State<CustomNavigatorHomePage> {
   int _currentIndex = 0;
   final List<Widget> _screens = [
-    HomeScreen(),
-    BrowseDecksScreen(),
+//for screen testing
+    SignUpScreen(),
+    SignIn(),
+    //HomeScreen(),
+    //BrowseDecksScreen(),
     ConversationsScreen(),
     SettingsScreen(),
   ];

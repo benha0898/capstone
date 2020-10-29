@@ -2,12 +2,12 @@
 import 'package:CapstoneProject/core/consts.dart';
 import 'package:flutter/material.dart';
 
-class SignIn extends StatefulWidget {
+class SignUpScreen extends StatefulWidget {
   @override
-  _SignInState createState() => _SignInState();
+  _SignUpScreenState createState() => _SignUpScreenState();
 }
 
-class _SignInState extends State<SignIn> {
+class _SignUpScreenState extends State<SignUpScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -21,7 +21,12 @@ class _SignInState extends State<SignIn> {
               TextField(
                 style: TextStyle(color: Colors.white),
                 decoration:
-                    InputDecoration(hintText: "email"), 
+                    InputDecoration(hintText: "username"),
+              ),
+              TextField(
+                style: TextStyle(color: Colors.white),
+                decoration:
+                    InputDecoration(hintText: "email"),
               ),
               TextField(
                 obscureText: true,
@@ -46,7 +51,7 @@ class _SignInState extends State<SignIn> {
                       LinearGradient(colors: [Colors.blueGrey, Colors.white54, Colors.blueGrey]),
                   borderRadius: BorderRadius.circular(30),
                 ),
-                child: Text("Sign In", style: TextStyle(color: Colors.white)),
+                child: Text("Sign Up", style: TextStyle(color: Colors.white)),
               ),
               SizedBox(
                 height: 8,
@@ -60,7 +65,7 @@ class _SignInState extends State<SignIn> {
                       LinearGradient(colors: [Colors.red[800], Colors.redAccent, Colors.red[800]]),
                   borderRadius: BorderRadius.circular(30),
                 ),
-                child: Text("Sign in with Google", style: TextStyle(color: Colors.white)),
+                child: Text("Sign up with Google", style: TextStyle(color: Colors.white)),
               ),
               SizedBox(
                 height: 8,
@@ -74,11 +79,11 @@ class _SignInState extends State<SignIn> {
                       LinearGradient(colors: [Colors.blue[800], Colors.blueAccent, Colors.blue[800]]),
                   borderRadius: BorderRadius.circular(30),
                 ),
-                child: Text("Continue with Facebook", style: TextStyle(color: Colors.white)),
+                child: Text("Connect Facebook", style: TextStyle(color: Colors.white)),
               ),
               SizedBox(height: 16),
               Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-                Text("Don't have an account?", style: TextStyle(color: Colors.white54)),
+                Text("Already an account?", style: TextStyle(color: Colors.white54)),
                 Text(
                   "Sign Up Now",
                   style: TextStyle(decoration: TextDecoration.underline, color: Colors.white70),
