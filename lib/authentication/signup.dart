@@ -25,10 +25,7 @@ class _SignUpState extends State<SignUp> {
         isLoading = true;
       });
 
-      authMethods
-          .signUpWithEmailAndPassword(emailTextEditingController.text,
-              passwordTextEditingController.text)
-          .then((val) {
+      authMethods.signUpWithEmailAndPassword(emailTextEditingController.text, passwordTextEditingController.text).then((val){
         print("$val");
       });
     }

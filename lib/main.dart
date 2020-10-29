@@ -1,8 +1,6 @@
-//import 'package:CapstoneProject/authentication/signin.dart';
-//import 'package:CapstoneProject/authentication/signup.dart';
-import 'package:CapstoneProject/authentication/signUpScreen.dart';
 import 'package:flutter/material.dart';
 
+import 'app.dart';
 
 void main() => runApp(MyApp());
 
@@ -10,7 +8,11 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: SignUpScreen(),
+      title: "Conversation App",
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+      ),
+      home: CustomNavigatorHomePage(),
     );
   }
 }

@@ -1,11 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
 
-class AppUser {
-  String userId;
-
-  AppUser({this.userId});
-}
-
 class AuthMethods{
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
@@ -54,3 +48,9 @@ class AuthMethods{
   
   
   }
+  
+  class AppUser {
+  String userId;
+
+  AppUser({this.userId});
+}

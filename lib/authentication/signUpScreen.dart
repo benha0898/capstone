@@ -1,4 +1,5 @@
 //import 'package:CapstoneProject/widgets/widgets.dart';
+import 'package:CapstoneProject/core/consts.dart';
 import 'package:flutter/material.dart';
 
 class SignUpScreen extends StatefulWidget {
@@ -10,7 +11,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: Colors.pink[100],
+        backgroundColor: AppColors.mainColor,
         body: Container(
           alignment: Alignment.bottomCenter,
           padding: EdgeInsets.symmetric(horizontal: 24),
@@ -18,21 +19,25 @@ class _SignUpScreenState extends State<SignUpScreen> {
             mainAxisSize: MainAxisSize.min,
             children: [
               TextField(
-                style: TextStyle(color: Colors.black),
+                style: TextStyle(color: Colors.white),
+                decoration:
+                    InputDecoration(hintText: "username"),
+              ),
+              TextField(
+                style: TextStyle(color: Colors.white),
                 decoration:
                     InputDecoration(hintText: "email"),
               ),
               TextField(
                 obscureText: true,
-                style: TextStyle(color: Colors.black),
+                style: TextStyle(color: Colors.white),
                 decoration: InputDecoration(hintText: "password"),
               ),
               SizedBox(
                 height: 8,
               ),
               Container(
-                alignment: Alignment.topRight,
-                child: Text("Forgot Password?"),
+                child: Text("Forgot Password?", style: TextStyle(color: Colors.white54)),
               ),
               SizedBox(
                 height: 8,
@@ -43,10 +48,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 padding: EdgeInsets.symmetric(vertical: 20),
                 decoration: BoxDecoration(
                   gradient:
-                      LinearGradient(colors: [Colors.pink, Colors.pink[300]]),
+                      LinearGradient(colors: [Colors.blueGrey, Colors.white54, Colors.blueGrey]),
                   borderRadius: BorderRadius.circular(30),
                 ),
-                child: Text("Sign Up"),
+                child: Text("Sign Up", style: TextStyle(color: Colors.white)),
               ),
               SizedBox(
                 height: 8,
@@ -57,29 +62,31 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 padding: EdgeInsets.symmetric(vertical: 20),
                 decoration: BoxDecoration(
                   gradient:
-                      LinearGradient(colors: [Colors.red, Colors.red[300]]),
+                      LinearGradient(colors: [Colors.red[800], Colors.redAccent, Colors.red[800]]),
                   borderRadius: BorderRadius.circular(30),
                 ),
-                child: Text("Sign Up with Google"),
+                child: Text("Sign up with Google", style: TextStyle(color: Colors.white)),
               ),
-              SizedBox(height: 8,),
+              SizedBox(
+                height: 8,
+              ),
               Container(
                 alignment: Alignment.center,
                 width: MediaQuery.of(context).size.width,
                 padding: EdgeInsets.symmetric(vertical: 20),
                 decoration: BoxDecoration(
                   gradient:
-                      LinearGradient(colors: [Colors.blue, Colors.blue[300]]),
+                      LinearGradient(colors: [Colors.blue[800], Colors.blueAccent, Colors.blue[800]]),
                   borderRadius: BorderRadius.circular(30),
                 ),
-                child: Text("Sign Up with Facebook"),
+                child: Text("Connect Facebook", style: TextStyle(color: Colors.white)),
               ),
               SizedBox(height: 16),
               Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-                Text("Don't have an account?"),
+                Text("Already an account?", style: TextStyle(color: Colors.white54)),
                 Text(
                   "Sign Up Now",
-                  style: TextStyle(decoration: TextDecoration.underline),
+                  style: TextStyle(decoration: TextDecoration.underline, color: Colors.white70),
                 )
               ]),
               SizedBox(height: 50),
