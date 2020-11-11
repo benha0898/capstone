@@ -1,4 +1,4 @@
-package CapstoneProject
+package capstone.project.conversations
 
 import io.flutter.embedding.android.FlutterActivity
 
