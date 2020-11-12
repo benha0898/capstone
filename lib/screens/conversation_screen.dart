@@ -17,6 +17,16 @@ class _ConversationScreenState extends State<ConversationScreen> {
   String currentUser = "1";
   String pairUser = "2";
   List<ChatItem> chatItems = ChatItem.list;
+  final textController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+
+    textController.addListener(() {
+      setState(() {});
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -155,52 +165,77 @@ class _ConversationScreenState extends State<ConversationScreen> {
                 ],
               ),
             ),
+          Row(
+            children: [
+              Expanded(
+                child: Container(
+                  margin: EdgeInsets.all(12),
+                  padding: EdgeInsets.symmetric(vertical: 6, horizontal: 12),
+                  decoration: BoxDecoration(
+                    color: AppColors.darkColor,
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(10),
+                    ),
+                  ),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: TextField(
+                          controller: textController,
+                          decoration: InputDecoration(
+                            border: InputBorder.none,
+                            hintText: "Type something...",
+                            hintStyle: TextStyle(
+                              color: Colors.white30,
+                            ),
+                          ),
+                          style: TextStyle(
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                      IconButton(
+                        icon: Icon(
+                          Icons.photo_outlined,
+                          color: AppColors.blueColor,
+                        ),
+                        onPressed: null,
+                      ),
+                      IconButton(
+                        icon: Icon(
+                          Icons.sentiment_satisfied_alt_outlined,
+                          color: AppColors.blueColor,
+                        ),
+                        onPressed: null,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              if (textController.text != '')
+                Padding(
+                  padding: EdgeInsets.only(right: 12.0),
+                  child: IconButton(
+                    icon: Icon(
+                      Icons.send,
+                      color: AppColors.blueColor,
+                    ),
+                    onPressed: _addMessage,
+                  ),
+                ),
+            ],
+          ),
         ],
       ),
-      bottomNavigationBar: _textField(),
     );
   }
 
-  Widget _textField() {
-    return Container(
-      margin: EdgeInsets.all(12),
-      padding: EdgeInsets.symmetric(vertical: 6, horizontal: 12),
-      decoration: BoxDecoration(
-        color: AppColors.darkColor,
-        borderRadius: BorderRadius.all(
-          Radius.circular(10),
-        ),
-      ),
-      child: Row(
-        children: [
-          Expanded(
-            child: TextField(
-              decoration: InputDecoration(
-                border: InputBorder.none,
-                hintText: "Type something...",
-                hintStyle: TextStyle(
-                  color: Colors.white30,
-                ),
-              ),
-            ),
-          ),
-          IconButton(
-            icon: Icon(
-              Icons.photo_outlined,
-              color: AppColors.blueColor,
-            ),
-            onPressed: null,
-          ),
-          IconButton(
-            icon: Icon(
-              Icons.sentiment_satisfied_alt_outlined,
-              color: AppColors.blueColor,
-            ),
-            onPressed: null,
-          ),
-        ],
-      ),
-    );
+  _addMessage() {
+    setState(() {
+      chatItems.insert(
+          0, ChatItem(senderId: "1", message: textController.text));
+      textController.clear();
+    });
   }
 
   _isFirstMessage(List<ChatItem> chatItems, int index) {
