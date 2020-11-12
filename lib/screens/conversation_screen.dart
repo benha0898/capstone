@@ -54,7 +54,7 @@ class _ConversationScreenState extends State<ConversationScreen> {
           ),
         ],
         title: Text(
-          "${widget.otherMember.contact.name}",
+          "${widget.otherMember.users.join(', ')}",
         ),
         centerTitle: true,
       ),
