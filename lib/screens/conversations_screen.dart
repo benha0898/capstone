@@ -23,8 +23,9 @@ class _ConversationsScreenState extends State<ConversationsScreen> {
         backgroundColor: AppColors.mainColor,
         title: Text(
           "Conversations",
-          style: TextStyle(fontSize: 32),
+          style: TextStyle(fontSize: 20),
         ),
+        centerTitle: true,
         actions: [
           IconButton(
             icon: Icon(

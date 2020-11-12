@@ -2,14 +2,13 @@ import 'package:flutter/material.dart';
 
 import 'core/consts.dart';
 
-//import 'screens/browse_decks_screen.dart';
+import 'screens/browse_decks_screen.dart';
 import 'screens/conversations_screen.dart';
 //import 'screens/home_screen.dart';
 import 'screens/settings_screen.dart';
 
-import 'package:CapstoneProject/authentication/signin.dart';
+//import 'package:CapstoneProject/authentication/signin.dart';
 import 'package:CapstoneProject/authentication/signUpScreen.dart';
-
 
 class CustomNavigatorHomePage extends StatefulWidget {
   @override
@@ -22,9 +21,9 @@ class _CustomNavigatorHomePageState extends State<CustomNavigatorHomePage> {
   final List<Widget> _screens = [
 //for screen testing
     SignUpScreen(),
-    SignIn(),
+    //SignIn(),
     //HomeScreen(),
-    //BrowseDecksScreen(),
+    BrowseDecksScreen(),
     ConversationsScreen(),
     SettingsScreen(),
   ];
