@@ -15,7 +15,7 @@ class ConversationsScreen extends StatefulWidget {
 
 class _ConversationsScreenState extends State<ConversationsScreen> {
   List<Conversation> list = Conversation.list;
-  User me = User(name: "Ben Ha");
+  User me = User(id: 1, name: "Ben Ha");
 
   @override
   void initState() {
