@@ -119,20 +119,23 @@ class _BrowseDecksScreenState extends State<BrowseDecksScreen> {
                   .where((element) => element.category == _selectedCategory)
                   .length,
               gridDelegate: new SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
+                crossAxisCount: 1,
               ),
               itemBuilder: (context, index) {
                 List<Deck> categoryDecks = _decks
                     .where((element) => element.category == _selectedCategory)
                     .toList();
-                return Card(
-                  child: InkWell(
-                    onTap: () {
-                      print(categoryDecks[index].name);
-                      _showDeckDescription(context, categoryDecks[index]);
-                    },
-                    child: Text(
-                      categoryDecks[index].name,
+                return FractionallySizedBox(
+                  widthFactor: 0.8,
+                  child: Card(
+                    child: InkWell(
+                      onTap: () {
+                        print(categoryDecks[index].name);
+                        _showDeckDescription(context, categoryDecks[index]);
+                      },
+                      child: Text(
+                        categoryDecks[index].name,
+                      ),
                     ),
                   ),
                 );
