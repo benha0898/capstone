@@ -9,7 +9,6 @@ import 'screens/settings_screen.dart';
 
 import 'authentication/LoginMain.dart';
 
-
 class CustomNavigatorHomePage extends StatefulWidget {
   @override
   _CustomNavigatorHomePageState createState() =>

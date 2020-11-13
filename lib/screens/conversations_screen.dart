@@ -1,9 +1,11 @@
 import 'package:CapstoneProject/core/consts.dart';
 import 'package:CapstoneProject/core/flutter_icons.dart';
+import 'package:CapstoneProject/models/user.dart';
 import 'package:CapstoneProject/models/conversation.dart';
 import 'package:CapstoneProject/screens/conversation_screen.dart';
 
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 
 class ConversationsScreen extends StatefulWidget {
@@ -13,6 +15,16 @@ class ConversationsScreen extends StatefulWidget {
 
 class _ConversationsScreenState extends State<ConversationsScreen> {
   List<Conversation> list = Conversation.list;
+  User me = User(id: 1, name: "Ben Ha");
+
+  @override
+  void initState() {
+    super.initState();
+
+    for (Conversation convo in list) {
+      convo.users = convo.users.where((element) => (element.name != me.name));
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -23,8 +35,9 @@ class _ConversationsScreenState extends State<ConversationsScreen> {
         backgroundColor: AppColors.mainColor,
         title: Text(
           "Conversations",
-          style: TextStyle(fontSize: 32),
+          style: TextStyle(fontSize: 20),
         ),
+        centerTitle: true,
         actions: [
           IconButton(
             icon: Icon(
@@ -83,7 +96,7 @@ class _ConversationsScreenState extends State<ConversationsScreen> {
                     ),
                   ),
                   title: Text(
-                    list[index].contact.name,
+                    list[index].users.join(", "),
                     style: TextStyle(
                       color: Colors.white,
                     ),
@@ -109,7 +122,14 @@ class _ConversationsScreenState extends State<ConversationsScreen> {
                               width: 25,
                             ),
                             Text(
-                              list[index].lastMessageTime + " days ago",
+                              (isToday(list[index].lastMessageTime))
+                                  ? DateFormat.jm()
+                                      .format(list[index].lastMessageTime)
+                                  : (isWithinAWeek(list[index].lastMessageTime))
+                                      ? DateFormat.E()
+                                          .format(list[index].lastMessageTime)
+                                      : DateFormat.MMMd()
+                                          .format(list[index].lastMessageTime),
                               style: TextStyle(
                                 color: Colors.white54,
                               ),
@@ -123,5 +143,20 @@ class _ConversationsScreenState extends State<ConversationsScreen> {
         ],
       ),
     );
+  }
+
+  bool isToday(DateTime date) {
+    DateTime now = DateTime.now();
+    return (now.year == date.year &&
+        now.month == date.month &&
+        now.day == date.day);
+  }
+
+  bool isWithinAWeek(DateTime date) {
+    DateTime now = DateTime.now();
+    DateTime lastWeek = now.subtract(Duration(days: 7));
+    lastWeek =
+        DateTime(lastWeek.year, lastWeek.month, lastWeek.day, 23, 59, 59);
+    return !isToday(date) && date.isAfter(lastWeek);
   }
 }

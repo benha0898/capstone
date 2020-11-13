@@ -1,0 +1,2 @@
+json_key_file("D:\\School\\Fall 2020\\Capstone\\serviceaccount.json") # Path to the json secret file - Follow https://docs.fastlane.tools/actions/supply/#setup to get one
+package_name("capstone.project.conversations") # e.g. com.krausefx.app

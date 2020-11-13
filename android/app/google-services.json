@@ -10,7 +10,7 @@
       "client_info": {
         "mobilesdk_app_id": "1:622442067224:android:528399e25fc9fc0abb9a6d",
         "android_client_info": {
-          "package_name": "com.example.CapstoneProject"
+          "package_name": "capstone.project.conversations"
         }
       },
       "oauth_client": [
@@ -18,7 +18,7 @@
           "client_id": "622442067224-ks61aqvm92g0onevptp1m91ec4qf3dfb.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "com.example.CapstoneProject",
+            "package_name": "capstone.project.conversations",
             "certificate_hash": "2b54d296b0863568f843f22faae0cfc4e60b725a"
           }
         },
