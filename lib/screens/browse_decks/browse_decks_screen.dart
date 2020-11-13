@@ -2,7 +2,7 @@ import 'package:CapstoneProject/models/deck.dart';
 import 'package:CapstoneProject/models/category.dart';
 import 'package:flutter/material.dart';
 
-import 'package:CapstoneProject/core/consts.dart';
+import 'package:CapstoneProject/theme/consts.dart';
 
 class BrowseDecksScreen extends StatefulWidget {
   @override

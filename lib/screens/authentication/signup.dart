@@ -1,4 +1,4 @@
-import 'package:CapstoneProject/services/auth.dart';
+import 'package:CapstoneProject/screens/services/auth.dart';
 import 'package:flutter/material.dart';
 
 class SignUp extends StatefulWidget {
@@ -25,7 +25,10 @@ class _SignUpState extends State<SignUp> {
         isLoading = true;
       });
 
-      authMethods.signUpWithEmailAndPassword(emailTextEditingController.text, passwordTextEditingController.text).then((val){
+      authMethods
+          .signUpWithEmailAndPassword(emailTextEditingController.text,
+              passwordTextEditingController.text)
+          .then((val) {
         print("$val");
       });
     }

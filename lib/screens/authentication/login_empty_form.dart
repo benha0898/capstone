@@ -1,6 +1,6 @@
 //import 'package:CapstoneProject/widgets/widgets.dart';
-import 'package:CapstoneProject/UserFile/UserSearch.dart';
-import 'package:CapstoneProject/core/consts.dart';
+import 'package:CapstoneProject/screens/user_file/user_search.dart';
+import 'package:CapstoneProject/theme/consts.dart';
 import 'package:flutter/material.dart';
 
 class LoginEmptyForm extends StatefulWidget {
@@ -21,8 +21,7 @@ class _LoginEmptyFormState extends State<LoginEmptyForm> {
             children: [
               TextField(
                 style: TextStyle(color: Colors.white),
-                decoration:
-                    InputDecoration(hintText: "Username"), 
+                decoration: InputDecoration(hintText: "Username"),
               ),
               TextField(
                 obscureText: true,
@@ -33,29 +32,33 @@ class _LoginEmptyFormState extends State<LoginEmptyForm> {
                 height: 8,
               ),
               Container(
-                child: Text("Forgot Password?", style: TextStyle(color: Colors.white54),)
-              ),
+                  child: Text(
+                "Forgot Password?",
+                style: TextStyle(color: Colors.white54),
+              )),
               SizedBox(
                 height: 8,
               ),
-              GestureDetector( onTap: () {
-                Navigator.of(context).push(
-                 MaterialPageRoute(
-                   builder: (_) => UserSearch()
-                   ),
-                );
-              },
-              child: Container(
-                alignment: Alignment.center,
-                width: MediaQuery.of(context).size.width,
-                padding: EdgeInsets.symmetric(vertical: 20),
-                decoration: BoxDecoration(
-                  gradient:
-                      LinearGradient(colors: [Colors.blueGrey, Colors.white54, Colors.blueGrey]),
-                  borderRadius: BorderRadius.circular(30),
+              GestureDetector(
+                onTap: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(builder: (_) => UserSearch()),
+                  );
+                },
+                child: Container(
+                  alignment: Alignment.center,
+                  width: MediaQuery.of(context).size.width,
+                  padding: EdgeInsets.symmetric(vertical: 20),
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(colors: [
+                      Colors.blueGrey,
+                      Colors.white54,
+                      Colors.blueGrey
+                    ]),
+                    borderRadius: BorderRadius.circular(30),
+                  ),
+                  child: Text("Submit", style: TextStyle(color: Colors.black)),
                 ),
-                child: Text("Submit", style: TextStyle(color: Colors.black)),
-              ),
               ),
               SizedBox(height: 50),
             ],

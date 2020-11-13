@@ -1,8 +1,8 @@
-import 'package:CapstoneProject/UserFile/UserInfo.dart';
-import 'package:CapstoneProject/core/consts.dart';
-import 'package:CapstoneProject/core/flutter_icons.dart';
+import 'package:CapstoneProject/models/user_info.dart';
+import 'package:CapstoneProject/theme/consts.dart';
+import 'package:CapstoneProject/theme/flutter_icons.dart';
 import 'package:CapstoneProject/models/conversation.dart';
-import 'package:CapstoneProject/screens/conversation_screen.dart';
+import 'package:CapstoneProject/screens/conversations/conversation_screen.dart';
 
 import 'package:flutter/material.dart';
 
@@ -84,20 +84,20 @@ class _UserSearchState extends State<UserSearch> {
                     ),
                   ),
                   subtitle: Row(
-                          children: [
-                            Text(
-                              list[index].userName,
-                              style: TextStyle(
-                                color: Colors.white54,
-                              ),
-                            ),
-                          ],
+                    children: [
+                      Text(
+                        list[index].userName,
+                        style: TextStyle(
+                          color: Colors.white54,
                         ),
+                      ),
+                    ],
+                  ),
                   trailing: Icon(
                     FlutterIcons.add_circle_outline,
                     color: Colors.white,
                     size: 35,
-                    ),
+                  ),
                 );
               },
             ),

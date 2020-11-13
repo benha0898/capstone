@@ -1,4 +1,4 @@
-import 'package:CapstoneProject/core/consts.dart';
+import 'package:CapstoneProject/theme/consts.dart';
 import 'package:CapstoneProject/models/chat_item.dart';
 import 'package:CapstoneProject/models/conversation.dart';
 import 'package:flutter/material.dart';

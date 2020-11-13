@@ -1,5 +1,5 @@
 //import 'package:CapstoneProject/widgets/widgets.dart';
-import 'package:CapstoneProject/core/consts.dart';
+import 'package:CapstoneProject/theme/consts.dart';
 import 'package:flutter/material.dart';
 
 class LoginCreateAccount extends StatefulWidget {
@@ -20,8 +20,7 @@ class _LoginCreateAccountState extends State<LoginCreateAccount> {
             children: [
               TextField(
                 style: TextStyle(color: Colors.white),
-                decoration:
-                    InputDecoration(hintText: "Email"), 
+                decoration: InputDecoration(hintText: "Email"),
               ),
               TextField(
                 obscureText: true,
@@ -41,8 +40,11 @@ class _LoginCreateAccountState extends State<LoginCreateAccount> {
                 width: MediaQuery.of(context).size.width,
                 padding: EdgeInsets.symmetric(vertical: 20),
                 decoration: BoxDecoration(
-                  gradient:
-                      LinearGradient(colors: [Colors.blueGrey, Colors.white54, Colors.blueGrey]),
+                  gradient: LinearGradient(colors: [
+                    Colors.blueGrey,
+                    Colors.white54,
+                    Colors.blueGrey
+                  ]),
                   borderRadius: BorderRadius.circular(30),
                 ),
                 child: Text("Submit", style: TextStyle(color: Colors.black)),

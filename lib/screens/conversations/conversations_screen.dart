@@ -1,8 +1,8 @@
-import 'package:CapstoneProject/core/consts.dart';
-import 'package:CapstoneProject/core/flutter_icons.dart';
+import 'package:CapstoneProject/theme/consts.dart';
+import 'package:CapstoneProject/theme/flutter_icons.dart';
 import 'package:CapstoneProject/models/user.dart';
 import 'package:CapstoneProject/models/conversation.dart';
-import 'package:CapstoneProject/screens/conversation_screen.dart';
+import 'package:CapstoneProject/screens/conversations/conversation_screen.dart';
 
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
