@@ -7,8 +7,7 @@ import 'screens/conversations_screen.dart';
 //import 'screens/home_screen.dart';
 import 'screens/settings_screen.dart';
 
-//import 'package:CapstoneProject/authentication/signin.dart';
-import 'package:CapstoneProject/authentication/signUpScreen.dart';
+import 'authentication/LoginMain.dart';
 
 class CustomNavigatorHomePage extends StatefulWidget {
   @override
@@ -19,10 +18,8 @@ class CustomNavigatorHomePage extends StatefulWidget {
 class _CustomNavigatorHomePageState extends State<CustomNavigatorHomePage> {
   int _currentIndex = 0;
   final List<Widget> _screens = [
-//for screen testing
-    SignUpScreen(),
-    //SignIn(),
-    //HomeScreen(),
+
+    LoginMain(),
     BrowseDecksScreen(),
     ConversationsScreen(),
     SettingsScreen(),
