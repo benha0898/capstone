@@ -15,14 +15,16 @@ class ConversationsScreen extends StatefulWidget {
 
 class _ConversationsScreenState extends State<ConversationsScreen> {
   List<Conversation> list = Conversation.list;
-  User me = User(id: 1, name: "Ben Ha");
+  User me = User(id: 1, firstName: "Ben", lastName: "Ha");
 
   @override
   void initState() {
     super.initState();
 
     for (Conversation convo in list) {
-      convo.users = convo.users.where((element) => (element.name != me.name));
+      convo.users =
+          convo.users.where((element) => (element.name != me.name)).toList();
+      print(convo.users.map((element) => element.name).join(", "));
     }
   }
 
@@ -51,6 +53,7 @@ class _ConversationsScreenState extends State<ConversationsScreen> {
       body: Column(
         children: [
           Container(
+            // Search bar
             margin: EdgeInsets.all(16),
             padding: EdgeInsets.all(6),
             decoration: BoxDecoration(
@@ -71,6 +74,7 @@ class _ConversationsScreenState extends State<ConversationsScreen> {
             ),
           ),
           Expanded(
+            // List of conversations
             child: ListView.builder(
               itemCount: list.length,
               itemBuilder: (context, index) {
@@ -96,7 +100,15 @@ class _ConversationsScreenState extends State<ConversationsScreen> {
                     ),
                   ),
                   title: Text(
-                    list[index].users.join(", "),
+                    list[index].users.length > 1
+                        ? list[index]
+                            .users
+                            .map((element) => element.firstName)
+                            .join(", ")
+                        : list[index]
+                            .users
+                            .map((element) => element.name)
+                            .join(", "),
                     style: TextStyle(
                       color: Colors.white,
                     ),

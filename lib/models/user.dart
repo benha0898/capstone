@@ -1,20 +1,25 @@
 class User {
   int id;
-  String name;
+  String firstName;
+  String lastName;
 
-  User({this.id, this.name});
+  User({this.id, this.firstName, this.lastName});
+
+  String get name {
+    return '$firstName $lastName';
+  }
 
   static List<User> names = [
-    User(id: 1, name: "Ben Ha"),
-    User(id: 2, name: "Josephine Estudillo"),
-    User(id: 3, name: "Jeffrey Davis"),
-    User(id: 4, name: "Cam Macdonell"),
-    User(id: 5, name: "Robert Andruchow"),
-    User(id: 6, name: "Michelle Weremczuk"),
-    User(id: 7, name: "Quinton Wong"),
-    User(id: 8, name: "Rebecca Hardy"),
-    User(id: 9, name: "Alex Anderson"),
-    User(id: 10, name: "Bob Billy"),
-    User(id: 11, name: "Christine Chang"),
+    User(id: 1, firstName: "Ben", lastName: "Ha"),
+    User(id: 2, firstName: "Josephine", lastName: "Estudillo"),
+    User(id: 3, firstName: "Jeffrey", lastName: "Davis"),
+    User(id: 4, firstName: "Cam", lastName: "Macdonell"),
+    User(id: 5, firstName: "Robert", lastName: "Andruchow"),
+    User(id: 6, firstName: "Michelle", lastName: "Weremczuk"),
+    User(id: 7, firstName: "Quinton", lastName: "Wong"),
+    User(id: 8, firstName: "Rebecca", lastName: "Hardy"),
+    User(id: 9, firstName: "Alex", lastName: "Anderson"),
+    User(id: 10, firstName: "Bob", lastName: "Billy"),
+    User(id: 11, firstName: "Christine", lastName: "Chang"),
   ];
 }

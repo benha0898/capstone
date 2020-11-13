@@ -15,9 +15,9 @@ class Conversation {
       lastMessage: "hello!",
       lastMessageTime: DateTime(2020, 10, 31, 19, 30, 00),
       users: [
-        User(id: 9, name: "Alex Anderson"),
-        User(id: 1, name: "Ben Ha"),
-        User(id: 11, name: "Christine Chang"),
+        User(id: 9, firstName: "Alex", lastName: "Anderson"),
+        User(id: 1, firstName: "Ben", lastName: "Ha"),
+        User(id: 11, firstName: "Christine", lastName: "Chang"),
       ],
     ),
     Conversation(
@@ -25,9 +25,9 @@ class Conversation {
       lastMessage: "Sounds great!",
       lastMessageTime: DateTime(2020, 11, 12, 9, 00, 00),
       users: [
-        User(id: 1, name: "Ben Ha"),
-        User(id: 2, name: "Josephine Estudillo"),
-        User(id: 6, name: "Michelle Weremczuk"),
+        User(id: 1, firstName: "Ben", lastName: "Ha"),
+        User(id: 2, firstName: "Josephine", lastName: "Estudillo"),
+        User(id: 6, firstName: "Michelle", lastName: "Weremczuk"),
       ],
     ),
     Conversation(
@@ -35,10 +35,10 @@ class Conversation {
       lastMessage: "Sure, no problem!",
       lastMessageTime: DateTime(2020, 11, 11, 14, 59, 59),
       users: [
-        User(id: 1, name: "Ben Ha"),
-        User(id: 2, name: "Josephine Estudillo"),
-        User(id: 3, name: "Jeffrey Davis"),
-        User(id: 5, name: "Robert Andruchow"),
+        User(id: 1, firstName: "Ben", lastName: "Ha"),
+        User(id: 2, firstName: "Josephine", lastName: "Estudillo"),
+        User(id: 3, firstName: "Jeffrey", lastName: "Davis"),
+        User(id: 5, firstName: "Robert", lastName: "Andruchow"),
       ],
     ),
     Conversation(
@@ -46,8 +46,8 @@ class Conversation {
       lastMessage: "I'm great! How are you?",
       lastMessageTime: DateTime(2020, 11, 8, 00, 30, 00),
       users: [
-        User(id: 1, name: "Ben Ha"),
-        User(id: 10, name: "Bob Billy"),
+        User(id: 1, firstName: "Ben", lastName: "Ha"),
+        User(id: 10, firstName: "Bob", lastName: "Billy"),
       ],
     ),
   ];

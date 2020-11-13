@@ -1,9 +1,9 @@
-import 'package:CapstoneProject/models/contact.dart';
+import 'package:CapstoneProject/models/user.dart';
 
 class UserId {
   final String userName;
   final String email;
-  final Contact name;
+  final User name;
 
   UserId({
     this.userName,
@@ -15,17 +15,17 @@ class UserId {
     UserId(
       userName: "alex_anderson",
       email: "andersona01@hotmail.com",
-      name: Contact(name: "Alex Anderson")
-      ),
+      name: User(id: 9, firstName: "Alex", lastName: "Anderson"),
+    ),
     UserId(
       userName: "BBob_01",
       email: "billyB@gmail.com",
-      name: Contact(name: "Bob Billy")
-      ),
+      name: User(id: 10, firstName: "Bob", lastName: "Billy"),
+    ),
     UserId(
       userName: "christinechang",
       email: "christinechang@gmail.com",
-      name: Contact(name: "Christine Chang")
-      ),
+      name: User(id: 11, firstName: "Christine", lastName: "Chang"),
+    ),
   ];
 }

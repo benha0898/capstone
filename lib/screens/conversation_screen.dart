@@ -54,7 +54,9 @@ class _ConversationScreenState extends State<ConversationScreen> {
           ),
         ],
         title: Text(
-          "${widget.otherMember.users.join(', ')}",
+          widget.otherMember.users.length > 1
+              ? "${widget.otherMember.users.map((element) => element.firstName).join(', ')}"
+              : "${widget.otherMember.users.map((element) => element.name).join(', ')}",
         ),
         centerTitle: true,
       ),
