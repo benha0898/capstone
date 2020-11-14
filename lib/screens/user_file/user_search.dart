@@ -61,7 +61,7 @@ class _UserSearchState extends State<UserSearch> {
                     Navigator.of(context).push(
                       MaterialPageRoute(
                         builder: (_) =>
-                            ConversationScreen(otherMember: listU[index]),
+                            ConversationScreen(conversation: listU[index]),
                       ),
                     );
                   },

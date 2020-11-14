@@ -83,7 +83,7 @@ class _ConversationsScreenState extends State<ConversationsScreen> {
                     Navigator.of(context).push(
                       MaterialPageRoute(
                         builder: (_) =>
-                            ConversationScreen(otherMember: list[index]),
+                            ConversationScreen(conversation: list[index]),
                       ),
                     );
                   },
