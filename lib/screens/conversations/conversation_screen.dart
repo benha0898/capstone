@@ -118,7 +118,14 @@ class _ConversationScreenState extends State<ConversationScreen> {
                     decoration: BoxDecoration(
                       image: DecorationImage(
                         image: ExactAssetImage(
-                          "assets/default.jpg",
+                          () {
+                            for (int i = 0; i < convoListItems.length; i++) {
+                              if (convoListItems[i].getMessage() != null) {
+                                return "assets/images/${convoListItems[i].getMessage().userId}.png";
+                              }
+                            }
+                            return "assets/default.jpg";
+                          }(),
                         ),
                       ),
                       borderRadius: BorderRadius.all(

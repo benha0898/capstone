@@ -29,6 +29,14 @@ class GeneratedQuestion implements ConversationListItem {
     this.answered = answered;
   }
 
+  Message getMessage() {
+    return null;
+  }
+
+  GeneratedQuestion getQuestion() {
+    return this;
+  }
+
   Widget buildItem(BuildContext context,
       {int groupSize, int id, bool isFirst, bool isLast}) {
     return Card(
@@ -80,7 +88,7 @@ class GeneratedQuestion implements ConversationListItem {
                               decoration: BoxDecoration(
                                 image: DecorationImage(
                                   image: ExactAssetImage(
-                                    "assets/default.jpg",
+                                    "assets/images/${message.userId}.png",
                                   ),
                                 ),
                                 borderRadius: BorderRadius.all(

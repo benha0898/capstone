@@ -1,4 +1,5 @@
 import 'package:CapstoneProject/models/conversation_list_item.dart';
+import 'package:CapstoneProject/models/generated_question.dart';
 import 'package:CapstoneProject/theme/consts.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -10,6 +11,14 @@ class Message implements ConversationListItem {
 
   Message({this.userId, this.text, timestamp})
       : this.timestamp = timestamp ?? DateTime.now();
+
+  Message getMessage() {
+    return this;
+  }
+
+  GeneratedQuestion getQuestion() {
+    return null;
+  }
 
   Widget buildItem(BuildContext context,
       {int groupSize, int id, bool isFirst, bool isLast}) {
@@ -24,7 +33,7 @@ class Message implements ConversationListItem {
                 decoration: BoxDecoration(
                   image: DecorationImage(
                     image: ExactAssetImage(
-                      "assets/default.jpg",
+                      "assets/images/${this.userId}.png",
                     ),
                   ),
                   borderRadius: BorderRadius.all(

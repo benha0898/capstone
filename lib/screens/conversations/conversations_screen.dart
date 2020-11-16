@@ -95,7 +95,8 @@ class _ConversationsScreenState extends State<ConversationsScreen> {
                         Radius.circular(100),
                       ),
                       image: DecorationImage(
-                        image: ExactAssetImage("assets/default.jpg"),
+                        image: ExactAssetImage(
+                            "assets/images/${list[index].users[0].id}.png"),
                       ),
                     ),
                   ),

@@ -112,7 +112,7 @@ class Conversation {
           ),
           Message(
             timestamp: DateTime(2020, 11, 10, 12, 00, 00),
-            userId: 9,
+            userId: 11,
             text:
                 "That was a great question! I feel like I got to know you a lot better now :)",
           ),
@@ -129,6 +129,47 @@ class Conversation {
         User(id: 2, firstName: "Josephine", lastName: "Estudillo"),
         User(id: 6, firstName: "Michelle", lastName: "Weremczuk"),
       ],
+      content: ConversationContent(
+        decks: List<GeneratedDeck>(),
+        messages: [
+          Message(
+            timestamp: DateTime(2020, 11, 12, 09, 00, 00),
+            userId: 1,
+            text: "Hi Michelle! How's it going?",
+          ),
+          Message(
+            timestamp: DateTime(2020, 11, 10, 12, 25, 00),
+            userId: 2,
+            text: "Talk to you tomorrow",
+          ),
+          Message(
+            timestamp: DateTime(2020, 11, 10, 12, 20, 00),
+            userId: 1,
+            text: "Alright sounds good!",
+          ),
+          Message(
+            timestamp: DateTime(2020, 11, 10, 12, 15, 00),
+            userId: 6,
+            text: "Hey I gotta head out. Let's circle back to this tomorrow",
+          ),
+          Message(
+            timestamp: DateTime(2020, 11, 10, 12, 10, 00),
+            userId: 1,
+            text: "Yeah I know. Hopefully things will get better soon",
+          ),
+          Message(
+            timestamp: DateTime(2020, 11, 10, 12, 05, 00),
+            userId: 6,
+            text: "This year has been crazy man. Can't wait for it to be over",
+          ),
+          Message(
+            timestamp: DateTime(2020, 11, 10, 12, 00, 00),
+            userId: 2,
+            text:
+                "That was a great question! I feel like I got to know you a lot better now :)",
+          ),
+        ],
+      ),
     ),
     Conversation(
       id: 3,
@@ -141,6 +182,47 @@ class Conversation {
         User(id: 3, firstName: "Jeffrey", lastName: "Davis"),
         User(id: 5, firstName: "Robert", lastName: "Andruchow"),
       ],
+      content: ConversationContent(
+        decks: List<GeneratedDeck>(),
+        messages: [
+          Message(
+            timestamp: DateTime(2020, 11, 12, 09, 00, 00),
+            userId: 2,
+            text: "Hi Ben! How's it going?",
+          ),
+          Message(
+            timestamp: DateTime(2020, 11, 10, 12, 25, 00),
+            userId: 1,
+            text: "Talk to you tomorrow",
+          ),
+          Message(
+            timestamp: DateTime(2020, 11, 10, 12, 20, 00),
+            userId: 3,
+            text: "Alright sounds good!",
+          ),
+          Message(
+            timestamp: DateTime(2020, 11, 10, 12, 15, 00),
+            userId: 5,
+            text: "Hey I gotta head out. Let's circle back to this tomorrow",
+          ),
+          Message(
+            timestamp: DateTime(2020, 11, 10, 12, 10, 00),
+            userId: 1,
+            text: "Yeah I know. Hopefully things will get better soon",
+          ),
+          Message(
+            timestamp: DateTime(2020, 11, 10, 12, 05, 00),
+            userId: 2,
+            text: "This year has been crazy man. Can't wait for it to be over",
+          ),
+          Message(
+            timestamp: DateTime(2020, 11, 10, 12, 00, 00),
+            userId: 3,
+            text:
+                "That was a great question! I feel like I got to know you a lot better now :)",
+          ),
+        ],
+      ),
     ),
     Conversation(
       id: 4,
@@ -151,6 +233,47 @@ class Conversation {
         User(id: 1, firstName: "Ben", lastName: "Ha"),
         User(id: 10, firstName: "Bob", lastName: "Billy"),
       ],
+      content: ConversationContent(
+        decks: List<GeneratedDeck>(),
+        messages: [
+          Message(
+            timestamp: DateTime(2020, 11, 12, 09, 00, 00),
+            userId: 10,
+            text: "Hi Ben! How's it going?",
+          ),
+          Message(
+            timestamp: DateTime(2020, 11, 10, 12, 25, 00),
+            userId: 1,
+            text: "Talk to you tomorrow",
+          ),
+          Message(
+            timestamp: DateTime(2020, 11, 10, 12, 20, 00),
+            userId: 10,
+            text: "Alright sounds good!",
+          ),
+          Message(
+            timestamp: DateTime(2020, 11, 10, 12, 15, 00),
+            userId: 1,
+            text: "Hey I gotta head out. Let's circle back to this tomorrow",
+          ),
+          Message(
+            timestamp: DateTime(2020, 11, 10, 12, 10, 00),
+            userId: 10,
+            text: "Yeah I know. Hopefully things will get better soon",
+          ),
+          Message(
+            timestamp: DateTime(2020, 11, 10, 12, 05, 00),
+            userId: 1,
+            text: "This year has been crazy man. Can't wait for it to be over",
+          ),
+          Message(
+            timestamp: DateTime(2020, 11, 10, 12, 00, 00),
+            userId: 1,
+            text:
+                "That was a great question! I feel like I got to know you a lot better now :)",
+          ),
+        ],
+      ),
     ),
   ];
 }
