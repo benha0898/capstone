@@ -1,5 +1,5 @@
-import 'package:CapstoneProject/models/deck.dart';
-import 'package:CapstoneProject/models/category.dart';
+import 'package:CapstoneProject/db.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 import 'package:CapstoneProject/theme/consts.dart';
@@ -10,19 +10,31 @@ class BrowseDecksScreen extends StatefulWidget {
 }
 
 class _BrowseDecksScreenState extends State<BrowseDecksScreen> {
-  List<Deck> _decks = Deck.decks;
+  DatabaseService db = DatabaseService();
+
   List<bool> _viewSelections = [true, false];
   List<bool> _categorySelections;
-  List<Category> _categories;
-  Category _selectedCategory;
+  List<QueryDocumentSnapshot> _categories = List<QueryDocumentSnapshot>();
+  QueryDocumentSnapshot _selectedCategory;
 
   @override
   void initState() {
     super.initState();
-    _categories = _decks.map((deck) => deck.category).toSet().toList();
-    _categorySelections =
-        List.generate(_categories.length, (index) => (index == 0));
-    _selectedCategory = _categories[0];
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      getData();
+    });
+  }
+
+  getData() async {
+    await FirebaseFirestore.instance
+        .collection("categories")
+        .get()
+        .then((value) => setState(() {
+              _categories.addAll(value.docs);
+              _selectedCategory = _categories[0];
+              _categorySelections =
+                  List.generate(_categories.length, (index) => (index == 0));
+            }));
   }
 
   @override
@@ -80,83 +92,92 @@ class _BrowseDecksScreenState extends State<BrowseDecksScreen> {
                 Expanded(
                   child: SingleChildScrollView(
                     scrollDirection: Axis.horizontal,
-                    child: ToggleButtons(
-                      renderBorder: false,
-                      color: Colors.black38,
-                      selectedColor: Colors.black,
-                      fillColor: Colors.transparent,
-                      children: List<Widget>.generate(
-                        _categories.length,
-                        (index) => Padding(
-                          padding: const EdgeInsets.all(16.0),
-                          child: Text(
-                            _categories[index].name,
-                            style: TextStyle(
-                              fontSize: 24,
-                              fontWeight: FontWeight.bold,
+                    child: _categorySelections != null
+                        ? ToggleButtons(
+                            renderBorder: false,
+                            color: Colors.black38,
+                            selectedColor: Colors.black,
+                            fillColor: Colors.transparent,
+                            children: List<Widget>.generate(
+                              _categories.length,
+                              (index) => Padding(
+                                padding: const EdgeInsets.all(16.0),
+                                child: Text(
+                                  _categories[index]['name'],
+                                  style: TextStyle(
+                                    fontSize: 24,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
                             ),
-                          ),
-                        ),
-                      ),
-                      isSelected: _categorySelections,
-                      onPressed: (int index) {
-                        setState(() {
-                          for (var i = 0; i < _categorySelections.length; i++) {
-                            _categorySelections[i] = (i == index);
-                          }
-                          _selectedCategory = _categories[index];
-                        });
-                      },
-                    ),
+                            isSelected: _categorySelections,
+                            onPressed: (int index) {
+                              setState(() {
+                                for (var i = 0;
+                                    i < _categorySelections.length;
+                                    i++) {
+                                  _categorySelections[i] = (i == index);
+                                }
+                                _selectedCategory = _categories[index];
+                              });
+                            },
+                          )
+                        : Text("Loading..."),
                   ),
                 ),
               ],
             ),
           ),
-          Expanded(
-            child: GridView.builder(
-              itemCount: _decks
-                  .where((element) => element.category == _selectedCategory)
-                  .length,
-              gridDelegate: new SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 1,
-              ),
-              itemBuilder: (context, index) {
-                List<Deck> categoryDecks = _decks
-                    .where((element) => element.category == _selectedCategory)
-                    .toList();
-                return FractionallySizedBox(
-                  widthFactor: 0.8,
-                  child: Card(
-                    child: InkWell(
-                      onTap: () {
-                        print(categoryDecks[index].name);
-                        _showDeckDescription(context, categoryDecks[index]);
-                      },
-                      child: Text(
-                        categoryDecks[index].name,
-                      ),
-                    ),
-                  ),
-                );
-              },
-            ),
-          ),
+          _selectedCategory != null
+              ? Expanded(
+                  child: StreamBuilder(
+                      stream: db.getDecksByCategory(_selectedCategory['name']),
+                      builder: (context, snapshot) {
+                        if (!snapshot.hasData) return Text('Loading...');
+                        return GridView.builder(
+                          itemCount: snapshot.data.documents.length,
+                          gridDelegate:
+                              new SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 1,
+                          ),
+                          itemBuilder: (context, index) {
+                            return FractionallySizedBox(
+                              widthFactor: 0.8,
+                              child: Card(
+                                child: InkWell(
+                                  onTap: () {
+                                    print(
+                                        snapshot.data.documents[index]['name']);
+                                    _showDeckDescription(context,
+                                        snapshot.data.documents[index]);
+                                  },
+                                  child: Text(
+                                    snapshot.data.documents[index]['name'],
+                                  ),
+                                ),
+                              ),
+                            );
+                          },
+                        );
+                      }),
+                )
+              : Text("Loading..."),
         ],
       ),
     );
   }
 
-  _showDeckDescription(BuildContext context, Deck deck) {
+  _showDeckDescription(BuildContext context, DocumentSnapshot deck) {
     showDialog(
         context: context,
         builder: (context) {
           return AlertDialog(
             title: Text(
-              deck.name,
+              deck['name'],
             ),
             content: Text(
-              deck.description,
+              deck['description'],
             ),
             actions: [
               FlatButton(
