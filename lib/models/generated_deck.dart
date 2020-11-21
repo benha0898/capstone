@@ -1,13 +1,28 @@
-import 'package:CapstoneProject/models/generated_question.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class GeneratedDeck {
-  List<GeneratedQuestion> questions;
-  bool completed = false;
+  final String category;
+  final String deckID;
+  final String name;
+  final DateTime timestamp;
+  final int totalQuestions;
+  final bool completed;
 
-  GeneratedDeck({questions})
-      : this.questions = questions ?? List<GeneratedQuestion>();
+  GeneratedDeck({
+    this.category,
+    this.deckID,
+    this.name,
+    this.totalQuestions,
+    timestamp,
+    completed,
+  })  : this.timestamp = timestamp ?? DateTime.now(),
+        this.completed = completed ?? false;
 
-  void addQuestion(GeneratedQuestion question) {
-    questions.add(question);
-  }
+  GeneratedDeck.fromSnapshot(DocumentSnapshot snapshot)
+      : this.category = snapshot["category"],
+        this.deckID = snapshot["deckID"],
+        this.name = snapshot["name"],
+        this.timestamp = snapshot["timestamp"].toDate(),
+        this.totalQuestions = snapshot["totalQuestions"],
+        this.completed = snapshot["completed"];
 }

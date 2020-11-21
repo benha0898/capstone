@@ -3,6 +3,7 @@ import 'package:CapstoneProject/theme/flutter_icons.dart';
 import 'package:CapstoneProject/models/user.dart';
 import 'package:CapstoneProject/models/conversation.dart';
 import 'package:CapstoneProject/screens/conversations/conversation_screen.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -14,18 +15,53 @@ class ConversationsScreen extends StatefulWidget {
 }
 
 class _ConversationsScreenState extends State<ConversationsScreen> {
-  List<Conversation> list = Conversation.list;
-  User me = User(id: 1, firstName: "Ben", lastName: "Ha");
+  List<Conversation> conversations;
+  User me;
 
   @override
   void initState() {
     super.initState();
 
-    for (Conversation convo in list) {
-      convo.users =
-          convo.users.where((element) => (element.name != me.name)).toList();
-      print(convo.users.map((element) => element.name).join(", "));
-    }
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      getData();
+      //print("CHECK 5");
+    });
+    //print("CHECK 6");
+  }
+
+  getData() async {
+    print("CHECK 1");
+    await FirebaseFirestore.instance
+        .collection("users")
+        .doc("Avqp7v0qZE2iZ0yyrRO6")
+        .get()
+        .then((value) => setState(() {
+              //print("CHECK 2");
+              me = User.fromSnapshot(value);
+              conversations = List<Conversation>();
+              if (me.conversations.length > 0) {
+                print("I have ${me.conversations.length} conversations!");
+                for (int i = 0; 10 * i <= me.conversations.length; i++) {
+                  List<String> temp = me.conversations.sublist(
+                      i,
+                      (i + 10 <= me.conversations.length)
+                          ? i + 10
+                          : me.conversations.length);
+                  FirebaseFirestore.instance
+                      .collection("conversations")
+                      .where(FieldPath.documentId, whereIn: temp)
+                      .snapshots()
+                      .listen((data) => setState(() {
+                            conversations.addAll(List.generate(
+                                data.docs.length,
+                                (index) => Conversation.fromSnapshot(
+                                    data.docs[index])));
+                          }));
+                }
+              }
+              //print("CHECK 3");
+            }));
+    //print("CHECK 4");
   }
 
   @override
@@ -73,86 +109,95 @@ class _ConversationsScreenState extends State<ConversationsScreen> {
               ),
             ),
           ),
-          Expanded(
-            // List of conversations
-            child: ListView.builder(
-              itemCount: list.length,
-              itemBuilder: (context, index) {
-                return ListTile(
-                  onTap: () {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (_) =>
-                            ConversationScreen(conversation: list[index]),
-                      ),
-                    );
-                  },
-                  leading: Container(
-                    width: 50,
-                    height: 50,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.all(
-                        Radius.circular(100),
-                      ),
-                      image: DecorationImage(
-                        image: ExactAssetImage(
-                            "assets/images/${list[index].users[0].id}.png"),
-                      ),
-                    ),
-                  ),
-                  title: Text(
-                    list[index].users.length > 1
-                        ? list[index]
-                            .users
-                            .map((element) => element.firstName)
-                            .join(", ")
-                        : list[index]
-                            .users
-                            .map((element) => element.name)
-                            .join(", "),
-                    style: TextStyle(
-                      color: Colors.white,
-                    ),
-                  ),
-                  subtitle: list[index].isTyping
-                      ? Row(
-                          children: [
-                            SpinKitThreeBounce(
-                              color: AppColors.blueColor,
-                              size: 20.0,
+          (conversations == null)
+              ? Text("Loading...")
+              : Expanded(
+                  // List of conversations
+                  child: ListView.builder(
+                    itemCount: conversations.length,
+                    itemBuilder: (context, index) {
+                      return ListTile(
+                        onTap: () {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (_) => ConversationScreen(
+                                  conversation: conversations[index], me: me),
                             ),
-                          ],
-                        )
-                      : Row(
-                          children: [
-                            Text(
-                              list[index].lastMessage,
-                              style: TextStyle(
-                                color: Colors.white54,
-                              ),
+                          );
+                        },
+                        leading: Container(
+                          width: 50,
+                          height: 50,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.all(
+                              Radius.circular(100),
                             ),
-                            SizedBox(
-                              width: 25,
+                            image: DecorationImage(
+                              image: Image.network(
+                                      conversations[index].groupPicture)
+                                  .image,
                             ),
-                            Text(
-                              (isToday(list[index].lastMessageTime))
-                                  ? DateFormat.jm()
-                                      .format(list[index].lastMessageTime)
-                                  : (isWithinAWeek(list[index].lastMessageTime))
-                                      ? DateFormat.E()
-                                          .format(list[index].lastMessageTime)
-                                      : DateFormat.MMMd()
-                                          .format(list[index].lastMessageTime),
-                              style: TextStyle(
-                                color: Colors.white54,
-                              ),
-                            ),
-                          ],
+                          ),
                         ),
-                );
-              },
-            ),
-          ),
+                        title: Text(
+                          conversations[index].users.length > 2
+                              ? conversations[index]
+                                  .users
+                                  .where((element) => element["id"] != me.id)
+                                  .map((element) => element["firstName"])
+                                  .join(", ")
+                              : conversations[index]
+                                  .users
+                                  .where((element) => element["id"] != me.id)
+                                  .map((element) =>
+                                      element["firstName"] +
+                                      " " +
+                                      element["lastName"])
+                                  .join(", "),
+                          style: TextStyle(
+                            color: Colors.white,
+                          ),
+                        ),
+                        subtitle: conversations[index].typing["isTyping"]
+                            ? Row(
+                                children: [
+                                  SpinKitThreeBounce(
+                                    color: AppColors.blueColor,
+                                    size: 20.0,
+                                  ),
+                                ],
+                              )
+                            : Row(
+                                children: [
+                                  Text(
+                                    conversations[index].lastActivity,
+                                    style: TextStyle(
+                                      color: Colors.white54,
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    width: 25,
+                                  ),
+                                  Text(
+                                    (isToday(conversations[index].timestamp))
+                                        ? DateFormat.jm().format(
+                                            conversations[index].timestamp)
+                                        : (isWithinAWeek(
+                                                conversations[index].timestamp))
+                                            ? DateFormat.E().format(
+                                                conversations[index].timestamp)
+                                            : DateFormat.MMMd().format(
+                                                conversations[index].timestamp),
+                                    style: TextStyle(
+                                      color: Colors.white54,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                      );
+                    },
+                  ),
+                ),
         ],
       ),
     );
