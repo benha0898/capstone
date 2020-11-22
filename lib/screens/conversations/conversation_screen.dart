@@ -1,4 +1,4 @@
-import 'package:CapstoneProject/models/conversation_list_item.dart';
+import 'package:CapstoneProject/db.dart';
 import 'package:CapstoneProject/models/generated_deck.dart';
 import 'package:CapstoneProject/models/generated_question.dart';
 import 'package:CapstoneProject/models/message.dart';
@@ -6,27 +6,26 @@ import 'package:CapstoneProject/models/user.dart';
 import 'package:CapstoneProject/theme/consts.dart';
 import 'package:CapstoneProject/models/chat_item.dart';
 import 'package:CapstoneProject/models/conversation.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 
 class ConversationScreen extends StatefulWidget {
   final Conversation conversation;
+  final User me;
 
-  const ConversationScreen({Key key, this.conversation}) : super(key: key);
+  const ConversationScreen({Key key, this.conversation, this.me})
+      : super(key: key);
 
   @override
   _ConversationScreenState createState() => _ConversationScreenState();
 }
 
 class _ConversationScreenState extends State<ConversationScreen> {
-  int currentUser = 1;
-  List<User> users = <User>[];
-  List<ChatItem> chatItems = ChatItem.list;
+  DatabaseService db = DatabaseService();
 
-  List<GeneratedDeck> decks = <GeneratedDeck>[];
-  List<GeneratedQuestion> questions;
-  List<Message> messages;
-  List<ConversationListItem> convoListItems = <ConversationListItem>[];
+  List<ChatItem> chatItems = List<ChatItem>();
+  List<GeneratedDeck> decks = List<GeneratedDeck>();
 
   final textController = TextEditingController();
 
@@ -34,20 +33,40 @@ class _ConversationScreenState extends State<ConversationScreen> {
   void initState() {
     super.initState();
 
-    users = widget.conversation.users;
-    decks = widget.conversation.content.decks;
-    questions =
-        decks.map((e) => e.questions).expand((element) => element).toList();
-    messages = widget.conversation.content.messages;
-    convoListItems.addAll(questions);
-    convoListItems.addAll(messages);
-    convoListItems.sort((a, b) => b.timestamp.compareTo(a.timestamp));
-    print("Hi");
-    print(convoListItems);
-
     textController.addListener(() {
       setState(() {});
     });
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      getData();
+    });
+  }
+
+  getData() async {
+    await FirebaseFirestore.instance
+        .collection("conversations")
+        .doc(widget.conversation.id)
+        .collection("chatItems")
+        .get()
+        .then((value) => setState(() {
+              if (value != null && value.docs.length != 0) {
+                chatItems.addAll(List.generate(value.docs.length,
+                    (index) => ChatItem.fromSnapshot(value.docs[index])));
+                print("I have ${chatItems.length} chat items!");
+              }
+            }));
+    await FirebaseFirestore.instance
+        .collection("conversations")
+        .doc(widget.conversation.id)
+        .collection("decks")
+        .get()
+        .then((value) => setState(() {
+              if (value != null && value.docs.length != 0) {
+                decks.addAll(List.generate(value.docs.length,
+                    (index) => GeneratedDeck.fromSnapshot(value.docs[index])));
+                print("I have ${decks.length} decks!");
+              }
+            }));
   }
 
   @override
@@ -77,8 +96,8 @@ class _ConversationScreenState extends State<ConversationScreen> {
         ],
         title: Text(
           widget.conversation.users.length > 1
-              ? "${widget.conversation.users.map((element) => element.firstName).join(', ')}"
-              : "${widget.conversation.users.map((element) => element.name).join(', ')}",
+              ? "${widget.conversation.users.map((element) => element["firstName"]).join(', ')}"
+              : "${widget.conversation.users.map((element) => element["firstName"] + " " + element["lastName"]).join(', ')}",
         ),
         centerTitle: true,
       ),
@@ -87,27 +106,217 @@ class _ConversationScreenState extends State<ConversationScreen> {
         children: [
           // Conversation Body
           Expanded(
-            child: ListView.builder(
-              itemCount: convoListItems.length,
-              reverse: true,
-              itemBuilder: (context, index) {
-                return Padding(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: 6,
+            child: chatItems.length == 0
+                ? Text("Start a conversation!")
+                : ListView.builder(
+                    itemCount: chatItems.length,
+                    reverse: true,
+                    itemBuilder: (context, index) {
+                      return Padding(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 6,
+                        ),
+                        child: (chatItems[index].sender["id"] != "")
+                            ? Row(
+                                mainAxisAlignment:
+                                    chatItems[index].sender["id"] ==
+                                            widget.me.id
+                                        ? MainAxisAlignment.end
+                                        : MainAxisAlignment.start,
+                                children: [
+                                  _isFirstMessage(index) &&
+                                          chatItems[index].sender["id"] !=
+                                              widget.me.id
+                                      ? Container(
+                                          width: 30,
+                                          height: 30,
+                                          decoration: BoxDecoration(
+                                            image: DecorationImage(
+                                              image: Image.network(
+                                                chatItems[index]
+                                                    .sender["profilePicture"],
+                                              ).image,
+                                            ),
+                                            borderRadius: BorderRadius.all(
+                                              Radius.circular(100),
+                                            ),
+                                          ),
+                                        )
+                                      : Container(
+                                          width: 30,
+                                          height: 30,
+                                        ),
+                                  Container(
+                                    constraints: BoxConstraints(
+                                      maxWidth:
+                                          MediaQuery.of(context).size.width *
+                                              .7,
+                                    ),
+                                    padding: EdgeInsets.symmetric(
+                                      vertical: 6,
+                                      horizontal: 12,
+                                    ),
+                                    margin: EdgeInsets.symmetric(
+                                      vertical: 6,
+                                      horizontal: 12,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.only(
+                                        topRight: Radius.circular(10),
+                                        bottomRight: Radius.circular(10),
+                                        topLeft: Radius.circular(
+                                            _isFirstMessage(index) ? 5 : 10),
+                                        bottomLeft: Radius.circular(
+                                            _isLastMessage(index) ? 5 : 10),
+                                      ),
+                                      color: chatItems[index].sender["id"] ==
+                                              widget.me.id
+                                          ? AppColors.blueColor
+                                          : Colors.white38,
+                                    ),
+                                    child: Text(
+                                      chatItems[index].text,
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 16,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              )
+                            : StreamBuilder(
+                                stream: db.getQuestion(
+                                    widget.conversation.id,
+                                    chatItems[index].deck,
+                                    chatItems[index].question),
+                                builder: (context, snapshot) {
+                                  if (!snapshot.hasData) {
+                                    return Text(
+                                      "Loading...",
+                                    );
+                                  } else {
+                                    GeneratedQuestion question =
+                                        GeneratedQuestion.fromSnapshot(
+                                            snapshot.data);
+                                    return Card(
+                                      child: ExpansionTile(
+                                        title: Container(
+                                          child: Text(
+                                            "Question ${question.number}",
+                                            // style: TextStyle(
+                                            //   color: Colors.black,
+                                            // ),
+                                          ),
+                                          // color: Colors.white,
+                                        ),
+                                        subtitle: Text(
+                                            "${question.answers.length}/${widget.conversation.users.length} answered"),
+                                        children: [
+                                          Column(
+                                            children: [
+                                              for (Message answer
+                                                  in question.answers)
+                                                Container(
+                                                  margin: EdgeInsets.all(5.0),
+                                                  padding: EdgeInsets.all(10.0),
+                                                  decoration: BoxDecoration(
+                                                    borderRadius:
+                                                        BorderRadius.all(
+                                                            Radius.circular(
+                                                                10)),
+                                                    color: AppColors.darkColor,
+                                                  ),
+                                                  child: Text(
+                                                    answer.text,
+                                                    style: TextStyle(
+                                                      color: Colors.white,
+                                                    ),
+                                                  ),
+                                                )
+                                            ],
+                                          ),
+                                          Column(
+                                            children: [
+                                              for (Message reply
+                                                  in question.replies)
+                                                Padding(
+                                                  padding: const EdgeInsets
+                                                          .symmetric(
+                                                      horizontal: 8.0),
+                                                  child: Row(
+                                                    mainAxisAlignment: reply
+                                                                .sender["id"] ==
+                                                            widget.me.id
+                                                        ? MainAxisAlignment.end
+                                                        : MainAxisAlignment
+                                                            .start,
+                                                    children: [
+                                                      reply.sender["id"] !=
+                                                              widget.me.id
+                                                          ? Container(
+                                                              width: 30,
+                                                              height: 30,
+                                                              decoration:
+                                                                  BoxDecoration(
+                                                                image:
+                                                                    DecorationImage(
+                                                                  image: Image
+                                                                      .network(
+                                                                    reply.sender[
+                                                                        "profilePicture"],
+                                                                  ).image,
+                                                                ),
+                                                                borderRadius:
+                                                                    BorderRadius
+                                                                        .all(
+                                                                  Radius
+                                                                      .circular(
+                                                                          100),
+                                                                ),
+                                                              ),
+                                                            )
+                                                          : Container(
+                                                              width: 30,
+                                                              height: 30,
+                                                            ),
+                                                      Container(
+                                                        margin:
+                                                            EdgeInsets.all(5.0),
+                                                        padding: EdgeInsets.all(
+                                                            10.0),
+                                                        decoration:
+                                                            BoxDecoration(
+                                                          borderRadius:
+                                                              BorderRadius.all(
+                                                                  Radius
+                                                                      .circular(
+                                                                          10)),
+                                                          color: AppColors
+                                                              .blueColor,
+                                                        ),
+                                                        child: Text(
+                                                          reply.text,
+                                                          style: TextStyle(
+                                                            color: Colors.white,
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                )
+                                            ],
+                                          ),
+                                        ],
+                                      ),
+                                    );
+                                  }
+                                }),
+                      );
+                    },
                   ),
-                  child: (convoListItems[index] is Message)
-                      ? convoListItems[index].buildItem(context,
-                          id: currentUser,
-                          isFirst: _isFirstMessage(convoListItems, index),
-                          isLast: _isLastMessage(convoListItems, index))
-                      : convoListItems[index].buildItem(context,
-                          groupSize: users.length + 1, id: currentUser),
-                );
-              },
-            ),
           ),
           // isTyping Indicator
-          if (widget.conversation.isTyping)
+          if (widget.conversation.typing["isTyping"])
             Padding(
               padding: EdgeInsets.all(8),
               child: Row(
@@ -117,16 +326,10 @@ class _ConversationScreenState extends State<ConversationScreen> {
                     height: 30,
                     decoration: BoxDecoration(
                       image: DecorationImage(
-                        image: ExactAssetImage(
-                          () {
-                            for (int i = 0; i < convoListItems.length; i++) {
-                              if (convoListItems[i].getMessage() != null) {
-                                return "assets/images/${convoListItems[i].getMessage().userId}.png";
-                              }
-                            }
-                            return "assets/default.jpg";
-                          }(),
-                        ),
+                        image: Image.network(
+                          widget.conversation.typing["sender"]
+                              ["profilePicture"],
+                        ).image,
                       ),
                       borderRadius: BorderRadius.all(
                         Radius.circular(100),
@@ -213,27 +416,20 @@ class _ConversationScreenState extends State<ConversationScreen> {
 
   _addMessage() {
     setState(() {
-      chatItems.insert(
-          0, ChatItem(senderId: "1", message: textController.text));
-      textController.clear();
+      // chatItems.insert(
+      //     0, ChatItem(senderId: "1", message: textController.text));
+      // textController.clear();
     });
   }
 
-  _isFirstMessage(List<ConversationListItem> convoListItems, int index) {
+  _isFirstMessage(int index) {
     if (index == 0) return true;
-    if (convoListItems[index - 1] is! Message) return true;
-    Message message = convoListItems[index] as Message;
-    Message prevMessage = convoListItems[index - 1] as Message;
-    return (message.userId != prevMessage.userId);
+    return (chatItems[index].sender["id"] != chatItems[index - 1].sender["id"]);
   }
 
-  _isLastMessage(List<ConversationListItem> convoListItems, int index) {
-    int maxIndex = convoListItems.length - 1;
+  _isLastMessage(int index) {
+    int maxIndex = chatItems.length - 1;
     if (index == maxIndex) return true;
-    if (convoListItems[index + 1] is! Message) return true;
-    Message message = convoListItems[index] as Message;
-    Message nextMessage = convoListItems[index + 1] as Message;
-
-    return (message.userId != nextMessage.userId);
+    return (chatItems[index].sender["id"] != chatItems[index + 1].sender["id"]);
   }
 }

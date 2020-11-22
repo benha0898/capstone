@@ -1,8 +1,8 @@
 import 'package:CapstoneProject/models/user_info.dart';
 import 'package:CapstoneProject/theme/consts.dart';
 import 'package:CapstoneProject/theme/flutter_icons.dart';
-import 'package:CapstoneProject/models/conversation.dart';
-import 'package:CapstoneProject/screens/conversations/conversation_screen.dart';
+//import 'package:CapstoneProject/models/conversation.dart';
+//import 'package:CapstoneProject/screens/conversations/conversation_screen.dart';
 
 import 'package:flutter/material.dart';
 
@@ -13,7 +13,7 @@ class UserSearch extends StatefulWidget {
 
 class _UserSearchState extends State<UserSearch> {
   List<UserId> list = UserId.list;
-  List<Conversation> listU = Conversation.list;
+  //List<Conversation> listU = Conversation.list;
 
   @override
   Widget build(BuildContext context) {
@@ -57,14 +57,14 @@ class _UserSearchState extends State<UserSearch> {
               itemCount: list.length,
               itemBuilder: (context, index) {
                 return ListTile(
-                  onTap: () {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (_) =>
-                            ConversationScreen(conversation: listU[index]),
-                      ),
-                    );
-                  },
+                  // onTap: () {
+                  //   Navigator.of(context).push(
+                  //     MaterialPageRoute(
+                  //       builder: (_) =>
+                  //           ConversationScreen(conversation: listU[index]),
+                  //     ),
+                  //   );
+                  // },
                   leading: Container(
                     width: 50,
                     height: 50,
@@ -78,7 +78,7 @@ class _UserSearchState extends State<UserSearch> {
                     ),
                   ),
                   title: Text(
-                    list[index].name.name,
+                    "TO-DO", //list[index].name.name,
                     style: TextStyle(
                       color: Colors.white,
                     ),

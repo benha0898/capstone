@@ -53,4 +53,11 @@ class DatabaseService {
   Future<DocumentSnapshot> getCategoryById(String id) {
     return _firestore.collection("categories").doc(id).get();
   }
+
+  Stream<DocumentSnapshot> getQuestion(String cid, String did, String qid) {
+    return _firestore
+        .collection("conversations/$cid/decks/$did/questions")
+        .doc(qid)
+        .snapshots();
+  }
 }
