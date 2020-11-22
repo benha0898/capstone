@@ -25,6 +25,13 @@ class User {
     return '$firstName $lastName';
   }
 
+  Map<String, String> get info => {
+        "id": this.id,
+        "firstName": this.firstName,
+        "lastName": this.lastName,
+        "profilePicture": this.profilePicture,
+      };
+
   // static List<User> names = [
   //   User(id: 1, firstName: "Ben", lastName: "Ha"),
   //   User(id: 2, firstName: "Josephine", lastName: "Estudillo"),

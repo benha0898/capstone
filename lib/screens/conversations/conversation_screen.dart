@@ -6,7 +6,6 @@ import 'package:CapstoneProject/models/user.dart';
 import 'package:CapstoneProject/theme/consts.dart';
 import 'package:CapstoneProject/models/chat_item.dart';
 import 'package:CapstoneProject/models/conversation.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 
@@ -37,37 +36,37 @@ class _ConversationScreenState extends State<ConversationScreen> {
       setState(() {});
     });
 
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      getData();
-    });
+    // WidgetsBinding.instance.addPostFrameCallback((_) {
+    //   getData();
+    // });
   }
 
-  getData() async {
-    await FirebaseFirestore.instance
-        .collection("conversations")
-        .doc(widget.conversation.id)
-        .collection("chatItems")
-        .get()
-        .then((value) => setState(() {
-              if (value != null && value.docs.length != 0) {
-                chatItems.addAll(List.generate(value.docs.length,
-                    (index) => ChatItem.fromSnapshot(value.docs[index])));
-                print("I have ${chatItems.length} chat items!");
-              }
-            }));
-    await FirebaseFirestore.instance
-        .collection("conversations")
-        .doc(widget.conversation.id)
-        .collection("decks")
-        .get()
-        .then((value) => setState(() {
-              if (value != null && value.docs.length != 0) {
-                decks.addAll(List.generate(value.docs.length,
-                    (index) => GeneratedDeck.fromSnapshot(value.docs[index])));
-                print("I have ${decks.length} decks!");
-              }
-            }));
-  }
+  // getData() async {
+  //   await FirebaseFirestore.instance
+  //       .collection("conversations")
+  //       .doc(widget.conversation.id)
+  //       .collection("chatItems")
+  //       .get()
+  //       .then((value) => setState(() {
+  //             if (value != null && value.docs.length != 0) {
+  //               chatItems.addAll(List.generate(value.docs.length,
+  //                   (index) => ChatItem.fromSnapshot(value.docs[index])));
+  //               print("I have ${chatItems.length} chat items!");
+  //             }
+  //           }));
+  //   await FirebaseFirestore.instance
+  //       .collection("conversations")
+  //       .doc(widget.conversation.id)
+  //       .collection("decks")
+  //       .get()
+  //       .then((value) => setState(() {
+  //             if (value != null && value.docs.length != 0) {
+  //               decks.addAll(List.generate(value.docs.length,
+  //                   (index) => GeneratedDeck.fromSnapshot(value.docs[index])));
+  //               print("I have ${decks.length} decks!");
+  //             }
+  //           }));
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -105,180 +104,135 @@ class _ConversationScreenState extends State<ConversationScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Conversation Body
-          Expanded(
-            child: chatItems.length == 0
-                ? Text("Start a conversation!")
-                : ListView.builder(
-                    itemCount: chatItems.length,
-                    reverse: true,
-                    itemBuilder: (context, index) {
-                      return Padding(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: 6,
-                        ),
-                        child: (chatItems[index].sender["id"] != "")
-                            ? Row(
-                                mainAxisAlignment:
-                                    chatItems[index].sender["id"] ==
-                                            widget.me.id
-                                        ? MainAxisAlignment.end
-                                        : MainAxisAlignment.start,
-                                children: [
-                                  _isFirstMessage(index) &&
-                                          chatItems[index].sender["id"] !=
-                                              widget.me.id
-                                      ? Container(
-                                          width: 30,
-                                          height: 30,
+          StreamBuilder(
+              stream: db.getChatItems(widget.conversation.id),
+              builder: (context, snapshot) {
+                if (!snapshot.hasData)
+                  return Center(child: Text("Loading..."));
+                else {
+                  chatItems = List.generate(
+                      snapshot.data.documents.length,
+                      (index) => ChatItem.fromSnapshot(
+                          snapshot.data.documents[index]));
+                }
+                return Expanded(
+                  child: chatItems.length == 0
+                      ? Text("Start a conversation!")
+                      : ListView.builder(
+                          itemCount: chatItems.length,
+                          reverse: true,
+                          itemBuilder: (context, index) {
+                            return Padding(
+                              padding: EdgeInsets.symmetric(
+                                horizontal: 6,
+                              ),
+                              child: (chatItems[index].sender["id"] != "")
+                                  ? Row(
+                                      mainAxisAlignment:
+                                          chatItems[index].sender["id"] ==
+                                                  widget.me.id
+                                              ? MainAxisAlignment.end
+                                              : MainAxisAlignment.start,
+                                      children: [
+                                        _isFirstMessage(index) &&
+                                                chatItems[index].sender["id"] !=
+                                                    widget.me.id
+                                            ? Container(
+                                                width: 30,
+                                                height: 30,
+                                                decoration: BoxDecoration(
+                                                  image: DecorationImage(
+                                                    image: Image.network(
+                                                      chatItems[index].sender[
+                                                          "profilePicture"],
+                                                    ).image,
+                                                  ),
+                                                  borderRadius:
+                                                      BorderRadius.all(
+                                                    Radius.circular(100),
+                                                  ),
+                                                ),
+                                              )
+                                            : Container(
+                                                width: 30,
+                                                height: 30,
+                                              ),
+                                        Container(
+                                          constraints: BoxConstraints(
+                                            maxWidth: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                .7,
+                                          ),
+                                          padding: EdgeInsets.symmetric(
+                                            vertical: 6,
+                                            horizontal: 12,
+                                          ),
+                                          margin: EdgeInsets.symmetric(
+                                            vertical: 6,
+                                            horizontal: 12,
+                                          ),
                                           decoration: BoxDecoration(
-                                            image: DecorationImage(
-                                              image: Image.network(
-                                                chatItems[index]
-                                                    .sender["profilePicture"],
-                                              ).image,
+                                            borderRadius: BorderRadius.only(
+                                              topRight: Radius.circular(10),
+                                              bottomRight: Radius.circular(10),
+                                              topLeft: Radius.circular(
+                                                  _isFirstMessage(index)
+                                                      ? 5
+                                                      : 10),
+                                              bottomLeft: Radius.circular(
+                                                  _isLastMessage(index)
+                                                      ? 5
+                                                      : 10),
                                             ),
-                                            borderRadius: BorderRadius.all(
-                                              Radius.circular(100),
-                                            ),
+                                            color:
+                                                chatItems[index].sender["id"] ==
+                                                        widget.me.id
+                                                    ? AppColors.blueColor
+                                                    : Colors.white38,
                                           ),
-                                        )
-                                      : Container(
-                                          width: 30,
-                                          height: 30,
-                                        ),
-                                  Container(
-                                    constraints: BoxConstraints(
-                                      maxWidth:
-                                          MediaQuery.of(context).size.width *
-                                              .7,
-                                    ),
-                                    padding: EdgeInsets.symmetric(
-                                      vertical: 6,
-                                      horizontal: 12,
-                                    ),
-                                    margin: EdgeInsets.symmetric(
-                                      vertical: 6,
-                                      horizontal: 12,
-                                    ),
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.only(
-                                        topRight: Radius.circular(10),
-                                        bottomRight: Radius.circular(10),
-                                        topLeft: Radius.circular(
-                                            _isFirstMessage(index) ? 5 : 10),
-                                        bottomLeft: Radius.circular(
-                                            _isLastMessage(index) ? 5 : 10),
-                                      ),
-                                      color: chatItems[index].sender["id"] ==
-                                              widget.me.id
-                                          ? AppColors.blueColor
-                                          : Colors.white38,
-                                    ),
-                                    child: Text(
-                                      chatItems[index].text,
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 16,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              )
-                            : StreamBuilder(
-                                stream: db.getQuestion(
-                                    widget.conversation.id,
-                                    chatItems[index].deck,
-                                    chatItems[index].question),
-                                builder: (context, snapshot) {
-                                  if (!snapshot.hasData) {
-                                    return Text(
-                                      "Loading...",
-                                    );
-                                  } else {
-                                    GeneratedQuestion question =
-                                        GeneratedQuestion.fromSnapshot(
-                                            snapshot.data);
-                                    return Card(
-                                      child: ExpansionTile(
-                                        title: Container(
                                           child: Text(
-                                            "Question ${question.number}",
-                                            // style: TextStyle(
-                                            //   color: Colors.black,
-                                            // ),
+                                            chatItems[index].text,
+                                            style: TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 16,
+                                            ),
                                           ),
-                                          // color: Colors.white,
                                         ),
-                                        subtitle: Text(
-                                            "${question.answers.length}/${widget.conversation.users.length} answered"),
-                                        children: [
-                                          Column(
-                                            children: [
-                                              for (Message answer
-                                                  in question.answers)
-                                                Container(
-                                                  margin: EdgeInsets.all(5.0),
-                                                  padding: EdgeInsets.all(10.0),
-                                                  decoration: BoxDecoration(
-                                                    borderRadius:
-                                                        BorderRadius.all(
-                                                            Radius.circular(
-                                                                10)),
-                                                    color: AppColors.darkColor,
-                                                  ),
-                                                  child: Text(
-                                                    answer.text,
-                                                    style: TextStyle(
-                                                      color: Colors.white,
-                                                    ),
-                                                  ),
-                                                )
-                                            ],
-                                          ),
-                                          Column(
-                                            children: [
-                                              for (Message reply
-                                                  in question.replies)
-                                                Padding(
-                                                  padding: const EdgeInsets
-                                                          .symmetric(
-                                                      horizontal: 8.0),
-                                                  child: Row(
-                                                    mainAxisAlignment: reply
-                                                                .sender["id"] ==
-                                                            widget.me.id
-                                                        ? MainAxisAlignment.end
-                                                        : MainAxisAlignment
-                                                            .start,
-                                                    children: [
-                                                      reply.sender["id"] !=
-                                                              widget.me.id
-                                                          ? Container(
-                                                              width: 30,
-                                                              height: 30,
-                                                              decoration:
-                                                                  BoxDecoration(
-                                                                image:
-                                                                    DecorationImage(
-                                                                  image: Image
-                                                                      .network(
-                                                                    reply.sender[
-                                                                        "profilePicture"],
-                                                                  ).image,
-                                                                ),
-                                                                borderRadius:
-                                                                    BorderRadius
-                                                                        .all(
-                                                                  Radius
-                                                                      .circular(
-                                                                          100),
-                                                                ),
-                                                              ),
-                                                            )
-                                                          : Container(
-                                                              width: 30,
-                                                              height: 30,
-                                                            ),
+                                      ],
+                                    )
+                                  : StreamBuilder(
+                                      stream: db.getQuestion(
+                                          widget.conversation.id,
+                                          chatItems[index].deck,
+                                          chatItems[index].question),
+                                      builder: (context, snapshot) {
+                                        if (!snapshot.hasData) {
+                                          return Text(
+                                            "Loading...",
+                                          );
+                                        } else {
+                                          GeneratedQuestion question =
+                                              GeneratedQuestion.fromSnapshot(
+                                                  snapshot.data);
+                                          return Card(
+                                            child: ExpansionTile(
+                                              title: Container(
+                                                child: Text(
+                                                  "Question ${question.number}",
+                                                  // style: TextStyle(
+                                                  //   color: Colors.black,
+                                                  // ),
+                                                ),
+                                                // color: Colors.white,
+                                              ),
+                                              subtitle: Text(
+                                                  "${question.answers.length}/${widget.conversation.users.length} answered"),
+                                              children: [
+                                                Column(
+                                                  children: [
+                                                    for (Message answer
+                                                        in question.answers)
                                                       Container(
                                                         margin:
                                                             EdgeInsets.all(5.0),
@@ -292,29 +246,105 @@ class _ConversationScreenState extends State<ConversationScreen> {
                                                                       .circular(
                                                                           10)),
                                                           color: AppColors
-                                                              .blueColor,
+                                                              .darkColor,
                                                         ),
                                                         child: Text(
-                                                          reply.text,
+                                                          answer.text,
                                                           style: TextStyle(
                                                             color: Colors.white,
                                                           ),
                                                         ),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                )
-                                            ],
-                                          ),
-                                        ],
-                                      ),
-                                    );
-                                  }
-                                }),
-                      );
-                    },
-                  ),
-          ),
+                                                      )
+                                                  ],
+                                                ),
+                                                Column(
+                                                  children: [
+                                                    for (Message reply
+                                                        in question.replies)
+                                                      Padding(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                    .symmetric(
+                                                                horizontal:
+                                                                    8.0),
+                                                        child: Row(
+                                                          mainAxisAlignment: reply
+                                                                          .sender[
+                                                                      "id"] ==
+                                                                  widget.me.id
+                                                              ? MainAxisAlignment
+                                                                  .end
+                                                              : MainAxisAlignment
+                                                                  .start,
+                                                          children: [
+                                                            reply.sender[
+                                                                        "id"] !=
+                                                                    widget.me.id
+                                                                ? Container(
+                                                                    width: 30,
+                                                                    height: 30,
+                                                                    decoration:
+                                                                        BoxDecoration(
+                                                                      image:
+                                                                          DecorationImage(
+                                                                        image: Image
+                                                                            .network(
+                                                                          reply.sender[
+                                                                              "profilePicture"],
+                                                                        ).image,
+                                                                      ),
+                                                                      borderRadius:
+                                                                          BorderRadius
+                                                                              .all(
+                                                                        Radius.circular(
+                                                                            100),
+                                                                      ),
+                                                                    ),
+                                                                  )
+                                                                : Container(
+                                                                    width: 30,
+                                                                    height: 30,
+                                                                  ),
+                                                            Container(
+                                                              margin: EdgeInsets
+                                                                  .all(5.0),
+                                                              padding:
+                                                                  EdgeInsets
+                                                                      .all(
+                                                                          10.0),
+                                                              decoration:
+                                                                  BoxDecoration(
+                                                                borderRadius: BorderRadius
+                                                                    .all(Radius
+                                                                        .circular(
+                                                                            10)),
+                                                                color: AppColors
+                                                                    .blueColor,
+                                                              ),
+                                                              child: Text(
+                                                                reply.text,
+                                                                style:
+                                                                    TextStyle(
+                                                                  color: Colors
+                                                                      .white,
+                                                                ),
+                                                              ),
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      )
+                                                  ],
+                                                ),
+                                              ],
+                                            ),
+                                          );
+                                        }
+                                      }),
+                            );
+                          },
+                        ),
+                );
+              }),
           // isTyping Indicator
           if (widget.conversation.typing["isTyping"])
             Padding(
@@ -349,87 +379,114 @@ class _ConversationScreenState extends State<ConversationScreen> {
               ),
             ),
           // Text Field
-          Row(
-            children: [
-              Expanded(
-                child: Container(
-                  margin: EdgeInsets.all(12),
-                  padding: EdgeInsets.symmetric(vertical: 6, horizontal: 12),
-                  decoration: BoxDecoration(
-                    color: AppColors.darkColor,
-                    borderRadius: BorderRadius.all(
-                      Radius.circular(10),
-                    ),
-                  ),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: TextField(
-                          controller: textController,
-                          decoration: InputDecoration(
-                            border: InputBorder.none,
-                            hintText: "Type something...",
-                            hintStyle: TextStyle(
-                              color: Colors.white30,
-                            ),
-                          ),
-                          style: TextStyle(
-                            color: Colors.white,
-                          ),
-                        ),
-                      ),
-                      IconButton(
-                        icon: Icon(
-                          Icons.photo_outlined,
-                          color: AppColors.blueColor,
-                        ),
-                        onPressed: null,
-                      ),
-                      IconButton(
-                        icon: Icon(
-                          Icons.sentiment_satisfied_alt_outlined,
-                          color: AppColors.blueColor,
-                        ),
-                        onPressed: null,
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              if (textController.text != '')
-                Padding(
-                  padding: EdgeInsets.only(right: 12.0),
-                  child: IconButton(
-                    icon: Icon(
-                      Icons.send,
-                      color: AppColors.blueColor,
-                    ),
-                    onPressed: _addMessage,
-                  ),
-                ),
-            ],
-          ),
+          ChatTextField(parentAction: _addMessage),
         ],
       ),
     );
   }
 
-  _addMessage() {
-    setState(() {
-      // chatItems.insert(
-      //     0, ChatItem(senderId: "1", message: textController.text));
-      // textController.clear();
-    });
+  void _addMessage(String text) {
+    ChatItem chatItem = ChatItem(sender: widget.me.info, text: text);
+    db.addMessage(widget.conversation.id, chatItem);
   }
 
-  _isFirstMessage(int index) {
+  bool _isFirstMessage(int index) {
     if (index == 0) return true;
     return (chatItems[index].sender["id"] != chatItems[index - 1].sender["id"]);
   }
 
-  _isLastMessage(int index) {
+  bool _isLastMessage(int index) {
     int maxIndex = chatItems.length - 1;
     if (index == maxIndex) return true;
     return (chatItems[index].sender["id"] != chatItems[index + 1].sender["id"]);
+  }
+}
+
+class ChatTextField extends StatefulWidget {
+  @override
+  _ChatTextFieldState createState() => _ChatTextFieldState();
+
+  final ValueChanged<String> parentAction;
+
+  const ChatTextField({Key key, this.parentAction}) : super(key: key);
+}
+
+class _ChatTextFieldState extends State<ChatTextField> {
+  final textController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+
+    textController.addListener(() {
+      setState(() {});
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Expanded(
+          child: Container(
+            margin: EdgeInsets.all(12),
+            padding: EdgeInsets.symmetric(vertical: 6, horizontal: 12),
+            decoration: BoxDecoration(
+              color: AppColors.darkColor,
+              borderRadius: BorderRadius.all(
+                Radius.circular(10),
+              ),
+            ),
+            child: Row(
+              children: [
+                Expanded(
+                  child: TextField(
+                    controller: textController,
+                    decoration: InputDecoration(
+                      border: InputBorder.none,
+                      hintText: "Type something...",
+                      hintStyle: TextStyle(
+                        color: Colors.white30,
+                      ),
+                    ),
+                    style: TextStyle(
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+                IconButton(
+                  icon: Icon(
+                    Icons.photo_outlined,
+                    color: AppColors.blueColor,
+                  ),
+                  onPressed: null,
+                ),
+                IconButton(
+                  icon: Icon(
+                    Icons.sentiment_satisfied_alt_outlined,
+                    color: AppColors.blueColor,
+                  ),
+                  onPressed: null,
+                ),
+              ],
+            ),
+          ),
+        ),
+        if (textController.text != '')
+          Padding(
+            padding: EdgeInsets.only(right: 12.0),
+            child: IconButton(
+              icon: Icon(
+                Icons.send,
+                color: AppColors.blueColor,
+              ),
+              onPressed: () {
+                widget.parentAction(textController.text);
+                textController.clear();
+              },
+            ),
+          ),
+      ],
+    );
   }
 }
