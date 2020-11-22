@@ -1,126 +1,41 @@
-import 'package:CapstoneProject/models/conversation_list_item.dart';
 import 'package:CapstoneProject/models/message.dart';
-import 'package:CapstoneProject/theme/consts.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
-class GeneratedQuestion implements ConversationListItem {
-  int id;
-  String question;
+class GeneratedQuestion {
+  String id;
+  int number;
+  String text;
   DateTime timestamp;
-  List<Message> answers;
-  List<Message> messages;
-  bool answered = false;
+  List<Message> answers = List<Message>();
+  List<Message> replies = List<Message>();
+  bool answered;
 
-  GeneratedQuestion({this.id, this.question, timestamp, answers, messages})
+  GeneratedQuestion(
+      {this.id, this.number, this.text, timestamp, answers, replies, answered})
       : this.timestamp = timestamp ?? DateTime.now(),
-        this.answers = answers ?? List<Message>(),
-        this.messages = messages ?? List<Message>();
+        this.answers = answers ?? List<Map<String, dynamic>>(),
+        this.replies = replies ?? List<Map<String, dynamic>>(),
+        this.answered = answered ?? false;
 
-  void addAnswer(Message answer) {
-    this.answers.add(answer);
-  }
-
-  void addMessage(Message message) {
-    this.messages.add(message);
-  }
-
-  void setAnswered(bool answered) {
-    this.answered = answered;
-  }
-
-  Message getMessage() {
-    return null;
-  }
-
-  GeneratedQuestion getQuestion() {
-    return this;
-  }
-
-  Widget buildItem(BuildContext context,
-      {int groupSize, int id, bool isFirst, bool isLast}) {
-    return Card(
-      child: ExpansionTile(
-        title: Container(
-          child: Text(
-            "Question ${this.id}",
-            // style: TextStyle(
-            //   color: Colors.black,
-            // ),
-          ),
-          // color: Colors.white,
-        ),
-        subtitle: Text("${answers.length}/$groupSize answered"),
-        children: [
-          Column(
-            children: [
-              for (Message answer in answers)
-                Container(
-                  margin: EdgeInsets.all(5.0),
-                  padding: EdgeInsets.all(10.0),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.all(Radius.circular(10)),
-                    color: AppColors.darkColor,
-                  ),
-                  child: Text(
-                    answer.text,
-                    style: TextStyle(
-                      color: Colors.white,
-                    ),
-                  ),
-                )
-            ],
-          ),
-          Column(
-            children: [
-              for (Message message in messages)
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                  child: Row(
-                    mainAxisAlignment: message.userId == id
-                        ? MainAxisAlignment.end
-                        : MainAxisAlignment.start,
-                    children: [
-                      message.userId != id
-                          ? Container(
-                              width: 30,
-                              height: 30,
-                              decoration: BoxDecoration(
-                                image: DecorationImage(
-                                  image: ExactAssetImage(
-                                    "assets/images/${message.userId}.png",
-                                  ),
-                                ),
-                                borderRadius: BorderRadius.all(
-                                  Radius.circular(100),
-                                ),
-                              ),
-                            )
-                          : Container(
-                              width: 30,
-                              height: 30,
-                            ),
-                      Container(
-                        margin: EdgeInsets.all(5.0),
-                        padding: EdgeInsets.all(10.0),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.all(Radius.circular(10)),
-                          color: AppColors.blueColor,
-                        ),
-                        child: Text(
-                          message.text,
-                          style: TextStyle(
-                            color: Colors.white,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                )
-            ],
-          ),
-        ],
-      ),
-    );
+  GeneratedQuestion.fromSnapshot(DocumentSnapshot snapshot) {
+    this.id = snapshot.id;
+    this.number = snapshot["number"];
+    this.text = snapshot["text"];
+    this.timestamp = snapshot["timestamp"].toDate();
+    if (snapshot.data().containsKey("answers"))
+      this.answers.addAll(List.generate(
+          snapshot["answers"].length,
+          (index) => Message.fromMap(
+              Map<String, dynamic>.from(snapshot["answers"][index]))));
+    if (snapshot.data().containsKey("replies")) {
+      print("Question $number: I have replies!");
+      this.replies.addAll(List.generate(
+          snapshot["replies"].length,
+          (index) => Message.fromMap(
+              Map<String, dynamic>.from(snapshot["replies"][index]))));
+    } else {
+      print("Question $number: I ain't got no replies!");
+    }
+    this.answered = snapshot["answered"];
   }
 }

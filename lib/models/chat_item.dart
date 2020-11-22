@@ -1,38 +1,23 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class ChatItem {
-  final String senderId;
-  final String message;
+  final Map<String, String> sender;
+  final String text;
+  final String deck;
+  final String question;
+  final DateTime timestamp;
 
-  ChatItem({this.senderId, this.message});
+  ChatItem({uid, sender, profilePicture, text, deck, question, timestamp})
+      : this.sender = sender ?? "",
+        this.text = text ?? "",
+        this.deck = deck ?? "",
+        this.question = question ?? "",
+        this.timestamp = timestamp ?? DateTime.now();
 
-  static List<ChatItem> list = [
-    ChatItem(
-      senderId: "1",
-      message: "Hi Alex! How's it going?",
-    ),
-    ChatItem(
-      senderId: "1",
-      message: "Talk to you tomorrow",
-    ),
-    ChatItem(
-      senderId: "1",
-      message: "Alright sounds good!",
-    ),
-    ChatItem(
-      senderId: "2",
-      message: "Hey I gotta head out. Let's circle back to this tomorrow",
-    ),
-    ChatItem(
-      senderId: "1",
-      message: "Yeah I know. Hopefully things will get better soon",
-    ),
-    ChatItem(
-      senderId: "2",
-      message: "This year has been crazy man. Can't wait for it to be over",
-    ),
-    ChatItem(
-      senderId: "2",
-      message:
-          "That was a great question! I feel like I got to know you a lot better now :)",
-    ),
-  ];
+  ChatItem.fromSnapshot(DocumentSnapshot snapshot)
+      : this.sender = Map<String, String>.from(snapshot["sender"]),
+        this.text = snapshot["text"],
+        this.deck = snapshot["deck"],
+        this.question = snapshot["question"],
+        this.timestamp = snapshot["timestamp"].toDate();
 }
