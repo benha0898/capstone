@@ -189,11 +189,34 @@ class _BrowseDecksScreenState extends State<BrowseDecksScreen> {
               FlatButton(
                 child: Text("Invite Players"),
                 onPressed: () {
-                  print("TODO");
+                  print("This should show invite players pop up");
+                  _invitePlayers(context, deck);
                 },
               ),
             ],
           );
         });
+  }
+
+  _invitePlayers(BuildContext context, DocumentSnapshot friends){
+    showDialog(
+      context: context,
+      builder: (context){
+        return AlertDialog(
+          title: Text('Invite Friends'),
+          content: Text('Show friends List'),
+          actions: [
+            FlatButton(
+              onPressed: (){
+                Navigator.of(context).pop();
+              },
+              child: Text('Back'),),
+            FlatButton(
+              child: Text('Start Playing'),
+              onPressed: null,),
+          ],
+        );
+      }
+    );
   }
 }
