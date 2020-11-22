@@ -88,11 +88,20 @@ class DatabaseService {
   }
 
   Future<void> addMessage(String cid, ChatItem chatItem) async {
-    Map<String, dynamic> data = chatItem.toJson();
-    print(data);
-    await _firestore
-        .collection("conversations/$cid/chatItems")
-        .add(data)
-        .then((value) => print("New message created!"));
+    if (chatItem.question == "") {
+      Map<String, dynamic> data = chatItem.toJsonMessage();
+      await _firestore
+          .collection("conversations/$cid/chatItems")
+          .add(data)
+          .then((value) => print("New message created!"));
+    } else {
+      Map<String, dynamic> replyData = chatItem.toJsonReply();
+      await _firestore
+          .collection("conversations/$cid/decks/${chatItem.deck}/questions")
+          .doc(chatItem.question)
+          .update({
+        "replies": FieldValue.arrayUnion([replyData])
+      }).then((value) => print("New reply created!"));
+    }
   }
 }

@@ -27,6 +27,7 @@ class _ConversationScreenState extends State<ConversationScreen> {
   List<GeneratedDeck> decks = List<GeneratedDeck>();
 
   final textController = TextEditingController();
+  GlobalKey<ChatTextFieldState> _keyChatTextField = new GlobalKey();
 
   @override
   void initState() {
@@ -217,6 +218,10 @@ class _ConversationScreenState extends State<ConversationScreen> {
                                                   snapshot.data);
                                           return Card(
                                             child: ExpansionTile(
+                                              onExpansionChanged:
+                                                  (bool isExpanded) =>
+                                                      _changeTextField(
+                                                          isExpanded, question),
                                               title: Container(
                                                 child: Text(
                                                   "Question ${question.number}",
@@ -379,14 +384,18 @@ class _ConversationScreenState extends State<ConversationScreen> {
               ),
             ),
           // Text Field
-          ChatTextField(parentAction: _addMessage),
+          ChatTextField(key: _keyChatTextField, parentAction: _addMessage),
         ],
       ),
     );
   }
 
-  void _addMessage(String text) {
-    ChatItem chatItem = ChatItem(sender: widget.me.info, text: text);
+  void _addMessage(String text, {GeneratedQuestion question}) {
+    ChatItem chatItem = ChatItem(
+        sender: widget.me.info,
+        text: text,
+        deck: question?.deck ?? "",
+        question: question?.id ?? "");
     db.addMessage(widget.conversation.id, chatItem);
   }
 
@@ -400,23 +409,37 @@ class _ConversationScreenState extends State<ConversationScreen> {
     if (index == maxIndex) return true;
     return (chatItems[index].sender["id"] != chatItems[index + 1].sender["id"]);
   }
+
+  void _changeTextField(bool isExpanded, GeneratedQuestion question) {
+    if (isExpanded) {
+      print("Question ${question.number} Expanded!");
+      _keyChatTextField.currentState.updateTarget(question: question);
+    } else {
+      print("Question ${question.number} Collapsed!");
+      _keyChatTextField.currentState.updateTarget();
+    }
+  }
 }
 
 class ChatTextField extends StatefulWidget {
   @override
-  _ChatTextFieldState createState() => _ChatTextFieldState();
+  ChatTextFieldState createState() => ChatTextFieldState();
 
-  final ValueChanged<String> parentAction;
+  final void Function(String text, {GeneratedQuestion question}) parentAction;
 
   const ChatTextField({Key key, this.parentAction}) : super(key: key);
 }
 
-class _ChatTextFieldState extends State<ChatTextField> {
+class ChatTextFieldState extends State<ChatTextField> {
   final textController = TextEditingController();
+  GeneratedQuestion _question;
+  bool _questionTargetted;
 
   @override
   void initState() {
     super.initState();
+
+    _questionTargetted = false;
 
     textController.addListener(() {
       setState(() {});
@@ -436,6 +459,12 @@ class _ChatTextFieldState extends State<ChatTextField> {
               borderRadius: BorderRadius.all(
                 Radius.circular(10),
               ),
+              border: (_questionTargetted)
+                  ? Border.all(
+                      color: Colors.yellow,
+                      width: 5,
+                    )
+                  : Border.fromBorderSide(BorderSide.none),
             ),
             child: Row(
               children: [
@@ -444,7 +473,9 @@ class _ChatTextFieldState extends State<ChatTextField> {
                     controller: textController,
                     decoration: InputDecoration(
                       border: InputBorder.none,
-                      hintText: "Type something...",
+                      hintText: (_questionTargetted)
+                          ? "Send a reply to Question ${_question.number}"
+                          : "Send a message",
                       hintStyle: TextStyle(
                         color: Colors.white30,
                       ),
@@ -454,13 +485,13 @@ class _ChatTextFieldState extends State<ChatTextField> {
                     ),
                   ),
                 ),
-                IconButton(
-                  icon: Icon(
-                    Icons.photo_outlined,
-                    color: AppColors.blueColor,
-                  ),
-                  onPressed: null,
-                ),
+                // IconButton(
+                //   icon: Icon(
+                //     Icons.photo_outlined,
+                //     color: AppColors.blueColor,
+                //   ),
+                //   onPressed: null,
+                // ),
                 IconButton(
                   icon: Icon(
                     Icons.sentiment_satisfied_alt_outlined,
@@ -481,12 +512,29 @@ class _ChatTextFieldState extends State<ChatTextField> {
                 color: AppColors.blueColor,
               ),
               onPressed: () {
-                widget.parentAction(textController.text);
+                if (_questionTargetted) {
+                  widget.parentAction(textController.text, question: _question);
+                } else {
+                  widget.parentAction(textController.text);
+                }
                 textController.clear();
               },
             ),
           ),
       ],
     );
+  }
+
+  void updateTarget({GeneratedQuestion question}) {
+    setState(() {
+      if (question == null) {
+        print("Changing text field to send to main container");
+        this._questionTargetted = false;
+      } else {
+        print("Changing text field to reply to question ${question.number}...");
+        this._question = question;
+        this._questionTargetted = true;
+      }
+    });
   }
 }
