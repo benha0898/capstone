@@ -1,4 +1,9 @@
+import 'dart:async';
+
+import 'package:CapstoneProject/models/chat_item.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+
+import 'models/user.dart';
 
 class DatabaseService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -46,10 +51,6 @@ class DatabaseService {
         .snapshots();
   }
 
-  Future<QuerySnapshot> getConversations() {
-    return _firestore.collection("categories").get();
-  }
-
   Future<DocumentSnapshot> getCategoryById(String id) {
     return _firestore.collection("categories").doc(id).get();
   }
@@ -59,5 +60,39 @@ class DatabaseService {
         .collection("conversations/$cid/decks/$did/questions")
         .doc(qid)
         .snapshots();
+  }
+
+  Stream<QuerySnapshot> getConversations(User user) {
+    return _firestore
+        .collection("conversations")
+        .where(FieldPath.documentId, whereIn: user.conversations)
+        .snapshots();
+  }
+
+  Stream<QuerySnapshot> getChatItems(String conversationId) {
+    return _firestore
+        .collection("conversations")
+        .doc(conversationId)
+        .collection("chatItems")
+        .orderBy("timestamp", descending: true)
+        .snapshots();
+  }
+
+  Stream<QuerySnapshot> getDecks(String conversationId) {
+    return _firestore
+        .collection("conversations")
+        .doc(conversationId)
+        .collection("chatItems")
+        .orderBy("timestamp")
+        .snapshots();
+  }
+
+  Future<void> addMessage(String cid, ChatItem chatItem) async {
+    Map<String, dynamic> data = chatItem.toJson();
+    print(data);
+    await _firestore
+        .collection("conversations/$cid/chatItems")
+        .add(data)
+        .then((value) => print("New message created!"));
   }
 }

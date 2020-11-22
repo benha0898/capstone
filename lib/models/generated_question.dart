@@ -28,13 +28,13 @@ class GeneratedQuestion {
           (index) => Message.fromMap(
               Map<String, dynamic>.from(snapshot["answers"][index]))));
     if (snapshot.data().containsKey("replies")) {
-      print("Question $number: I have replies!");
+      //print("Question $number: I have replies!");
       this.replies.addAll(List.generate(
           snapshot["replies"].length,
           (index) => Message.fromMap(
               Map<String, dynamic>.from(snapshot["replies"][index]))));
     } else {
-      print("Question $number: I ain't got no replies!");
+      //print("Question $number: I ain't got no replies!");
     }
     this.answered = snapshot["answered"];
   }
