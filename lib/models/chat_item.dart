@@ -21,7 +21,7 @@ class ChatItem {
         this.question = snapshot["question"],
         this.timestamp = snapshot["timestamp"].toDate();
 
-  Map<String, dynamic> toJson() => {
+  Map<String, dynamic> toJsonMessage() => {
         "sender": {
           "id": this.sender["id"],
           "firstName": this.sender["firstName"],
@@ -29,8 +29,18 @@ class ChatItem {
           "profilePicture": this.sender["profilePicture"],
         },
         "text": this.text,
-        "deck": this.deck,
-        "question": this.question,
+        "deck": "",
+        "question": "",
+        "timestamp": DateTime.now(),
+      };
+  Map<String, dynamic> toJsonResponse() => {
+        "sender": {
+          "id": this.sender["id"],
+          "firstName": this.sender["firstName"],
+          "lastName": this.sender["lastName"],
+          "profilePicture": this.sender["profilePicture"],
+        },
+        "text": this.text,
         "timestamp": DateTime.now(),
       };
 }
