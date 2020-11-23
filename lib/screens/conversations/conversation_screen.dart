@@ -107,323 +107,377 @@ class _ConversationScreenState extends State<ConversationScreen> {
         children: [
           // Conversation Body
           StreamBuilder(
-              stream: db.getChatItems(widget.conversation.id),
-              builder: (context, snapshot) {
-                if (!snapshot.hasData)
-                  return Center(child: Text("Loading..."));
-                else {
-                  chatItems = List.generate(
-                      snapshot.data.documents.length,
-                      (index) => ChatItem.fromSnapshot(
-                          snapshot.data.documents[index]));
-                }
-                return Expanded(
-                  child: chatItems.length == 0
-                      ? Text("Start a conversation!")
-                      : ListView.builder(
-                          itemCount: chatItems.length,
-                          reverse: true,
-                          itemBuilder: (context, index) {
-                            return Padding(
-                              padding: EdgeInsets.symmetric(
-                                horizontal: 6,
-                              ),
-                              child: (chatItems[index].sender["id"] != "")
-                                  ? Row(
-                                      mainAxisAlignment:
-                                          chatItems[index].sender["id"] ==
-                                                  widget.me.id
-                                              ? MainAxisAlignment.end
-                                              : MainAxisAlignment.start,
-                                      children: [
-                                        _isFirstMessage(index) &&
-                                                !_chatItemSentByMe(
-                                                    chatItems[index])
-                                            ? Container(
-                                                width: 30,
-                                                height: 30,
-                                                decoration: BoxDecoration(
-                                                  image: DecorationImage(
-                                                    image: Image.network(
-                                                      chatItems[index].sender[
-                                                          "profilePicture"],
-                                                    ).image,
-                                                  ),
-                                                  borderRadius:
-                                                      BorderRadius.all(
-                                                    Radius.circular(100),
-                                                  ),
+            stream: db.getChatItems(widget.conversation.id),
+            builder: (context, snapshot) {
+              if (!snapshot.hasData)
+                return Center(child: Text("Loading..."));
+              else {
+                chatItems = List.generate(
+                    snapshot.data.documents.length,
+                    (index) =>
+                        ChatItem.fromSnapshot(snapshot.data.documents[index]));
+              }
+              return Expanded(
+                child: chatItems.length == 0
+                    ? Center(child: Text("Start a conversation!"))
+                    : ListView.builder(
+                        itemCount: chatItems.length,
+                        reverse: true,
+                        itemBuilder: (context, index) {
+                          return Padding(
+                            padding: EdgeInsets.symmetric(
+                              horizontal: 6,
+                            ),
+                            child: (chatItems[index].sender["id"] != "")
+                                ? Row(
+                                    mainAxisAlignment:
+                                        chatItems[index].sender["id"] ==
+                                                widget.me.id
+                                            ? MainAxisAlignment.end
+                                            : MainAxisAlignment.start,
+                                    children: [
+                                      _isFirstMessage(index) &&
+                                              !_chatItemSentByMe(
+                                                  chatItems[index])
+                                          ? Container(
+                                              width: 30,
+                                              height: 30,
+                                              decoration: BoxDecoration(
+                                                image: DecorationImage(
+                                                  image: Image.network(
+                                                    chatItems[index].sender[
+                                                        "profilePicture"],
+                                                  ).image,
                                                 ),
-                                              )
-                                            : Container(
-                                                width: 30,
-                                                height: 30,
+                                                borderRadius: BorderRadius.all(
+                                                  Radius.circular(100),
+                                                ),
                                               ),
-                                        Container(
-                                          constraints: BoxConstraints(
-                                            maxWidth: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
-                                                .7,
-                                          ),
-                                          padding: EdgeInsets.symmetric(
-                                            vertical: 6,
-                                            horizontal: 12,
-                                          ),
-                                          margin: EdgeInsets.symmetric(
-                                            vertical: 6,
-                                            horizontal: 12,
-                                          ),
-                                          decoration: BoxDecoration(
-                                            borderRadius: BorderRadius.only(
-                                              topRight: Radius.circular(10),
-                                              bottomRight: Radius.circular(10),
-                                              topLeft: Radius.circular(
-                                                  _isFirstMessage(index)
-                                                      ? 5
-                                                      : 10),
-                                              bottomLeft: Radius.circular(
-                                                  _isLastMessage(index)
-                                                      ? 5
-                                                      : 10),
+                                            )
+                                          : Container(
+                                              width: 30,
+                                              height: 30,
                                             ),
-                                            color: _chatItemSentByMe(
-                                                    chatItems[index])
-                                                ? AppColors.blueColor
-                                                : Colors.white38,
+                                      Container(
+                                        constraints: BoxConstraints(
+                                          maxWidth: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              .7,
+                                        ),
+                                        padding: EdgeInsets.symmetric(
+                                          vertical: 6,
+                                          horizontal: 12,
+                                        ),
+                                        margin: EdgeInsets.symmetric(
+                                          vertical: 6,
+                                          horizontal: 12,
+                                        ),
+                                        decoration: BoxDecoration(
+                                          borderRadius: BorderRadius.only(
+                                            topRight: Radius.circular(10),
+                                            bottomRight: Radius.circular(10),
+                                            topLeft: Radius.circular(
+                                                _isFirstMessage(index)
+                                                    ? 5
+                                                    : 10),
+                                            bottomLeft: Radius.circular(
+                                                _isLastMessage(index) ? 5 : 10),
                                           ),
-                                          child: Text(
-                                            chatItems[index].text,
-                                            style: TextStyle(
-                                              color: Colors.white,
-                                              fontSize: 16,
-                                            ),
+                                          color: _chatItemSentByMe(
+                                                  chatItems[index])
+                                              ? AppColors.blueColor
+                                              : Colors.white38,
+                                        ),
+                                        child: Text(
+                                          chatItems[index].text,
+                                          style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 16,
                                           ),
                                         ),
-                                      ],
-                                    )
-                                  : StreamBuilder(
-                                      stream: db.getQuestion(
-                                          widget.conversation.id,
-                                          chatItems[index].deck,
-                                          chatItems[index].question),
-                                      builder: (context, snapshot) {
-                                        if (!snapshot.hasData) {
-                                          return Text(
-                                            "Loading...",
-                                          );
-                                        } else {
-                                          GeneratedQuestion question =
-                                              GeneratedQuestion.fromSnapshot(
-                                                  snapshot.data);
-                                          //print("Question ${question.number} has ${question.answers.length} answers right now");
-                                          updatedQuestion =
-                                              GeneratedQuestion.fromSnapshot(
-                                                  snapshot.data);
-                                          //print("Updated question ${question.number} with ${question.answers.length} answers");
-                                          return Container(
-                                            decoration: BoxDecoration(
-                                              color: (!question.answered)
-                                                  ? Colors.white
-                                                  : Colors.red[200],
-                                              borderRadius:
-                                                  BorderRadius.circular(15),
-                                              border: (!question.answered &&
-                                                      !_answeredByMe(question))
-                                                  ? Border.all(
-                                                      color: Colors.red[200],
-                                                      width: 5,
-                                                    )
-                                                  : Border.fromBorderSide(
-                                                      BorderSide.none),
-                                            ),
-                                            child: (question.answered)
-                                                ? ExpansionTile(
-                                                    onExpansionChanged:
-                                                        (bool isExpanded) =>
-                                                            _changeTextField(
-                                                                isExpanded,
-                                                                question),
-                                                    title: Container(
-                                                      child: Text(
-                                                        "Q${question.number}. ${question.text}",
-                                                        style: TextStyle(
-                                                          color: Colors.black,
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                        ),
-                                                      ),
-                                                      // color: Colors.white,
-                                                    ),
-                                                    subtitle: Text(
-                                                      "Show answers",
+                                      ),
+                                    ],
+                                  )
+                                : StreamBuilder(
+                                    stream: db.getQuestion(
+                                        widget.conversation.id,
+                                        chatItems[index].deck,
+                                        chatItems[index].question),
+                                    builder: (context, snapshot) {
+                                      if (!snapshot.hasData) {
+                                        return Text(
+                                          "Loading...",
+                                        );
+                                      } else {
+                                        GeneratedQuestion question =
+                                            GeneratedQuestion.fromSnapshot(
+                                                snapshot.data);
+                                        //print("Question ${question.number} has ${question.answers.length} answers right now");
+                                        updatedQuestion =
+                                            GeneratedQuestion.fromSnapshot(
+                                                snapshot.data);
+                                        //print("Updated question ${question.number} with ${question.answers.length} answers");
+                                        return Container(
+                                          margin: EdgeInsets.all(12.0),
+                                          decoration: BoxDecoration(
+                                            color: (!question.answered)
+                                                ? Colors.white
+                                                : Colors.red[200],
+                                            borderRadius:
+                                                BorderRadius.circular(15),
+                                            border: (!question.answered &&
+                                                    !_answeredByMe(question))
+                                                ? Border.all(
+                                                    color: Colors.red[200],
+                                                    width: 5,
+                                                  )
+                                                : Border.fromBorderSide(
+                                                    BorderSide.none),
+                                          ),
+                                          child: (question.answered)
+                                              ? ExpansionTile(
+                                                  onExpansionChanged:
+                                                      (bool isExpanded) =>
+                                                          _changeTextField(
+                                                              isExpanded,
+                                                              question),
+                                                  title: Container(
+                                                    child: Text(
+                                                      "Q${question.number}. ${question.text}",
                                                       style: TextStyle(
                                                         color: Colors.black,
+                                                        fontWeight:
+                                                            FontWeight.bold,
                                                       ),
                                                     ),
-                                                    children: [
-                                                      Column(
-                                                        children: [
-                                                          for (Message answer
-                                                              in question
-                                                                  .answers)
-                                                            Container(
-                                                              margin: EdgeInsets
-                                                                  .all(5.0),
-                                                              padding:
-                                                                  EdgeInsets
-                                                                      .all(
-                                                                          10.0),
-                                                              decoration:
-                                                                  BoxDecoration(
-                                                                borderRadius: BorderRadius
-                                                                    .all(Radius
-                                                                        .circular(
-                                                                            10)),
-                                                                color: AppColors
-                                                                    .darkColor,
-                                                              ),
-                                                              child: Text(
-                                                                answer.text,
-                                                                style:
-                                                                    TextStyle(
-                                                                  color: Colors
-                                                                      .white,
-                                                                ),
-                                                              ),
-                                                            )
-                                                        ],
-                                                      ),
-                                                      Column(
-                                                        children: [
-                                                          for (Message reply
-                                                              in question
-                                                                  .replies)
-                                                            Padding(
-                                                              padding: const EdgeInsets
-                                                                      .symmetric(
-                                                                  horizontal:
-                                                                      8.0),
-                                                              child: Row(
-                                                                mainAxisAlignment: _messageSentByMe(
-                                                                        reply)
-                                                                    ? MainAxisAlignment
-                                                                        .end
-                                                                    : MainAxisAlignment
-                                                                        .start,
-                                                                children: [
-                                                                  !_messageSentByMe(
-                                                                          reply)
-                                                                      ? Container(
-                                                                          width:
-                                                                              30,
-                                                                          height:
-                                                                              30,
-                                                                          decoration:
-                                                                              BoxDecoration(
-                                                                            image:
-                                                                                DecorationImage(
-                                                                              image: Image.network(
-                                                                                reply.sender["profilePicture"],
-                                                                              ).image,
-                                                                            ),
-                                                                            borderRadius:
-                                                                                BorderRadius.all(
-                                                                              Radius.circular(100),
-                                                                            ),
-                                                                          ),
-                                                                        )
-                                                                      : Container(
-                                                                          width:
-                                                                              30,
-                                                                          height:
-                                                                              30,
-                                                                        ),
-                                                                  Container(
-                                                                    margin: EdgeInsets
-                                                                        .all(
-                                                                            5.0),
-                                                                    padding:
-                                                                        EdgeInsets.all(
-                                                                            10.0),
-                                                                    decoration:
-                                                                        BoxDecoration(
-                                                                      borderRadius:
-                                                                          BorderRadius.all(
-                                                                              Radius.circular(10)),
-                                                                      color: AppColors
-                                                                          .blueColor,
-                                                                    ),
-                                                                    child: Text(
-                                                                      reply
-                                                                          .text,
-                                                                      style:
-                                                                          TextStyle(
-                                                                        color: Colors
-                                                                            .white,
-                                                                      ),
-                                                                    ),
-                                                                  ),
-                                                                ],
-                                                              ),
-                                                            )
-                                                        ],
-                                                      ),
-                                                    ],
-                                                  )
-                                                : ExpansionTile(
-                                                    onExpansionChanged:
-                                                        !_answeredByMe(question)
-                                                            ? (bool isExpanded) =>
-                                                                _changeTextField(
-                                                                    isExpanded,
-                                                                    question)
-                                                            : (bool isExpanded) =>
-                                                                () {},
-                                                    trailing:
-                                                        SizedBox(width: 0),
-                                                    title: Container(
-                                                      child: Text(
-                                                        "Q${question.number}. ${question.text}",
-                                                        style: TextStyle(
-                                                          color: Colors.black,
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                        ),
-                                                      ),
-                                                      // color: Colors.white,
-                                                    ),
-                                                    subtitle: Row(
-                                                      children: [
-                                                        Text(
-                                                          "${question.answers.length}/${widget.conversation.users.length} answered. ",
-                                                          style: TextStyle(
-                                                            color: Colors.black,
-                                                          ),
-                                                        ),
-                                                        _answeredByMe(question)
-                                                            ? Text(
-                                                                "Waiting for others")
-                                                            : Text(
-                                                                "Click here to answer",
-                                                                style: TextStyle(
-                                                                    color: AppColors
-                                                                        .blueColor,
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .w700),
-                                                              ),
-                                                      ],
+                                                    // color: Colors.white,
+                                                  ),
+                                                  subtitle: Text(
+                                                    "Show answers",
+                                                    style: TextStyle(
+                                                      color: Colors.black,
                                                     ),
                                                   ),
-                                          );
-                                        }
-                                      }),
-                            );
-                          },
-                        ),
-                );
-              }),
+                                                  children: [
+                                                    Column(
+                                                      children: [
+                                                        for (Message answer
+                                                            in question.answers)
+                                                          Container(
+                                                            margin:
+                                                                EdgeInsets.all(
+                                                                    5.0),
+                                                            padding:
+                                                                EdgeInsets.all(
+                                                                    10.0),
+                                                            decoration:
+                                                                BoxDecoration(
+                                                              borderRadius: BorderRadius
+                                                                  .all(Radius
+                                                                      .circular(
+                                                                          10)),
+                                                              color: AppColors
+                                                                  .darkColor,
+                                                            ),
+                                                            child: Text(
+                                                              answer.text,
+                                                              style: TextStyle(
+                                                                color: Colors
+                                                                    .white,
+                                                              ),
+                                                            ),
+                                                          )
+                                                      ],
+                                                    ),
+                                                    Column(
+                                                      children: [
+                                                        for (Message reply
+                                                            in question.replies)
+                                                          Padding(
+                                                            padding:
+                                                                const EdgeInsets
+                                                                        .symmetric(
+                                                                    horizontal:
+                                                                        8.0),
+                                                            child: Row(
+                                                              mainAxisAlignment:
+                                                                  _messageSentByMe(
+                                                                          reply)
+                                                                      ? MainAxisAlignment
+                                                                          .end
+                                                                      : MainAxisAlignment
+                                                                          .start,
+                                                              children: [
+                                                                !_messageSentByMe(
+                                                                        reply)
+                                                                    ? Container(
+                                                                        width:
+                                                                            30,
+                                                                        height:
+                                                                            30,
+                                                                        decoration:
+                                                                            BoxDecoration(
+                                                                          image:
+                                                                              DecorationImage(
+                                                                            image:
+                                                                                Image.network(
+                                                                              reply.sender["profilePicture"],
+                                                                            ).image,
+                                                                          ),
+                                                                          borderRadius:
+                                                                              BorderRadius.all(
+                                                                            Radius.circular(100),
+                                                                          ),
+                                                                        ),
+                                                                      )
+                                                                    : Container(
+                                                                        width:
+                                                                            30,
+                                                                        height:
+                                                                            30,
+                                                                      ),
+                                                                Container(
+                                                                  margin:
+                                                                      EdgeInsets
+                                                                          .all(
+                                                                              5.0),
+                                                                  padding:
+                                                                      EdgeInsets
+                                                                          .all(
+                                                                              10.0),
+                                                                  decoration:
+                                                                      BoxDecoration(
+                                                                    borderRadius:
+                                                                        BorderRadius.all(
+                                                                            Radius.circular(10)),
+                                                                    color: AppColors
+                                                                        .blueColor,
+                                                                  ),
+                                                                  child: Text(
+                                                                    reply.text,
+                                                                    style:
+                                                                        TextStyle(
+                                                                      color: Colors
+                                                                          .white,
+                                                                    ),
+                                                                  ),
+                                                                ),
+                                                              ],
+                                                            ),
+                                                          )
+                                                      ],
+                                                    ),
+                                                  ],
+                                                )
+                                              : ExpansionTile(
+                                                  onExpansionChanged:
+                                                      !_answeredByMe(question)
+                                                          ? (bool isExpanded) =>
+                                                              _changeTextField(
+                                                                  isExpanded,
+                                                                  question)
+                                                          : (bool isExpanded) =>
+                                                              () {},
+                                                  trailing: SizedBox(width: 0),
+                                                  title: Container(
+                                                    child: Text(
+                                                      "Q${question.number}. ${question.text}",
+                                                      style: TextStyle(
+                                                        color: Colors.black,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                      ),
+                                                    ),
+                                                    // color: Colors.white,
+                                                  ),
+                                                  subtitle: Row(
+                                                    children: [
+                                                      Text(
+                                                        "${question.answers.length}/${widget.conversation.users.length} answered. ",
+                                                        style: TextStyle(
+                                                          color: Colors.black,
+                                                        ),
+                                                      ),
+                                                      _answeredByMe(question)
+                                                          ? Text(
+                                                              "Waiting for others")
+                                                          : Text(
+                                                              "Click here to answer",
+                                                              style: TextStyle(
+                                                                  color: AppColors
+                                                                      .blueColor,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w700),
+                                                            ),
+                                                    ],
+                                                  ),
+                                                ),
+                                        );
+                                      }
+                                    }),
+                          );
+                        },
+                      ),
+              );
+            },
+          ),
+          // Next Question button
+          StreamBuilder(
+            stream: db.getGeneratedDecks(widget.conversation.id),
+            builder: (context, snapshot) {
+              if (!snapshot.hasData) {
+                return Center(child: Text("Fetching decks"));
+              } else {
+                decks = List.generate(
+                    snapshot.data.documents.length,
+                    (index) => GeneratedDeck.fromSnapshot(
+                        snapshot.data.documents[index]));
+              }
+              return Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Row(
+                    children: [
+                      for (GeneratedDeck deck in decks)
+                        RaisedButton(
+                          onPressed: (!deck.completed)
+                              ? () => _addQuestion(deck)
+                              : () {},
+                          textColor: Colors.black,
+                          color: Colors.red[200],
+                          disabledColor: Colors.grey,
+                          disabledTextColor: Colors.grey[50],
+                          padding: const EdgeInsets.all(10.0),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20.0),
+                          ),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Text(
+                                "Next Question",
+                                style: TextStyle(fontSize: 16),
+                              ),
+                              Text(
+                                "${deck.name}",
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.normal,
+                                ),
+                              ),
+                            ],
+                          ),
+                        )
+                    ],
+                  ),
+                ),
+              );
+            },
+          ),
           // isTyping Indicator
           if (widget.conversation.typing["isTyping"])
             Padding(
@@ -462,6 +516,10 @@ class _ConversationScreenState extends State<ConversationScreen> {
         ],
       ),
     );
+  }
+
+  void _addQuestion(GeneratedDeck deck) {
+    db.addQuestion(widget.conversation.id, deck);
   }
 
   void _addMessage(String text, {GeneratedQuestion question}) {

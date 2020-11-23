@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:CapstoneProject/models/chat_item.dart';
 import 'package:CapstoneProject/models/conversation.dart';
+import 'package:CapstoneProject/models/generated_deck.dart';
 import 'package:CapstoneProject/models/generated_question.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
@@ -80,11 +81,11 @@ class DatabaseService {
         .snapshots();
   }
 
-  Stream<QuerySnapshot> getDecks(String conversationId) {
+  Stream<QuerySnapshot> getGeneratedDecks(String cid) {
     return _firestore
         .collection("conversations")
-        .doc(conversationId)
-        .collection("chatItems")
+        .doc(cid)
+        .collection("decks")
         .orderBy("timestamp")
         .snapshots();
   }
@@ -123,5 +124,54 @@ class DatabaseService {
         }).then((value) => print("New answer created!"));
       }
     }
+  }
+
+  Future<void> addQuestion(String cid, GeneratedDeck deck) async {
+    DateTime now = DateTime.now();
+    DocumentSnapshot deckQuery = await _firestore
+        .collection("categories/${deck.categoryID}/decks")
+        .doc(deck.deckID)
+        .get();
+    String questionText =
+        deckQuery.data()["questions"][deck.questionsGenerated];
+    print(questionText);
+    Map<String, dynamic> question = {
+      "answered": false,
+      "deck": deck.id,
+      "number": deck.questionsGenerated + 1,
+      "text": questionText,
+      "timestamp": now,
+    };
+    await _firestore
+        .collection("conversations/$cid/decks/${deck.id}/questions")
+        .add(question)
+        .then((value) async {
+      print("New question added to conversations/decks/questions! ${value.id}");
+      Map<String, dynamic> chatItem = {
+        "deck": deck.id,
+        "question": value.id,
+        "sender": {
+          "id": "",
+          "firstName": "",
+          "lastName": "",
+          "profilePicture": "",
+        },
+        "text": "",
+        "timestamp": now,
+      };
+      await _firestore
+          .collection("conversations/$cid/decks")
+          .doc(deck.id)
+          .update({
+        "questionsGenerated": deck.questionsGenerated + 1,
+        "completed": (deck.questionsGenerated + 1 == deck.totalQuestions)
+      }).then((value) async {
+        print("Deck document ${deck.id} updated!");
+        await _firestore
+            .collection("conversations/$cid/chatItems")
+            .add(chatItem)
+            .then((value) => print("New chatItem added! ${value.id}"));
+      });
+    });
   }
 }

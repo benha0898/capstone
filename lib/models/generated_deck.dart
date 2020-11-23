@@ -1,28 +1,41 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class GeneratedDeck {
+  final String id;
   final String category;
   final String deckID;
+  final String categoryID;
   final String name;
   final DateTime timestamp;
   final int totalQuestions;
   final bool completed;
+  final List<int> questionsOrder;
+  final int questionsGenerated;
 
   GeneratedDeck({
+    this.id,
     this.category,
     this.deckID,
+    this.categoryID,
     this.name,
     this.totalQuestions,
+    this.questionsOrder,
     timestamp,
     completed,
+    questionsGenerated,
   })  : this.timestamp = timestamp ?? DateTime.now(),
-        this.completed = completed ?? false;
+        this.completed = completed ?? false,
+        this.questionsGenerated = questionsGenerated ?? 0;
 
   GeneratedDeck.fromSnapshot(DocumentSnapshot snapshot)
-      : this.category = snapshot["category"],
+      : this.id = snapshot.id,
+        this.category = snapshot["category"],
         this.deckID = snapshot["deckID"],
+        this.categoryID = snapshot["categoryID"],
         this.name = snapshot["name"],
         this.timestamp = snapshot["timestamp"].toDate(),
         this.totalQuestions = snapshot["totalQuestions"],
-        this.completed = snapshot["completed"];
+        this.completed = snapshot["completed"],
+        this.questionsOrder = snapshot["questionsOrder"].cast<int>(),
+        this.questionsGenerated = snapshot["questionsGenerated"];
 }
