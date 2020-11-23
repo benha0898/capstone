@@ -1,6 +1,8 @@
 import 'dart:async';
 
 import 'package:CapstoneProject/models/chat_item.dart';
+import 'package:CapstoneProject/models/conversation.dart';
+import 'package:CapstoneProject/models/generated_question.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'models/user.dart';
@@ -87,21 +89,39 @@ class DatabaseService {
         .snapshots();
   }
 
-  Future<void> addMessage(String cid, ChatItem chatItem) async {
+  Future<void> addMessage(Conversation conversation, ChatItem chatItem,
+      {GeneratedQuestion question}) async {
     if (chatItem.question == "") {
       Map<String, dynamic> data = chatItem.toJsonMessage();
       await _firestore
-          .collection("conversations/$cid/chatItems")
+          .collection("conversations/${conversation.id}/chatItems")
           .add(data)
           .then((value) => print("New message created!"));
     } else {
-      Map<String, dynamic> replyData = chatItem.toJsonReply();
-      await _firestore
-          .collection("conversations/$cid/decks/${chatItem.deck}/questions")
-          .doc(chatItem.question)
-          .update({
-        "replies": FieldValue.arrayUnion([replyData])
-      }).then((value) => print("New reply created!"));
+      Map<String, dynamic> responseData = chatItem.toJsonResponse();
+      if (question.answered) {
+        await _firestore
+            .collection(
+                "conversations/${conversation.id}/decks/${chatItem.deck}/questions")
+            .doc(chatItem.question)
+            .update({
+          "replies": FieldValue.arrayUnion([responseData])
+        }).then((value) => print("New reply created!"));
+      } else {
+        bool answered =
+            (question.answers.length + 1 == conversation.users.length);
+        print(
+            "Users: ${conversation.users.length}. Answers: ${question.answers.length + 1}. $answered.");
+        await _firestore
+            .collection(
+                "conversations/${conversation.id}/decks/${chatItem.deck}/questions")
+            .doc(chatItem.question)
+            .update({
+          "answers": FieldValue.arrayUnion([responseData]),
+          "answered":
+              (question.answers.length + 1 == conversation.users.length),
+        }).then((value) => print("New answer created!"));
+      }
     }
   }
 }

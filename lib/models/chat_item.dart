@@ -33,7 +33,7 @@ class ChatItem {
         "question": "",
         "timestamp": DateTime.now(),
       };
-  Map<String, dynamic> toJsonReply() => {
+  Map<String, dynamic> toJsonResponse() => {
         "sender": {
           "id": this.sender["id"],
           "firstName": this.sender["firstName"],
