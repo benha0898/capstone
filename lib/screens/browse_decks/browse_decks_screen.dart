@@ -1,4 +1,5 @@
 import 'package:CapstoneProject/db.dart';
+import 'package:CapstoneProject/theme/flutter_icons.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
@@ -17,11 +18,18 @@ class _BrowseDecksScreenState extends State<BrowseDecksScreen> {
   List<QueryDocumentSnapshot> _categories = List<QueryDocumentSnapshot>();
   QueryDocumentSnapshot _selectedCategory;
 
+  
+  List<QueryDocumentSnapshot> _friends = List<QueryDocumentSnapshot>();
+  //List<DocumentSnapshot> _friendsList;
+  
+  
+
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       getData();
+      getFriends();
     });
   }
 
@@ -35,6 +43,15 @@ class _BrowseDecksScreenState extends State<BrowseDecksScreen> {
               _categorySelections =
                   List.generate(_categories.length, (index) => (index == 0));
             }));
+  }
+
+getFriends() async {
+    await FirebaseFirestore.instance
+        .collection("users")
+        .get()
+        .then((querySnapshot) {
+              _friends = querySnapshot.docs;
+            });
   }
 
   @override
@@ -67,7 +84,7 @@ class _BrowseDecksScreenState extends State<BrowseDecksScreen> {
             onPressed: () {},
           ),
         ],
-      ),
+      ),    
       body: Column(
         children: [
           Padding(
@@ -150,7 +167,7 @@ class _BrowseDecksScreenState extends State<BrowseDecksScreen> {
                                     print(
                                         snapshot.data.documents[index]['name']);
                                     _showDeckDescription(context,
-                                        snapshot.data.documents[index]);
+                                        snapshot.data.documents[index], _friends);
                                   },
                                   child: Text(
                                     snapshot.data.documents[index]['name'],
@@ -168,7 +185,7 @@ class _BrowseDecksScreenState extends State<BrowseDecksScreen> {
     );
   }
 
-  _showDeckDescription(BuildContext context, DocumentSnapshot deck) {
+  _showDeckDescription(BuildContext context, DocumentSnapshot deck, List<DocumentSnapshot> friends){
     showDialog(
         context: context,
         builder: (context) {
@@ -190,7 +207,7 @@ class _BrowseDecksScreenState extends State<BrowseDecksScreen> {
                 child: Text("Invite Players"),
                 onPressed: () {
                   print("This should show invite players pop up");
-                  _invitePlayers(context, deck);
+                  _invitePlayers(context, deck, friends);
                 },
               ),
             ],
@@ -198,13 +215,49 @@ class _BrowseDecksScreenState extends State<BrowseDecksScreen> {
         });
   }
 
-  _invitePlayers(BuildContext context, DocumentSnapshot friends){
+  _invitePlayers(BuildContext context, DocumentSnapshot deck, List<DocumentSnapshot> friends){
     showDialog(
       context: context,
       builder: (context){
         return AlertDialog(
-          title: Text('Invite Friends'),
-          content: Text('Show friends List'),
+          title: ListTile(
+            title: Text('Add Friends'),
+            leading: FlatButton(onPressed: null, child: Text('Cancel')),
+            trailing: IconButton(icon: Icon(FlutterIcons.search), onPressed: null)
+          ),
+          content: 
+          Column(
+          children: [
+          Container(
+            height: 320.0,
+            width: 400.0,
+            child: ListView.builder(
+              shrinkWrap: true,
+              itemCount: friends.length,
+              itemBuilder: (context, index){
+                return ListTile(
+                  title: Text(friends[index].get('firstName')),
+                  leading:Icon(FlutterIcons.add_circle_outline,
+                  color: Colors.blue, size: 30,),
+                );
+              }),
+          ),
+          Container(
+            height: 100.0,
+            width: 400.0,
+            child: Column(
+              children: [
+              Text('Deck Selected: ${deck['name']}'),
+              ButtonTheme(
+                minWidth: 30.0,
+                height: 30.0,
+                child: RaisedButton(onPressed: (){},
+                child: Text('edit'))
+              ),
+              Text('Friends Selected: '),
+            ],),
+          )
+          ],),
           actions: [
             FlatButton(
               onPressed: (){
