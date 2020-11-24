@@ -81,11 +81,19 @@ class DatabaseService {
         .snapshots();
   }
 
-  Stream<QuerySnapshot> getGeneratedDecks(String cid) {
+  Stream<QuerySnapshot> getPlayingDeck(String cid) {
     return _firestore
         .collection("conversations")
         .doc(cid)
         .collection("decks")
+        .where("completed", isEqualTo: false)
+        .limit(1)
+        .snapshots();
+  }
+
+  Stream<QuerySnapshot> questionAnswered(String cid, String did) {
+    return _firestore
+        .collection("conversations/$cid/decks/$did/questions")
         .orderBy("timestamp")
         .snapshots();
   }
