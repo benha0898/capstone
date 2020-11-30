@@ -1,4 +1,5 @@
 import 'package:CapstoneProject/db.dart';
+import 'package:CapstoneProject/models/conversation.dart';
 import 'package:CapstoneProject/theme/flutter_icons.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -20,9 +21,8 @@ class _BrowseDecksScreenState extends State<BrowseDecksScreen> {
 
   
   List<QueryDocumentSnapshot> _friends = List<QueryDocumentSnapshot>();
-  //List<DocumentSnapshot> _friendsList;
-  
-  
+  List<QueryDocumentSnapshot> _selectedFriends = List<QueryDocumentSnapshot>();
+  Conversation newConversation;
 
   @override
   void initState() {
@@ -222,9 +222,14 @@ getFriends() async {
         return AlertDialog(
           title: ListTile(
             title: Text('Add Friends'),
-            leading: FlatButton(onPressed: null, child: Text('Cancel')),
-            trailing: IconButton(icon: Icon(FlutterIcons.search), onPressed: null)
-          ),
+            leading: FlatButton(
+              onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => BrowseDecksScreen()),
+            );
+          }, child: Text('Cancel'),),
+            trailing: IconButton(icon: Icon(FlutterIcons.search), onPressed: null)),
           content: 
           Column(
           children: [
@@ -237,8 +242,13 @@ getFriends() async {
               itemBuilder: (context, index){
                 return ListTile(
                   title: Text(friends[index].get('firstName')),
-                  leading:Icon(FlutterIcons.add_circle_outline,
-                  color: Colors.blue, size: 30,),
+                  leading:IconButton(
+                    icon: Icon(FlutterIcons.add_circle_outline),
+                    onPressed: () {
+                      _selectedFriends.add(friends[index]);
+                      print(friends[index].get('firstName'));
+                      print(_selectedFriends);
+                    }),
                 );
               }),
           ),
@@ -251,8 +261,11 @@ getFriends() async {
               ButtonTheme(
                 minWidth: 30.0,
                 height: 30.0,
-                child: RaisedButton(onPressed: (){},
-                child: Text('edit'))
+                child: RaisedButton(
+                  onPressed: (){
+                    Navigator.of(context).pop();
+                  },
+                  child: Text('edit'))
               ),
               Text('Friends Selected: '),
             ],),
