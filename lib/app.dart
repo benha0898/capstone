@@ -7,8 +7,6 @@ import 'screens/conversations/conversations_screen.dart';
 //import 'screens/home_screen.dart';
 import 'screens/settings/settings_screen.dart';
 
-import 'screens/authentication/login_main.dart';
-
 class CustomNavigatorHomePage extends StatefulWidget {
   @override
   _CustomNavigatorHomePageState createState() =>
@@ -18,7 +16,6 @@ class CustomNavigatorHomePage extends StatefulWidget {
 class _CustomNavigatorHomePageState extends State<CustomNavigatorHomePage> {
   int _currentIndex = 0;
   final List<Widget> _screens = [
-    LoginMain(),
     BrowseDecksScreen(),
     ConversationsScreen(),
     SettingsScreen(),
@@ -45,10 +42,6 @@ class _CustomNavigatorHomePageState extends State<CustomNavigatorHomePage> {
         unselectedItemColor: Colors.white24,
         type: BottomNavigationBarType.fixed,
         items: [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: "Home",
-          ),
           BottomNavigationBarItem(
             icon: Icon(Icons.view_carousel_rounded),
             label: "Decks",
