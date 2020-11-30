@@ -33,14 +33,15 @@ class _CustomNavigatorHomePageState extends State<CustomNavigatorHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.transparent,
       body: _screens[_currentIndex],
       bottomNavigationBar: BottomNavigationBar(
         onTap: (index) => onTabTapped(index),
-        backgroundColor: AppColors.darkColor,
+        backgroundColor: MyTheme.darkColor,
         currentIndex: _currentIndex,
-        showSelectedLabels: false,
-        showUnselectedLabels: false,
-        selectedItemColor: Colors.white,
+        showSelectedLabels: true,
+        showUnselectedLabels: true,
+        selectedItemColor: MyTheme.yellowColor,
         unselectedItemColor: Colors.white24,
         type: BottomNavigationBarType.fixed,
         items: [
@@ -50,7 +51,7 @@ class _CustomNavigatorHomePageState extends State<CustomNavigatorHomePage> {
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.view_carousel_rounded),
-            label: "Browse Decks",
+            label: "Decks",
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.message_rounded),

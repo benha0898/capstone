@@ -51,14 +51,14 @@ class _ConversationScreenState extends State<ConversationScreen> {
   Widget build(BuildContext context) {
     print("Conversation Screen is built");
     return Scaffold(
-      backgroundColor: AppColors.mainColor,
+      backgroundColor: MyTheme.mainColor,
       appBar: AppBar(
-        backgroundColor: AppColors.mainColor,
+        backgroundColor: MyTheme.mainColor,
         elevation: 0,
         leading: IconButton(
           icon: Icon(
             Icons.arrow_back,
-            color: AppColors.blueColor,
+            color: MyTheme.blueColor,
           ),
           onPressed: () {
             Navigator.of(context).pop();
@@ -68,7 +68,7 @@ class _ConversationScreenState extends State<ConversationScreen> {
           IconButton(
             icon: Icon(
               Icons.more_horiz,
-              color: AppColors.blueColor,
+              color: MyTheme.blueColor,
             ),
             onPressed: () {},
           ),
@@ -174,7 +174,7 @@ class _ConversationScreenState extends State<ConversationScreen> {
                                             ),
                                             color: _chatItemSentByMe(
                                                     chatItems[index])
-                                                ? AppColors.blueColor
+                                                ? MyTheme.blueColor
                                                 : Colors.white38,
                                           ),
                                           child: Text(
@@ -267,7 +267,7 @@ class _ConversationScreenState extends State<ConversationScreen> {
                                                                     .all(Radius
                                                                         .circular(
                                                                             10)),
-                                                                color: AppColors
+                                                                color: MyTheme
                                                                     .darkColor,
                                                               ),
                                                               child: Text(
@@ -338,7 +338,7 @@ class _ConversationScreenState extends State<ConversationScreen> {
                                                                       borderRadius:
                                                                           BorderRadius.all(
                                                                               Radius.circular(10)),
-                                                                      color: AppColors
+                                                                      color: MyTheme
                                                                           .blueColor,
                                                                     ),
                                                                     child: Text(
@@ -394,7 +394,7 @@ class _ConversationScreenState extends State<ConversationScreen> {
                                                             : Text(
                                                                 "Click here to answer",
                                                                 style: TextStyle(
-                                                                    color: AppColors
+                                                                    color: MyTheme
                                                                         .blueColor,
                                                                     fontWeight:
                                                                         FontWeight
@@ -507,7 +507,7 @@ class _ConversationScreenState extends State<ConversationScreen> {
                         left: 12,
                       ),
                       child: SpinKitThreeBounce(
-                        color: AppColors.blueColor,
+                        color: MyTheme.blueColor,
                         size: 20.0,
                       ),
                     ),
@@ -611,7 +611,7 @@ class ChatTextFieldState extends State<ChatTextField> {
             margin: EdgeInsets.all(12),
             padding: EdgeInsets.symmetric(vertical: 6, horizontal: 12),
             decoration: BoxDecoration(
-              color: AppColors.darkColor,
+              color: MyTheme.darkColor,
               borderRadius: BorderRadius.all(
                 Radius.circular(10),
               ),
@@ -655,7 +655,7 @@ class ChatTextFieldState extends State<ChatTextField> {
                 IconButton(
                   icon: Icon(
                     Icons.sentiment_satisfied_alt_outlined,
-                    color: AppColors.blueColor,
+                    color: MyTheme.blueColor,
                   ),
                   onPressed: null,
                 ),
@@ -669,7 +669,7 @@ class ChatTextFieldState extends State<ChatTextField> {
             child: IconButton(
               icon: Icon(
                 Icons.send,
-                color: AppColors.blueColor,
+                color: MyTheme.blueColor,
               ),
               onPressed: () {
                 if (_questionTargetted) {

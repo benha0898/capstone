@@ -1,3 +1,4 @@
+import 'package:CapstoneProject/theme/consts.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 
@@ -18,20 +19,26 @@ class MyApp extends StatelessWidget {
         builder: (context, snapshot) {
           return MaterialApp(
             title: "Conversation App",
-            theme: ThemeData(
-              primarySwatch: Colors.blue,
+            theme: MyTheme.themeData,
+            home: Container(
+              decoration: BoxDecoration(
+                image: MyTheme.backgroundImage,
+              ),
+              child: Scaffold(
+                backgroundColor: Colors.transparent,
+                body: (snapshot.hasError)
+                    ? Center(
+                        child: Text(snapshot.error.toString()),
+                      )
+                    : (snapshot.connectionState == ConnectionState.done)
+                        ? CustomNavigatorHomePage()
+                        : Center(
+                            child: Text(
+                              "Loading...",
+                            ),
+                          ),
+              ),
             ),
-            home: (snapshot.hasError)
-                ? Center(
-                    child: Text(snapshot.error.toString()),
-                  )
-                : (snapshot.connectionState == ConnectionState.done)
-                    ? CustomNavigatorHomePage()
-                    : Center(
-                        child: Text(
-                          "Loading...",
-                        ),
-                      ),
           );
         });
   }

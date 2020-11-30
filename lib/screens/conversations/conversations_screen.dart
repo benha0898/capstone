@@ -1,6 +1,5 @@
 import 'package:CapstoneProject/db.dart';
 import 'package:CapstoneProject/theme/consts.dart';
-import 'package:CapstoneProject/theme/flutter_icons.dart';
 import 'package:CapstoneProject/models/user.dart';
 import 'package:CapstoneProject/models/conversation.dart';
 import 'package:CapstoneProject/screens/conversations/conversation_screen.dart';
@@ -63,10 +62,10 @@ class _ConversationsScreenState extends State<ConversationsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.mainColor,
+      backgroundColor: Colors.transparent,
       appBar: AppBar(
         elevation: 0,
-        backgroundColor: AppColors.mainColor,
+        backgroundColor: MyTheme.mainColor,
         title: Text(
           "Conversations",
           style: TextStyle(fontSize: 20),
@@ -75,8 +74,8 @@ class _ConversationsScreenState extends State<ConversationsScreen> {
         actions: [
           IconButton(
             icon: Icon(
-              FlutterIcons.filter,
-              color: AppColors.blueColor,
+              Icons.search_rounded,
+              color: MyTheme.whiteColor,
             ),
             onPressed: () {},
           ),
@@ -84,27 +83,27 @@ class _ConversationsScreenState extends State<ConversationsScreen> {
       ),
       body: Column(
         children: [
-          Container(
-            // Search bar
-            margin: EdgeInsets.all(16),
-            padding: EdgeInsets.all(6),
-            decoration: BoxDecoration(
-              color: Colors.black45,
-              borderRadius: BorderRadius.all(Radius.circular(10)),
-            ),
-            child: TextField(
-              decoration: InputDecoration(
-                prefixIcon: Icon(
-                  Icons.search,
-                  color: Colors.white30,
-                ),
-                hintText: "Search",
-                hintStyle: TextStyle(
-                  color: Colors.white30,
-                ),
-              ),
-            ),
-          ),
+          // Container(
+          //   // Search bar
+          //   margin: EdgeInsets.all(16),
+          //   padding: EdgeInsets.all(6),
+          //   decoration: BoxDecoration(
+          //     color: Colors.black45,
+          //     borderRadius: BorderRadius.all(Radius.circular(10)),
+          //   ),
+          //   child: TextField(
+          //     decoration: InputDecoration(
+          //       prefixIcon: Icon(
+          //         Icons.search,
+          //         color: Colors.white30,
+          //       ),
+          //       hintText: "Search",
+          //       hintStyle: TextStyle(
+          //         color: Colors.white30,
+          //       ),
+          //     ),
+          //   ),
+          // ),
           (me == null)
               ? Text("Loading...")
               : StreamBuilder(
@@ -119,91 +118,94 @@ class _ConversationsScreenState extends State<ConversationsScreen> {
                       child: ListView.builder(
                         itemCount: conversations.length,
                         itemBuilder: (context, index) {
-                          return ListTile(
-                            onTap: () {
-                              Navigator.of(context).push(
-                                MaterialPageRoute(
-                                  builder: (_) => ConversationScreen(
-                                      conversation: conversations[index],
-                                      me: me),
-                                ),
-                              );
-                            },
-                            leading: Container(
-                              width: 50,
-                              height: 50,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.all(
-                                  Radius.circular(100),
-                                ),
-                                image: DecorationImage(
-                                  image: Image.network(
-                                          conversations[index].groupPicture)
-                                      .image,
-                                ),
-                              ),
+                          return Container(
+                            decoration: BoxDecoration(
+                              color: (index % 2 == 0)
+                                  ? Color(0xFFE2E2E2)
+                                  : Color(0xFFD9D9D9),
                             ),
-                            title: Text(
-                              conversations[index].users.length > 2
-                                  ? conversations[index]
-                                      .users
-                                      .where(
-                                          (element) => element["id"] != me.id)
-                                      .map((element) => element["firstName"])
-                                      .join(", ")
-                                  : conversations[index]
-                                      .users
-                                      .where(
-                                          (element) => element["id"] != me.id)
-                                      .map((element) =>
-                                          element["firstName"] +
-                                          " " +
-                                          element["lastName"])
-                                      .join(", "),
-                              style: TextStyle(
-                                color: Colors.white,
-                              ),
-                            ),
-                            subtitle: conversations[index].typing["isTyping"]
-                                ? Row(
-                                    children: [
-                                      SpinKitThreeBounce(
-                                        color: AppColors.blueColor,
-                                        size: 20.0,
-                                      ),
-                                    ],
-                                  )
-                                : Row(
-                                    children: [
-                                      Text(
-                                        conversations[index].lastActivity,
-                                        style: TextStyle(
-                                          color: Colors.white54,
-                                        ),
-                                      ),
-                                      SizedBox(
-                                        width: 25,
-                                      ),
-                                      Text(
-                                        (isToday(
-                                                conversations[index].timestamp))
-                                            ? DateFormat.jm().format(
-                                                conversations[index].timestamp)
-                                            : (isWithinAWeek(
-                                                    conversations[index]
-                                                        .timestamp))
-                                                ? DateFormat.E().format(
-                                                    conversations[index]
-                                                        .timestamp)
-                                                : DateFormat.MMMd().format(
-                                                    conversations[index]
-                                                        .timestamp),
-                                        style: TextStyle(
-                                          color: Colors.white54,
-                                        ),
-                                      ),
-                                    ],
+                            child: ListTile(
+                              onTap: () {
+                                Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                    builder: (_) => ConversationScreen(
+                                        conversation: conversations[index],
+                                        me: me),
                                   ),
+                                );
+                              },
+                              leading: Container(
+                                width: 50,
+                                height: 50,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.all(
+                                    Radius.circular(100),
+                                  ),
+                                  image: DecorationImage(
+                                    image: Image.network(
+                                            conversations[index].groupPicture)
+                                        .image,
+                                  ),
+                                ),
+                              ),
+                              title: Text(
+                                conversations[index].users.length > 2
+                                    ? conversations[index]
+                                        .users
+                                        .where(
+                                            (element) => element["id"] != me.id)
+                                        .map((element) => element["firstName"])
+                                        .join(", ")
+                                    : conversations[index]
+                                        .users
+                                        .where(
+                                            (element) => element["id"] != me.id)
+                                        .map((element) =>
+                                            element["firstName"] +
+                                            " " +
+                                            element["lastName"])
+                                        .join(", "),
+                                style: TextStyle(
+                                  color: MyTheme.mainColor,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                              subtitle: conversations[index].typing["isTyping"]
+                                  ? Row(
+                                      children: [
+                                        SpinKitThreeBounce(
+                                          color: MyTheme.blueColor,
+                                          size: 20.0,
+                                        ),
+                                      ],
+                                    )
+                                  : Row(
+                                      children: [
+                                        Text(
+                                          conversations[index].lastActivity,
+                                          style: TextStyle(
+                                            color: MyTheme.mainColor,
+                                            fontWeight: FontWeight.w400,
+                                            fontStyle: FontStyle.italic,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                              trailing: Text(
+                                (isToday(conversations[index].timestamp))
+                                    ? DateFormat.jm()
+                                        .format(conversations[index].timestamp)
+                                    : (isWithinAWeek(
+                                            conversations[index].timestamp))
+                                        ? DateFormat.E().format(
+                                            conversations[index].timestamp)
+                                        : DateFormat.MMMd().format(
+                                            conversations[index].timestamp),
+                                style: TextStyle(
+                                  color: MyTheme.mainColor,
+                                ),
+                              ),
+                            ),
                           );
                         },
                       ),

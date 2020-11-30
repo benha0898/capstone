@@ -11,7 +11,7 @@ class _LoginCreateAccountState extends State<LoginCreateAccount> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: AppColors.mainColor,
+        backgroundColor: MyTheme.mainColor,
         body: Container(
           alignment: Alignment.bottomCenter,
           padding: EdgeInsets.symmetric(horizontal: 24),
