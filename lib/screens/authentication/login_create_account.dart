@@ -1,5 +1,7 @@
 //import 'package:CapstoneProject/widgets/widgets.dart';
+import 'package:CapstoneProject/app.dart';
 import 'package:CapstoneProject/screens/services/auth.dart';
+import 'package:CapstoneProject/screens/services/database.dart';
 import 'package:CapstoneProject/theme/consts.dart';
 import 'package:flutter/material.dart';
 //import 'package:firebase_auth/firebase_auth.dart';
@@ -14,9 +16,12 @@ class _LoginCreateAccountState extends State<LoginCreateAccount> {
   bool isLoading = false;
 
   AuthMethods authMethods = new AuthMethods();
+  DatabaseMethods databaseMethods = new DatabaseMethods();
+
   final formKey = GlobalKey<FormState>();
   TextEditingController emailController = new TextEditingController();
   TextEditingController passwordController = new TextEditingController();
+  TextEditingController usernameController = new TextEditingController();
 
   signUpUser(){
     if(formKey.currentState.validate()){
@@ -25,9 +30,23 @@ class _LoginCreateAccountState extends State<LoginCreateAccount> {
       });
 
       authMethods.signUpWithEmailAndPassword(emailController.text, passwordController.text).then((val){
-        print("${val.uid}");
+        print("${val.userId}");
 
-      
+        Map<String, dynamic> userInfoMap = {
+          "username" : usernameController.text,
+          "email" : emailController.text,
+          "firstName" : "",
+          "lastName" : "",
+          "profilePicture" : "",
+          "conversations": [],
+        };
+
+        databaseMethods.uploadUserInfo(userInfoMap);
+
+      Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => CustomNavigatorHomePage(),
+            ));
       });
     }
   }
@@ -52,12 +71,23 @@ class _LoginCreateAccountState extends State<LoginCreateAccount> {
               child:
               Column(children: [
                 TextFormField(
+                  controller: usernameController,
+                  style: TextStyle(color: Colors.white),
+                  decoration: InputDecoration(
+                    hintText: "username"),
+                ),
+                TextFormField(
                   validator: (val){
                     return RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+").hasMatch(val) ? null : "Please provide valid email";
                   },
                   controller: emailController,
                   style: TextStyle(color: Colors.white),
-                  decoration: InputDecoration(hintText: "Email"),
+                  decoration: InputDecoration(
+                    hintText: "email",
+                    hintStyle: TextStyle(
+                      color: Colors.grey
+                    ),
+                    ),
                 ),
                 TextFormField(
                   validator: (val){
@@ -67,11 +97,6 @@ class _LoginCreateAccountState extends State<LoginCreateAccount> {
                   obscureText: true,
                   style: TextStyle(color: Colors.white),
                   decoration: InputDecoration(hintText: "Password"),
-                ),
-                TextFormField(
-                  obscureText: true,
-                  style: TextStyle(color: Colors.white),
-                  decoration: InputDecoration(hintText: "Confirm Password"),
                 ),
               ]),
               ),

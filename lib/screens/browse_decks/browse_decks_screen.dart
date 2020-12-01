@@ -1,5 +1,8 @@
+
+
 import 'package:CapstoneProject/db.dart';
 import 'package:CapstoneProject/models/conversation.dart';
+import 'package:CapstoneProject/screens/services/database.dart';
 import 'package:CapstoneProject/theme/flutter_icons.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -22,6 +25,8 @@ class _BrowseDecksScreenState extends State<BrowseDecksScreen> {
   
   List<QueryDocumentSnapshot> _friends = List<QueryDocumentSnapshot>();
   List<QueryDocumentSnapshot> _selectedFriends = List<QueryDocumentSnapshot>();
+  TextEditingController usernameController = new TextEditingController();
+  DatabaseMethods databaseMethods = new DatabaseMethods();
   Conversation newConversation;
 
   @override
@@ -47,7 +52,7 @@ class _BrowseDecksScreenState extends State<BrowseDecksScreen> {
 
 getFriends() async {
     await FirebaseFirestore.instance
-        .collection("users")
+        .collection("registeredUser")
         .get()
         .then((querySnapshot) {
               _friends = querySnapshot.docs;
@@ -229,7 +234,13 @@ getFriends() async {
               MaterialPageRoute(builder: (context) => BrowseDecksScreen()),
             );
           }, child: Text('Cancel'),),
-            trailing: IconButton(icon: Icon(FlutterIcons.search), onPressed: null)),
+            trailing: 
+            IconButton(
+              icon: Icon(FlutterIcons.search),
+              onPressed: (){
+                _searchplayers(context);
+              }
+              )),
           content: 
           Column(
           children: [
@@ -241,12 +252,12 @@ getFriends() async {
               itemCount: friends.length,
               itemBuilder: (context, index){
                 return ListTile(
-                  title: Text(friends[index].get('firstName')),
+                  title: Text(friends[index].get('username')),
                   leading:IconButton(
                     icon: Icon(FlutterIcons.add_circle_outline),
                     onPressed: () {
                       _selectedFriends.add(friends[index]);
-                      print(friends[index].get('firstName'));
+                      print(friends[index].get('username'));
                       print(_selectedFriends);
                     }),
                 );
@@ -285,4 +296,77 @@ getFriends() async {
       }
     );
   }
+
+QuerySnapshot searchSnapshot;
+  initiateSearch(){
+    databaseMethods.getUserbyUsername(usernameController.text)
+    .then((val){
+      print(val.toString());
+      setState(() {
+         searchSnapshot = val;
+      });
+    });
+  }
+
+  _searchplayers(BuildContext context){
+    showDialog(
+      context: context,
+      builder: (context){
+        return AlertDialog(
+          title: ListTile(
+            title: TextFormField(
+              controller: usernameController,
+              style: TextStyle(color: Colors.blueAccent),
+              decoration: InputDecoration(
+                hintText: "search username")
+            ),
+            trailing: 
+            IconButton(
+              icon: Icon(FlutterIcons.search),
+              onPressed: (){
+                initiateSearch();
+                }),
+            ),
+        content: searchSnapshot != null ?
+        Container(
+          height: 400.0,
+          width: 400.0,
+          child: ListView.builder(
+          itemCount: searchSnapshot.docs.length,
+          itemBuilder: (context, index){
+            return SearchTile(
+              userUsername: searchSnapshot.docs[index].get('username'),
+              userEmail: searchSnapshot.docs[index].get('email')
+            );
+          })
+         ) : Container(),
+        );
+    });
+  }
 }
+
+class SearchTile extends StatelessWidget {
+    final String userUsername;
+    final String userEmail;
+    SearchTile({this.userUsername, this.userEmail});
+
+    @override
+    Widget build(BuildContext context) {
+      return Container(
+        child: Row(
+          children: [
+            Column(
+              children: [
+                Text(userUsername),
+                Text(userEmail),
+                ],
+              ),
+              Spacer(),
+              Container(
+                
+              )
+          ],
+        )
+      );
+    }
+  }
