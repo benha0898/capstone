@@ -40,7 +40,7 @@ class _LoginEmptyFormState extends State<LoginEmptyForm> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: AppColors.mainColor,
+        backgroundColor: MyTheme.mainColor,
         body: isLoading
         ?Container(
           child: Center(

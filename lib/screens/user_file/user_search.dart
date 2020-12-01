@@ -18,10 +18,10 @@ class _UserSearchState extends State<UserSearch> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.mainColor,
+      backgroundColor: MyTheme.mainColor,
       appBar: AppBar(
         elevation: 0,
-        backgroundColor: AppColors.mainColor,
+        backgroundColor: MyTheme.mainColor,
         title: Text(
           "Friends",
           style: TextStyle(fontSize: 32),

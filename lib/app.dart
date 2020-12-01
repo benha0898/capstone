@@ -4,10 +4,7 @@ import 'theme/consts.dart';
 
 import 'screens/browse_decks/browse_decks_screen.dart';
 import 'screens/conversations/conversations_screen.dart';
-import 'screens/home_screen.dart';
 import 'screens/settings/settings_screen.dart';
-
-//import 'screens/authentication/login_main.dart';
 
 class CustomNavigatorHomePage extends StatefulWidget {
   @override
@@ -18,7 +15,6 @@ class CustomNavigatorHomePage extends StatefulWidget {
 class _CustomNavigatorHomePageState extends State<CustomNavigatorHomePage> {
   int _currentIndex = 0;
   final List<Widget> _screens = [
-    HomeScreen(),
     BrowseDecksScreen(),
     ConversationsScreen(),
     SettingsScreen(),
@@ -33,24 +29,21 @@ class _CustomNavigatorHomePageState extends State<CustomNavigatorHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.transparent,
       body: _screens[_currentIndex],
       bottomNavigationBar: BottomNavigationBar(
         onTap: (index) => onTabTapped(index),
-        backgroundColor: AppColors.darkColor,
+        backgroundColor: MyTheme.darkColor,
         currentIndex: _currentIndex,
-        showSelectedLabels: false,
-        showUnselectedLabels: false,
-        selectedItemColor: Colors.white,
+        showSelectedLabels: true,
+        showUnselectedLabels: true,
+        selectedItemColor: MyTheme.yellowColor,
         unselectedItemColor: Colors.white24,
         type: BottomNavigationBarType.fixed,
         items: [
           BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: "Home",
-          ),
-          BottomNavigationBarItem(
             icon: Icon(Icons.view_carousel_rounded),
-            label: "Browse Decks",
+            label: "Decks",
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.message_rounded),
