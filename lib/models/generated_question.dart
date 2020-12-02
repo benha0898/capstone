@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 class GeneratedQuestion {
   String id;
   int number;
+  int totalQuestions;
   String deck;
   String deckName;
   String text;
@@ -18,6 +19,7 @@ class GeneratedQuestion {
   GeneratedQuestion({
     this.id,
     this.number,
+    this.totalQuestions,
     this.deck,
     this.deckName,
     this.text,
@@ -35,6 +37,7 @@ class GeneratedQuestion {
   GeneratedQuestion.fromSnapshot(DocumentSnapshot snapshot) {
     this.id = snapshot.id;
     this.number = snapshot["number"];
+    this.totalQuestions = snapshot["totalQuestions"];
     this.deck = snapshot["deck"];
     this.deckName = snapshot["deckName"];
     this.text = snapshot["text"];
