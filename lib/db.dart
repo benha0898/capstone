@@ -66,9 +66,15 @@ class DatabaseService {
   }
 
   Stream<QuerySnapshot> getConversations(User user) {
+    Map<String, dynamic> u = {
+      "firstName": user.firstName,
+      "id": user.id,
+      "lastName": user.lastName,
+    };
     return _firestore
         .collection("conversations")
-        .where(FieldPath.documentId, whereIn: user.conversations)
+        .where("users", arrayContains: u)
+        .orderBy("timestamp", descending: true)
         .snapshots();
   }
 

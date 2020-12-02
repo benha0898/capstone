@@ -1,34 +1,42 @@
 import 'package:CapstoneProject/models/message.dart';
+import 'package:CapstoneProject/theme/consts.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
 
 class GeneratedQuestion {
   String id;
   int number;
   String deck;
+  String deckName;
   String text;
   DateTime timestamp;
   List<Message> answers = List<Message>();
   List<Message> replies = List<Message>();
   bool answered;
+  Color color;
 
-  GeneratedQuestion(
-      {this.id,
-      this.number,
-      this.deck,
-      this.text,
-      timestamp,
-      answers,
-      replies,
-      answered})
-      : this.timestamp = timestamp ?? DateTime.now(),
+  GeneratedQuestion({
+    this.id,
+    this.number,
+    this.deck,
+    this.deckName,
+    this.text,
+    timestamp,
+    answers,
+    replies,
+    answered,
+    color,
+  })  : this.timestamp = timestamp ?? DateTime.now(),
         this.answers = answers ?? List<Map<String, dynamic>>(),
         this.replies = replies ?? List<Map<String, dynamic>>(),
-        this.answered = answered ?? false;
+        this.answered = answered ?? false,
+        this.color = color ?? MyTheme.greyColor;
 
   GeneratedQuestion.fromSnapshot(DocumentSnapshot snapshot) {
     this.id = snapshot.id;
     this.number = snapshot["number"];
     this.deck = snapshot["deck"];
+    this.deckName = snapshot["deckName"];
     this.text = snapshot["text"];
     this.timestamp = snapshot["timestamp"].toDate();
     if (snapshot.data().containsKey("answers")) {
@@ -46,5 +54,6 @@ class GeneratedQuestion {
       this.replies.sort((a, b) => a.timestamp.compareTo(b.timestamp));
     }
     this.answered = snapshot["answered"];
+    this.color = Color(snapshot["color"]).withOpacity(1);
   }
 }
