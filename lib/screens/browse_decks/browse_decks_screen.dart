@@ -3,7 +3,7 @@
 import 'package:CapstoneProject/db.dart';
 import 'package:CapstoneProject/models/conversation.dart';
 import 'package:CapstoneProject/screens/services/database.dart';
-import 'package:CapstoneProject/theme/flutter_icons.dart';
+//import 'package:CapstoneProject/theme/flutter_icons.dart';
 import 'package:CapstoneProject/models/deck.dart';
 import 'package:CapstoneProject/screens/browse_decks/deck_view_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -25,8 +25,8 @@ class _BrowseDecksScreenState extends State<BrowseDecksScreen> {
   QueryDocumentSnapshot _selectedCategory;
 
   
-  List<QueryDocumentSnapshot> _friends = List<QueryDocumentSnapshot>();
-  List<QueryDocumentSnapshot> _selectedFriends = List<QueryDocumentSnapshot>();
+  //List<QueryDocumentSnapshot> _friends = List<QueryDocumentSnapshot>();
+  //List<QueryDocumentSnapshot> _selectedFriends = List<QueryDocumentSnapshot>();
   TextEditingController usernameController = new TextEditingController();
   DatabaseMethods databaseMethods = new DatabaseMethods();
   Conversation newConversation;
@@ -36,7 +36,7 @@ class _BrowseDecksScreenState extends State<BrowseDecksScreen> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       getData();
-      getFriends();
+      //getFriends();
     });
   }
 
@@ -51,7 +51,7 @@ class _BrowseDecksScreenState extends State<BrowseDecksScreen> {
                   List.generate(_categories.length, (index) => (index == 0));
             }));
   }
-
+/*
 getFriends() async {
     await FirebaseFirestore.instance
         .collection("registeredUser")
@@ -60,7 +60,7 @@ getFriends() async {
               _friends = querySnapshot.docs;
             });
   }
-
+*/
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -205,7 +205,7 @@ getFriends() async {
       ),
     );
   }
-
+/*
   _showDeckDescription(BuildContext context, DocumentSnapshot deck, List<DocumentSnapshot> friends){
     showDialog(
         context: context,
@@ -385,4 +385,5 @@ class SearchTile extends StatelessWidget {
         )
       );
     }
+    */
   }

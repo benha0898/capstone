@@ -14,7 +14,11 @@ class DatabaseMethods{
     });
   }
 
-  getUsers(){
-
+  getUsers(List _users) async{
+    return await FirebaseFirestore.instance.collection("registeredUser")
+    .get()
+    .then((querySnapshot) {
+      _users = querySnapshot.docs;
+    });
   }
 }

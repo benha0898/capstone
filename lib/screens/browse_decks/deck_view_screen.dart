@@ -1,3 +1,4 @@
+import 'package:CapstoneProject/screens/services/search_screen.dart';
 import 'package:CapstoneProject/models/deck.dart';
 import 'package:CapstoneProject/theme/consts.dart';
 import 'package:flutter/material.dart';
@@ -60,7 +61,13 @@ class _DeckViewScreenState extends State<DeckViewScreen> {
           ),
           child: Text("Select"),
           onPressed: () {
-            print("TODO");
+            print("open invite friends screen");
+            Navigator.of(context)
+              .push(MaterialPageRoute(
+                builder: (_) => SearchScreen(
+                  deck: widget.deck,
+                ),
+                  ));
           },
         ),
       ],
