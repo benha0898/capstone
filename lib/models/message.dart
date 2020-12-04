@@ -11,4 +11,15 @@ class Message {
     this.text = map["text"];
     this.timestamp = map["timestamp"].toDate();
   }
+
+  Map<String, dynamic> toMap() => {
+        "sender": {
+          "id": this.sender["id"],
+          "firstName": this.sender["firstName"],
+          "lastName": this.sender["lastName"],
+          "profilePicture": this.sender["profilePicture"],
+        },
+        "text": this.text,
+        "timestamp": DateTime.now(),
+      };
 }

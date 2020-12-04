@@ -1,9 +1,9 @@
 import 'dart:async';
 
-import 'package:CapstoneProject/models/chat_item.dart';
 import 'package:CapstoneProject/models/conversation.dart';
 import 'package:CapstoneProject/models/generated_deck.dart';
 import 'package:CapstoneProject/models/generated_question.dart';
+import 'package:CapstoneProject/models/message.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'models/user.dart';
@@ -58,17 +58,23 @@ class DatabaseService {
     return _firestore.collection("categories").doc(id).get();
   }
 
-  Stream<DocumentSnapshot> getQuestion(String cid, String did, String qid) {
+  Stream<QuerySnapshot> getQuestion(String cid) {
     return _firestore
-        .collection("conversations/$cid/decks/$did/questions")
-        .doc(qid)
+        .collection("conversations/$cid/questions")
+        .orderBy("timestamp", descending: true)
         .snapshots();
   }
 
   Stream<QuerySnapshot> getConversations(User user) {
+    Map<String, dynamic> u = {
+      "firstName": user.firstName,
+      "id": user.id,
+      "lastName": user.lastName,
+    };
     return _firestore
         .collection("conversations")
-        .where(FieldPath.documentId, whereIn: user.conversations)
+        .where("users", arrayContains: u)
+        .orderBy("timestamp", descending: true)
         .snapshots();
   }
 
@@ -98,39 +104,27 @@ class DatabaseService {
         .snapshots();
   }
 
-  Future<void> addMessage(Conversation conversation, ChatItem chatItem,
-      {GeneratedQuestion question}) async {
-    if (chatItem.question == "") {
-      Map<String, dynamic> data = chatItem.toJsonMessage();
+  Future<void> addMessage(Conversation conversation, Message message,
+      GeneratedQuestion question) async {
+    if (question.answered) {
       await _firestore
-          .collection("conversations/${conversation.id}/chatItems")
-          .add(data)
-          .then((value) => print("New message created!"));
+          .collection("conversations/${conversation.id}/questions")
+          .doc(question.id)
+          .update({
+        "replies": FieldValue.arrayUnion([message.toMap()])
+      }).then((value) => print("New reply created!"));
     } else {
-      Map<String, dynamic> responseData = chatItem.toJsonResponse();
-      if (question.answered) {
-        await _firestore
-            .collection(
-                "conversations/${conversation.id}/decks/${chatItem.deck}/questions")
-            .doc(chatItem.question)
-            .update({
-          "replies": FieldValue.arrayUnion([responseData])
-        }).then((value) => print("New reply created!"));
-      } else {
-        bool answered =
-            (question.answers.length + 1 == conversation.users.length);
-        print(
-            "Users: ${conversation.users.length}. Answers: ${question.answers.length + 1}. $answered.");
-        await _firestore
-            .collection(
-                "conversations/${conversation.id}/decks/${chatItem.deck}/questions")
-            .doc(chatItem.question)
-            .update({
-          "answers": FieldValue.arrayUnion([responseData]),
-          "answered":
-              (question.answers.length + 1 == conversation.users.length),
-        }).then((value) => print("New answer created!"));
-      }
+      bool answered =
+          (question.answers.length + 1 == conversation.users.length);
+      print(
+          "Users: ${conversation.users.length}. Answers: ${question.answers.length + 1}. $answered.");
+      await _firestore
+          .collection("conversations/${conversation.id}/questions")
+          .doc(question.id)
+          .update({
+        "answers": FieldValue.arrayUnion([message.toMap()]),
+        "answered": answered,
+      }).then((value) => print("New answer created!"));
     }
   }
 

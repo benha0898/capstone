@@ -15,65 +15,71 @@ class DeckViewScreen extends StatefulWidget {
 class _DeckViewScreenState extends State<DeckViewScreen> {
   @override
   Widget build(BuildContext context) {
-    return AlertDialog(
-      backgroundColor: widget.deck.color,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(20.0),
+    return Container(
+      decoration: BoxDecoration(
+        image: MyTheme.backgroundImage,
       ),
-      title: Align(
-        alignment: Alignment.bottomLeft,
-        child: IconButton(
-            padding: EdgeInsets.zero,
-            alignment: Alignment.centerLeft,
-            highlightColor: Colors.transparent,
-            icon: Icon(
-              Icons.arrow_back_ios_sharp,
-              color: MyTheme.mainColor,
-            ),
-            onPressed: () {
-              Navigator.of(context).pop();
-            }),
-      ),
-      content: SingleChildScrollView(
-        child: AspectRatio(
-          aspectRatio: 5 / 6,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              Text(
-                widget.deck.name,
-                style: Theme.of(context).textTheme.headline2,
-              ),
-              Text(
-                widget.deck.description,
-              ),
-            ],
-          ),
-        ),
-      ),
-      actionsPadding: EdgeInsets.symmetric(horizontal: 8.0),
-      actions: [
-        RaisedButton(
-          color: MyTheme.whiteColor,
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        body: AlertDialog(
+          backgroundColor: widget.deck.color,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(5.0),
+            borderRadius: BorderRadius.circular(20.0),
           ),
-          child: Text("Select"),
-          onPressed: () {
-            print("open invite friends screen");
+          title: Align(
+            alignment: Alignment.bottomLeft,
+            child: IconButton(
+                padding: EdgeInsets.zero,
+                alignment: Alignment.centerLeft,
+                highlightColor: Colors.transparent,
+                icon: Icon(
+                  Icons.arrow_back_ios_sharp,
+                  color: MyTheme.mainColor,
+                ),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                }),
+          ),
+          content: SingleChildScrollView(
+            child: AspectRatio(
+              aspectRatio: 5 / 6,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  Text(
+                    widget.deck.name,
+                    style: Theme.of(context).textTheme.headline2,
+                  ),
+                  Text(
+                    widget.deck.description,
+                  ),
+                ],
+              ),
+            ),
+          ),
+          actionsPadding: EdgeInsets.symmetric(horizontal: 8.0),
+          actions: [
+            RaisedButton(
+              color: MyTheme.whiteColor,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(5.0),
+              ),
+              child: Text("Select"),
+              onPressed: () {
+                print("open invite friends screen");
             Navigator.of(context)
               .push(MaterialPageRoute(
                 builder: (_) => SearchScreen(
                   deck: widget.deck,
                 ),
                   ));
-          },
+              },
+            ),
+          ],
         ),
-      ],
+      ),
     );
-  }
-
   // _showDeckDescription(BuildContext context, Deck deck) {
   //   showDialog(
   //       context: context,
@@ -102,4 +108,5 @@ class _DeckViewScreenState extends State<DeckViewScreen> {
   //         );
   //       });
   // }
+}
 }

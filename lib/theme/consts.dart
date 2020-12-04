@@ -16,7 +16,7 @@ class MyTheme {
   static DecorationImage backgroundImage = DecorationImage(
     image: AssetImage("assets/background-image.png"),
     colorFilter: ColorFilter.mode(Color(0XFF525252), BlendMode.multiply),
-    fit: BoxFit.fitWidth,
+    fit: BoxFit.cover,
     repeat: ImageRepeat.repeatY,
   );
   static ThemeData themeData = ThemeData(

@@ -1,4 +1,6 @@
+import 'package:CapstoneProject/theme/consts.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
 
 class GeneratedDeck {
   final String id;
@@ -11,6 +13,7 @@ class GeneratedDeck {
   final bool completed;
   final List<int> questionsOrder;
   final int questionsGenerated;
+  final Color color;
 
   GeneratedDeck({
     this.id,
@@ -23,9 +26,11 @@ class GeneratedDeck {
     timestamp,
     completed,
     questionsGenerated,
+    color,
   })  : this.timestamp = timestamp ?? DateTime.now(),
         this.completed = completed ?? false,
-        this.questionsGenerated = questionsGenerated ?? 0;
+        this.questionsGenerated = questionsGenerated ?? 0,
+        this.color = MyTheme.greyColor;
 
   GeneratedDeck.fromSnapshot(DocumentSnapshot snapshot)
       : this.id = snapshot.id,
@@ -37,5 +42,6 @@ class GeneratedDeck {
         this.totalQuestions = snapshot["totalQuestions"],
         this.completed = snapshot["completed"],
         this.questionsOrder = snapshot["questionsOrder"].cast<int>(),
-        this.questionsGenerated = snapshot["questionsGenerated"];
+        this.questionsGenerated = snapshot["questionsGenerated"],
+        this.color = Color(snapshot["color"]).withOpacity(1);
 }
