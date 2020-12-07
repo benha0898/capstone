@@ -45,6 +45,12 @@ class MyTheme {
         fontSize: 24.0,
         fontWeight: FontWeight.w400,
       ),
+      headline5: TextStyle(
+        fontFamily: "DottiesVanilla",
+        fontSize: 14.0,
+        fontWeight: FontWeight.w400,
+        color: MyTheme.whiteColor,
+      ),
       bodyText2: TextStyle(
         fontSize: 14.0,
         fontWeight: FontWeight.normal,

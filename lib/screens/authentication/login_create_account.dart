@@ -2,6 +2,7 @@
 import 'package:CapstoneProject/app.dart';
 import 'package:CapstoneProject/screens/services/auth.dart';
 import 'package:CapstoneProject/screens/services/database.dart';
+import 'package:CapstoneProject/screens/services/helper_functions.dart';
 import 'package:CapstoneProject/theme/consts.dart';
 import 'package:flutter/material.dart';
 //import 'package:firebase_auth/firebase_auth.dart';
@@ -17,14 +18,31 @@ class _LoginCreateAccountState extends State<LoginCreateAccount> {
 
   AuthMethods authMethods = new AuthMethods();
   DatabaseMethods databaseMethods = new DatabaseMethods();
+  HelperFunctions helperFunctions = new HelperFunctions();
 
   final formKey = GlobalKey<FormState>();
   TextEditingController emailController = new TextEditingController();
   TextEditingController passwordController = new TextEditingController();
   TextEditingController usernameController = new TextEditingController();
+  TextEditingController firstNameController = new TextEditingController();
+  TextEditingController lastNameController = new TextEditingController();
+
 
   signUpUser(){
     if(formKey.currentState.validate()){
+
+      Map<String, dynamic> userInfoMap = {
+          "username" : usernameController.text,
+          "email" : emailController.text,
+          "firstName" : firstNameController.text,
+          "lastName" : lastNameController.text,
+          "profilePicture" : "",
+          "conversations": [],
+      };
+
+      //HelperFunctions.saveUserNameSP(usernameController.text);
+      //HelperFunctions.saveUserEmailSP(emailController.text);
+
       setState(() {
         isLoading = true;
       });
@@ -32,16 +50,9 @@ class _LoginCreateAccountState extends State<LoginCreateAccount> {
       authMethods.signUpWithEmailAndPassword(emailController.text, passwordController.text).then((val){
         print("${val.userId}");
 
-        Map<String, dynamic> userInfoMap = {
-          "username" : usernameController.text,
-          "email" : emailController.text,
-          "firstName" : "",
-          "lastName" : "",
-          "profilePicture" : "",
-          "conversations": [],
-        };
-
         databaseMethods.uploadUserInfo(userInfoMap);
+
+        //HelperFunctions.getUserLoggedInSP(true);
 
       Navigator.pushReplacement(
               context,
@@ -71,6 +82,24 @@ class _LoginCreateAccountState extends State<LoginCreateAccount> {
               child:
               Column(children: [
                 TextFormField(
+                  validator: (val){
+                    return val.length > 0 ? null : "Field cannot be empty";
+                  },
+                  controller: firstNameController,
+                  style: TextStyle(color: Colors.white),
+                  decoration: InputDecoration(
+                    hintText: "First Name"),
+                ),
+                TextFormField(
+                  validator: (val){
+                    return val.length > 0 ? null : "Field cannot be empty";
+                  },
+                  controller: lastNameController,
+                  style: TextStyle(color: Colors.white),
+                  decoration: InputDecoration(
+                    hintText: "Last Name"),
+                ),
+                TextFormField(
                   controller: usernameController,
                   style: TextStyle(color: Colors.white),
                   decoration: InputDecoration(
@@ -84,9 +113,6 @@ class _LoginCreateAccountState extends State<LoginCreateAccount> {
                   style: TextStyle(color: Colors.white),
                   decoration: InputDecoration(
                     hintText: "email",
-                    hintStyle: TextStyle(
-                      color: Colors.grey
-                    ),
                     ),
                 ),
                 TextFormField(
@@ -96,7 +122,7 @@ class _LoginCreateAccountState extends State<LoginCreateAccount> {
                   controller: passwordController,
                   obscureText: true,
                   style: TextStyle(color: Colors.white),
-                  decoration: InputDecoration(hintText: "Password"),
+                  decoration: InputDecoration(hintText: "password"),
                 ),
               ]),
               ),
