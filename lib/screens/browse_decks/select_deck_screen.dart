@@ -173,6 +173,20 @@ class _SelectDeckScreenState extends State<SelectDeckScreen> {
                                       ));
                                     },
                                     child: Container(
+                                      decoration: (deck.graphic != "")
+                                          ? BoxDecoration(
+                                              image: DecorationImage(
+                                                image: Image.network(
+                                                  deck.graphic,
+                                                ).image,
+                                              ),
+                                              borderRadius:
+                                                  BorderRadius.circular(20.0),
+                                            )
+                                          : BoxDecoration(
+                                              color: deck.color,
+                                              borderRadius:
+                                                  BorderRadius.circular(20.0)),
                                       padding: EdgeInsets.all(12.0),
                                       child: Align(
                                         alignment: Alignment.bottomLeft,
