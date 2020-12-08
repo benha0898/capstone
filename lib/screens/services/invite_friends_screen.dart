@@ -60,6 +60,7 @@ class _InviteFriendsState extends State<InviteFriends> {
                     .push(MaterialPageRoute(builder: (_) => SearchFriends()));
               },
             ),
+            
             title: Text(
               'Invite Friends',
               style: TextStyle(

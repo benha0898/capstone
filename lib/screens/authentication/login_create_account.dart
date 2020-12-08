@@ -1,6 +1,7 @@
 //import 'package:CapstoneProject/widgets/widgets.dart';
 import 'package:CapstoneProject/app.dart';
 import 'package:CapstoneProject/screens/services/auth.dart';
+import 'package:CapstoneProject/screens/services/constants.dart';
 import 'package:CapstoneProject/screens/services/database.dart';
 import 'package:CapstoneProject/screens/services/helper_functions.dart';
 import 'package:CapstoneProject/theme/consts.dart';
@@ -27,6 +28,12 @@ class _LoginCreateAccountState extends State<LoginCreateAccount> {
   TextEditingController firstNameController = new TextEditingController();
   TextEditingController lastNameController = new TextEditingController();
 
+  setConstants(){
+    Constants.myFirstName = firstNameController.text;
+    Constants.myLastName = lastNameController.text;
+    Constants.myEmail = emailController.text;
+    Constants.myUsername = usernameController.text;
+  }
 
   signUpUser(){
     if(formKey.currentState.validate()){
@@ -42,13 +49,15 @@ class _LoginCreateAccountState extends State<LoginCreateAccount> {
 
       //HelperFunctions.saveUserNameSP(usernameController.text);
       //HelperFunctions.saveUserEmailSP(emailController.text);
-
+      setConstants();
+      
       setState(() {
         isLoading = true;
       });
 
       authMethods.signUpWithEmailAndPassword(emailController.text, passwordController.text).then((val){
         print("${val.userId}");
+        print(Constants.myUsername);
 
         databaseMethods.uploadUserInfo(userInfoMap);
 
