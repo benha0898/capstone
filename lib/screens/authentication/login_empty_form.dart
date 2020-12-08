@@ -15,7 +15,6 @@ class LoginEmptyForm extends StatefulWidget {
 }
 
 class _LoginEmptyFormState extends State<LoginEmptyForm> {
-
   bool isLoading = false;
 
   AuthMethods authMethods = new AuthMethods();
@@ -49,8 +48,9 @@ class _LoginEmptyFormState extends State<LoginEmptyForm> {
         if(val != null){
           //HelperFunctions.saveUserLoggedInSP(true);
         Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(builder: (context) => CustomNavigatorHomePage(),
+            context,
+            MaterialPageRoute(
+              builder: (context) => CustomNavigatorHomePage(),
             ));
         }
       });
@@ -124,12 +124,7 @@ class _LoginEmptyFormState extends State<LoginEmptyForm> {
                     ]),
                     borderRadius: BorderRadius.circular(30),
                   ),
-                  child: Text("Submit", style: TextStyle(color: Colors.black)),
-                ),
-              ),
-              SizedBox(height: 50),
-            ],
-          ),
-        ));
+                )),
+            ])));
   }
 }

@@ -1,5 +1,3 @@
-
-
 import 'package:CapstoneProject/db.dart';
 import 'package:CapstoneProject/models/conversation.dart';
 import 'package:CapstoneProject/screens/services/database.dart';
@@ -24,7 +22,6 @@ class _BrowseDecksScreenState extends State<BrowseDecksScreen> {
   List<QueryDocumentSnapshot> _categories = List<QueryDocumentSnapshot>();
   QueryDocumentSnapshot _selectedCategory;
 
-  
   //List<QueryDocumentSnapshot> _friends = List<QueryDocumentSnapshot>();
   //List<QueryDocumentSnapshot> _selectedFriends = List<QueryDocumentSnapshot>();
   TextEditingController usernameController = new TextEditingController();
@@ -51,6 +48,7 @@ class _BrowseDecksScreenState extends State<BrowseDecksScreen> {
                   List.generate(_categories.length, (index) => (index == 0));
             }));
   }
+
 /*
 getFriends() async {
     await FirebaseFirestore.instance
@@ -104,7 +102,7 @@ getFriends() async {
             onPressed: () {},
           ),
         ],
-      ),    
+      ),
       body: Column(
         children: [
           Padding(
@@ -142,7 +140,7 @@ getFriends() async {
                         });
                       },
                     )
-                  : Text("Loading..."),
+                  : SizedBox(),
             ),
           ),
           _selectedCategory != null
@@ -150,7 +148,8 @@ getFriends() async {
                   child: StreamBuilder(
                       stream: db.getDecksByCategory(_selectedCategory['name']),
                       builder: (context, snapshot) {
-                        if (!snapshot.hasData) return Text('Loading...');
+                        if (!snapshot.hasData)
+                          return Center(child: CircularProgressIndicator());
                         return GridView.builder(
                           itemCount: snapshot.data.documents.length,
                           padding: EdgeInsets.symmetric(horizontal: 50.0),
@@ -200,7 +199,7 @@ getFriends() async {
                         );
                       }),
                 )
-              : Text("Loading..."),
+              : Expanded(child: Center(child: CircularProgressIndicator())),
         ],
       ),
     );
@@ -386,4 +385,4 @@ class SearchTile extends StatelessWidget {
       );
     }
     */
-  }
+}

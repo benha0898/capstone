@@ -1,12 +1,17 @@
 import 'package:CapstoneProject/screens/services/invite_friends_screen.dart';
+import 'package:CapstoneProject/models/conversation.dart';
+import 'package:CapstoneProject/models/user.dart';
 import 'package:CapstoneProject/models/deck.dart';
 import 'package:CapstoneProject/theme/consts.dart';
 import 'package:flutter/material.dart';
 
 class DeckViewScreen extends StatefulWidget {
   final Deck deck;
+  final User me;
+  final Conversation conversation;
 
-  const DeckViewScreen({Key key, this.deck}) : super(key: key);
+  const DeckViewScreen({Key key, this.deck, this.me, this.conversation})
+      : super(key: key);
 
   @override
   _DeckViewScreenState createState() => _DeckViewScreenState();
@@ -42,7 +47,7 @@ class _DeckViewScreenState extends State<DeckViewScreen> {
           ),
           content: SingleChildScrollView(
             child: AspectRatio(
-              aspectRatio: 5 / 6,
+              aspectRatio: 5 / 7,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.end,
@@ -51,9 +56,62 @@ class _DeckViewScreenState extends State<DeckViewScreen> {
                     widget.deck.name,
                     style: Theme.of(context).textTheme.headline2,
                   ),
+                  SizedBox(height: 10),
                   Text(
                     widget.deck.description,
                   ),
+                  SizedBox(height: 20),
+                  (widget.conversation != null)
+                      ? Stack(
+                          children: [
+                            FractionallySizedBox(
+                              widthFactor: 1.0,
+                              child: Container(
+                                alignment: Alignment.center,
+                                padding: EdgeInsets.all(20),
+                                decoration: BoxDecoration(
+                                  color: MyTheme.whiteColor,
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(25.0)),
+                                ),
+                                child: Text(
+                                  "Use Deck",
+                                  style: TextStyle(
+                                    fontSize: 22.0,
+                                    color: Colors.black,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ),
+                            ),
+                            Positioned.fill(
+                              child: Material(
+                                color: Colors.transparent,
+                                child: InkWell(
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(25.0)),
+                                  onTap: () {
+                                    print("Hello");
+                                  },
+                                ),
+                              ),
+                            ),
+                          ],
+                        )
+                      : RaisedButton(
+                          color: MyTheme.whiteColor,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(5.0),
+                          ),
+                          child: Text("Select"),
+                          onPressed: () {
+                            print("open invite friends screen");
+                            Navigator.of(context).push(MaterialPageRoute(
+                              builder: (_) => InviteFriends(
+                                deck: widget.deck,
+                              ),
+                            ));
+                          }),
                 ],
               ),
             ),
@@ -80,33 +138,5 @@ class _DeckViewScreenState extends State<DeckViewScreen> {
         ),
       ),
     );
-  // _showDeckDescription(BuildContext context, Deck deck) {
-  //   showDialog(
-  //       context: context,
-  //       builder: (context) {
-  //         return AlertDialog(
-  //           title: Text(
-  //             deck.name,
-  //           ),
-  //           content: Text(
-  //             deck.description,
-  //           ),
-  //           actions: [
-  //             FlatButton(
-  //               child: Text("Back"),
-  //               onPressed: () {
-  //                 Navigator.of(context).pop();
-  //               },
-  //             ),
-  //             FlatButton(
-  //               child: Text("Invite Players"),
-  //               onPressed: () {
-  //                 print("TODO");
-  //               },
-  //             ),
-  //           ],
-  //         );
-  //       });
-  // }
-}
+  }
 }

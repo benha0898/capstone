@@ -58,10 +58,10 @@ class DatabaseService {
     return _firestore.collection("categories").doc(id).get();
   }
 
-  Stream<QuerySnapshot> getQuestion(String cid) {
+  Stream<QuerySnapshot> getQuestions(String cid) {
     return _firestore
         .collection("conversations/$cid/questions")
-        .orderBy("timestamp", descending: true)
+        .orderBy("timestamp", descending: false)
         .snapshots();
   }
 
@@ -78,15 +78,6 @@ class DatabaseService {
         .snapshots();
   }
 
-  Stream<QuerySnapshot> getChatItems(String conversationId) {
-    return _firestore
-        .collection("conversations")
-        .doc(conversationId)
-        .collection("chatItems")
-        .orderBy("timestamp", descending: true)
-        .snapshots();
-  }
-
   Stream<QuerySnapshot> getPlayingDeck(String cid) {
     return _firestore
         .collection("conversations")
@@ -97,15 +88,9 @@ class DatabaseService {
         .snapshots();
   }
 
-  Stream<QuerySnapshot> questionAnswered(String cid, String did) {
-    return _firestore
-        .collection("conversations/$cid/decks/$did/questions")
-        .orderBy("timestamp")
-        .snapshots();
-  }
-
   Future<void> addMessage(Conversation conversation, Message message,
       GeneratedQuestion question) async {
+    // If question has been answered, addMessage adds a message to the "replies" array
     if (question.answered) {
       await _firestore
           .collection("conversations/${conversation.id}/questions")
@@ -113,11 +98,13 @@ class DatabaseService {
           .update({
         "replies": FieldValue.arrayUnion([message.toMap()])
       }).then((value) => print("New reply created!"));
-    } else {
+    }
+    // Otherwise, addMessage adds a message to the "answers" array
+    else {
       bool answered =
           (question.answers.length + 1 == conversation.users.length);
-      print(
-          "Users: ${conversation.users.length}. Answers: ${question.answers.length + 1}. $answered.");
+      // print(
+      //     "Users: ${conversation.users.length}. Answers: ${question.answers.length + 1}. $answered.");
       await _firestore
           .collection("conversations/${conversation.id}/questions")
           .doc(question.id)
@@ -128,8 +115,10 @@ class DatabaseService {
     }
   }
 
-  Future<void> addQuestion(String cid, GeneratedDeck deck) async {
+  Future<DocumentSnapshot> addQuestion(String cid, GeneratedDeck deck) async {
     DateTime now = DateTime.now();
+    DocumentReference newQuestionRef;
+    // 1. Get the next question text
     DocumentSnapshot deckQuery = await _firestore
         .collection("categories/${deck.categoryID}/decks")
         .doc(deck.deckID)
@@ -137,30 +126,25 @@ class DatabaseService {
     String questionText =
         deckQuery.data()["questions"][deck.questionsGenerated];
     print(questionText);
+    // 2. Prepare data to be added
     Map<String, dynamic> question = {
       "answered": false,
       "deck": deck.id,
+      "deckName": deck.name,
+      "totalQuestions": deck.totalQuestions,
+      "color": deck.color.value,
       "number": deck.questionsGenerated + 1,
       "text": questionText,
       "timestamp": now,
     };
+    // 3. Add question to conversations/questions subcollection
     await _firestore
-        .collection("conversations/$cid/decks/${deck.id}/questions")
+        .collection("conversations/$cid/questions")
         .add(question)
         .then((value) async {
-      print("New question added to conversations/decks/questions! ${value.id}");
-      Map<String, dynamic> chatItem = {
-        "deck": deck.id,
-        "question": value.id,
-        "sender": {
-          "id": "",
-          "firstName": "",
-          "lastName": "",
-          "profilePicture": "",
-        },
-        "text": "",
-        "timestamp": now,
-      };
+      print("New question added to conversations/questions! ${value.id}");
+      newQuestionRef = value;
+      // 4. Update "questionsGenerated" and "completed" fields in deck document
       await _firestore
           .collection("conversations/$cid/decks")
           .doc(deck.id)
@@ -169,11 +153,8 @@ class DatabaseService {
         "completed": (deck.questionsGenerated + 1 == deck.totalQuestions)
       }).then((value) async {
         print("Deck document ${deck.id} updated!");
-        await _firestore
-            .collection("conversations/$cid/chatItems")
-            .add(chatItem)
-            .then((value) => print("New chatItem added! ${value.id}"));
       });
     });
+    return newQuestionRef.get();
   }
 }

@@ -38,6 +38,8 @@ dependencies:
   flutter_automation: ^1.4.0
   shared_preferences: ^0.5.12+4
 
+  configurable_expansion_tile: ^1.0.0
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

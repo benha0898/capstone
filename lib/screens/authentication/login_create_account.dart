@@ -14,7 +14,6 @@ class LoginCreateAccount extends StatefulWidget {
 }
 
 class _LoginCreateAccountState extends State<LoginCreateAccount> {
-
   bool isLoading = false;
 
   AuthMethods authMethods = new AuthMethods();
@@ -55,7 +54,10 @@ class _LoginCreateAccountState extends State<LoginCreateAccount> {
         isLoading = true;
       });
 
-      authMethods.signUpWithEmailAndPassword(emailController.text, passwordController.text).then((val){
+      authMethods
+          .signUpWithEmailAndPassword(
+              emailController.text, passwordController.text)
+          .then((val) {
         print("${val.userId}");
         print(Constants.myUsername);
 
@@ -156,12 +158,7 @@ class _LoginCreateAccountState extends State<LoginCreateAccount> {
                     ]),
                     borderRadius: BorderRadius.circular(30),
                   ),
-                  child: Text("Submit", style: TextStyle(color: Colors.black)),
-                ),
-              ),
-              SizedBox(height: 50),
-            ],
-          ),
-        ));
+              )),
+          ])));
   }
 }

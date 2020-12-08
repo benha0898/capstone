@@ -81,35 +81,37 @@ class _ConversationsScreenState extends State<ConversationsScreen> {
           ),
         ],
       ),
-      body: Column(
-        children: [
-          // Container(
-          //   // Search bar
-          //   margin: EdgeInsets.all(16),
-          //   padding: EdgeInsets.all(6),
-          //   decoration: BoxDecoration(
-          //     color: Colors.black45,
-          //     borderRadius: BorderRadius.all(Radius.circular(10)),
-          //   ),
-          //   child: TextField(
-          //     decoration: InputDecoration(
-          //       prefixIcon: Icon(
-          //         Icons.search,
-          //         color: Colors.white30,
-          //       ),
-          //       hintText: "Search",
-          //       hintStyle: TextStyle(
-          //         color: Colors.white30,
-          //       ),
-          //     ),
-          //   ),
-          // ),
-          (me == null)
-              ? Text("Loading...")
-              : StreamBuilder(
+      body: (me == null)
+          ? Center(child: CircularProgressIndicator())
+          : Column(
+              children: [
+                // Container(
+                //   // Search bar
+                //   margin: EdgeInsets.all(16),
+                //   padding: EdgeInsets.all(6),
+                //   decoration: BoxDecoration(
+                //     color: Colors.black45,
+                //     borderRadius: BorderRadius.all(Radius.circular(10)),
+                //   ),
+                //   child: TextField(
+                //     decoration: InputDecoration(
+                //       prefixIcon: Icon(
+                //         Icons.search,
+                //         color: Colors.white30,
+                //       ),
+                //       hintText: "Search",
+                //       hintStyle: TextStyle(
+                //         color: Colors.white30,
+                //       ),
+                //     ),
+                //   ),
+                // ),
+                StreamBuilder(
                   stream: db.getConversations(me),
                   builder: (context, snapshot) {
-                    if (!snapshot.hasData) return Text("Loading...");
+                    if (!snapshot.hasData)
+                      return Expanded(
+                          child: Center(child: CircularProgressIndicator()));
                     List<Conversation> conversations = List.generate(
                         snapshot.data.documents.length,
                         (index) => Conversation.fromSnapshot(
@@ -212,8 +214,8 @@ class _ConversationsScreenState extends State<ConversationsScreen> {
                     );
                   },
                 ),
-        ],
-      ),
+              ],
+            ),
     );
   }
 
