@@ -37,6 +37,8 @@ dependencies:
   flutter_spinkit: ^4.1.2+1
   flutter_automation: ^1.4.0
 
+  configurable_expansion_tile: ^1.0.0
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
