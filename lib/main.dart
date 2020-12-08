@@ -1,3 +1,4 @@
+import 'package:CapstoneProject/app.dart';
 import 'package:CapstoneProject/screens/authentication/login_main.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -32,7 +33,7 @@ class MyApp extends StatelessWidget {
                         child: Text(snapshot.error.toString()),
                       )
                     : (snapshot.connectionState == ConnectionState.done)
-                        ? LoginMain()
+                        ? CustomNavigatorHomePage()
                         : Center(
                             child: Text(
                               "Loading...",

@@ -68,7 +68,7 @@ class _SearchScreenState extends State<SearchScreen> {
       ),
       content: SingleChildScrollView(
         child: AspectRatio(
-          aspectRatio: 5 / 6,
+          aspectRatio: 5 / 7,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.start,
@@ -78,57 +78,57 @@ class _SearchScreenState extends State<SearchScreen> {
                 style: Theme.of(context).textTheme.headline2,
               ),
               Expanded(
-                child:
-              ListView.builder(
-                      //shrinkWrap: true,
-                      itemCount: friendlist.length,
-                      itemBuilder: (context, index) {
-                        return ListTile(
-                          title: Text(friendlist[index].get('username')),
-                          leading: IconButton(
-                            icon: Icon(FlutterIcons.add_circle_outline),
-                            onPressed: () {
-                              print("user: ${friendlist[index].get('username')} clicked");
-                            },
-                          ),
-                        );
-                      }),
+                child: ListView.builder(
+                    //shrinkWrap: true,
+                    itemCount: friendlist.length,
+                    itemBuilder: (context, index) {
+                      return ListTile(
+                        title: Text(friendlist[index].get('username')),
+                        leading: IconButton(
+                          icon: Icon(FlutterIcons.add_circle_outline),
+                          onPressed: () {
+                            print(
+                                "user: ${friendlist[index].get('username')} clicked");
+                          },
+                        ),
+                      );
+                    }),
               ),
               Container(
-                  child: Column(
-                    children: [
-                Text(
-                  'Deck Selected: ${widget.deck.name}',
+                child: Column(
+                  children: [
+                    Text(
+                      'Deck Selected: ${widget.deck.name}',
+                    ),
+                    ButtonTheme(
+                      minWidth: 30.0,
+                      height: 30.0,
+                      child: RaisedButton(
+                        onPressed: () {
+                          print('go back to card description');
+                        },
+                        child: Text("edit"),
+                      ),
+                    ),
+                    Text("Friends Selected: ")
+                  ],
                 ),
-                ButtonTheme(
-                  minWidth: 30.0,
-                  height: 30.0,
-                  child: RaisedButton(
-                    onPressed: () {
-                      print('go back to card description');
-                    },
-                    child: Text("edit"),
-                  ),
+              ),
+              SizedBox(height: 20),
+              RaisedButton(
+                color: MyTheme.whiteColor,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(5.0),
                 ),
-                Text("Friends Selected: ")
-              ]))
+                child: Text("Start Playing"),
+                onPressed: () {
+                  print('start new conversation');
+                },
+              ),
             ],
           ),
         ),
       ),
-      actionsPadding: EdgeInsets.symmetric(horizontal: 8.0),
-      actions: [
-        RaisedButton(
-          color: MyTheme.whiteColor,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(5.0),
-          ),
-          child: Text("Start Playing"),
-          onPressed: () {
-            print('start new conversation');
-          },
-        ),
-      ],
     );
   }
 }

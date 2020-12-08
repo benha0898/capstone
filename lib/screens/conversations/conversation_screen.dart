@@ -4,6 +4,7 @@ import 'package:CapstoneProject/db.dart';
 import 'package:CapstoneProject/models/generated_deck.dart';
 import 'package:CapstoneProject/models/generated_question.dart';
 import 'package:CapstoneProject/models/user.dart';
+import 'package:CapstoneProject/screens/browse_decks/select_deck_screen.dart';
 import 'package:CapstoneProject/screens/conversations/question_card_expanded.dart';
 import 'package:CapstoneProject/theme/consts.dart';
 import 'package:CapstoneProject/models/conversation.dart';
@@ -93,7 +94,15 @@ class _ConversationScreenState extends State<ConversationScreen> {
               if (snapshot.data.docs.length == 0)
                 return Center(
                   child: RaisedButton(
-                    onPressed: () => print("Start new conversation!"),
+                    onPressed: () {
+                      print("Start new conversation!");
+                      Navigator.of(context).push(MaterialPageRoute(
+                        builder: (_) => SelectDeckScreen(
+                          me: widget.me,
+                          conversation: widget.conversation,
+                        ),
+                      ));
+                    },
                     child: Text("Start new conversation"),
                   ),
                 );
