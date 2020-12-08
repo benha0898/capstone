@@ -4,7 +4,6 @@ import 'theme/consts.dart';
 
 import 'screens/browse_decks/browse_decks_screen.dart';
 import 'screens/conversations/conversations_screen.dart';
-//import 'screens/home_screen.dart';
 import 'screens/settings/settings_screen.dart';
 
 class CustomNavigatorHomePage extends StatefulWidget {

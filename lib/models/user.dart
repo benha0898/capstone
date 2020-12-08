@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 class User {
   String id;
+  String email;
   String firstName;
   String lastName;
   String profilePicture;
@@ -9,6 +10,7 @@ class User {
 
   User(
       {this.id,
+      this.email,
       this.firstName,
       this.lastName,
       this.profilePicture,
@@ -16,6 +18,7 @@ class User {
 
   User.fromSnapshot(DocumentSnapshot snapshot)
       : id = snapshot.id,
+      email = snapshot["email"],
         firstName = snapshot["firstName"],
         lastName = snapshot["lastName"],
         profilePicture = snapshot["profilePicture"],
@@ -27,6 +30,7 @@ class User {
 
   Map<String, String> get info => {
         "id": this.id,
+        "email" : this.email,
         "firstName": this.firstName,
         "lastName": this.lastName,
         "profilePicture": this.profilePicture,

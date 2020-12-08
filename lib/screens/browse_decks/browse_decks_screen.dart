@@ -1,4 +1,9 @@
+
+
 import 'package:CapstoneProject/db.dart';
+import 'package:CapstoneProject/models/conversation.dart';
+import 'package:CapstoneProject/screens/services/database.dart';
+//import 'package:CapstoneProject/theme/flutter_icons.dart';
 import 'package:CapstoneProject/models/deck.dart';
 import 'package:CapstoneProject/screens/browse_decks/deck_view_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -19,11 +24,19 @@ class _BrowseDecksScreenState extends State<BrowseDecksScreen> {
   List<QueryDocumentSnapshot> _categories = List<QueryDocumentSnapshot>();
   QueryDocumentSnapshot _selectedCategory;
 
+  
+  //List<QueryDocumentSnapshot> _friends = List<QueryDocumentSnapshot>();
+  //List<QueryDocumentSnapshot> _selectedFriends = List<QueryDocumentSnapshot>();
+  TextEditingController usernameController = new TextEditingController();
+  DatabaseMethods databaseMethods = new DatabaseMethods();
+  Conversation newConversation;
+
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       getData();
+      //getFriends();
     });
   }
 
@@ -38,7 +51,16 @@ class _BrowseDecksScreenState extends State<BrowseDecksScreen> {
                   List.generate(_categories.length, (index) => (index == 0));
             }));
   }
-
+/*
+getFriends() async {
+    await FirebaseFirestore.instance
+        .collection("registeredUser")
+        .get()
+        .then((querySnapshot) {
+              _friends = querySnapshot.docs;
+            });
+  }
+*/
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -82,7 +104,7 @@ class _BrowseDecksScreenState extends State<BrowseDecksScreen> {
             onPressed: () {},
           ),
         ],
-      ),
+      ),    
       body: Column(
         children: [
           Padding(
@@ -183,62 +205,185 @@ class _BrowseDecksScreenState extends State<BrowseDecksScreen> {
       ),
     );
   }
+/*
+  _showDeckDescription(BuildContext context, DocumentSnapshot deck, List<DocumentSnapshot> friends){
+    showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: Text(
+              deck['name'],
+            ),
+            content: Text(
+              deck['description'],
+            ),
+            actions: [
+              FlatButton(
+                child: Text("Back"),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+              FlatButton(
+                child: Text("Invite Players"),
+                onPressed: () {
+                  print("This should show invite players pop up");
+                  _invitePlayers(context, deck, friends);
+                },
+              ),
+            ],
+          );
+        });
+  }
 
-  // _showDeckDescription(BuildContext context, Deck deck) {
-  //   showDialog(
-  //       context: context,
-  //       builder: (context) {
-  //         return AlertDialog(
-  //           backgroundColor: deck.color,
-  //           shape: RoundedRectangleBorder(
-  //             borderRadius: BorderRadius.circular(20.0),
-  //           ),
-  //           title: Align(
-  //             alignment: Alignment.bottomLeft,
-  //             child: IconButton(
-  //                 padding: EdgeInsets.zero,
-  //                 alignment: Alignment.centerLeft,
-  //                 highlightColor: Colors.transparent,
-  //                 icon: Icon(
-  //                   Icons.arrow_back_ios_sharp,
-  //                   color: MyTheme.mainColor,
-  //                 ),
-  //                 onPressed: () {
-  //                   Navigator.of(context).pop();
-  //                 }),
-  //           ),
-  //           content: SingleChildScrollView(
-  //             child: AspectRatio(
-  //               aspectRatio: 5 / 6,
-  //               child: Column(
-  //                 crossAxisAlignment: CrossAxisAlignment.center,
-  //                 mainAxisAlignment: MainAxisAlignment.end,
-  //                 children: [
-  //                   Text(
-  //                     deck.name,
-  //                     style: Theme.of(context).textTheme.headline2,
-  //                   ),
-  //                   Text(
-  //                     deck.description,
-  //                   ),
-  //                 ],
-  //               ),
-  //             ),
-  //           ),
-  //           actionsPadding: EdgeInsets.symmetric(horizontal: 8.0),
-  //           actions: [
-  //             RaisedButton(
-  //               color: MyTheme.whiteColor,
-  //               shape: RoundedRectangleBorder(
-  //                 borderRadius: BorderRadius.circular(5.0),
-  //               ),
-  //               child: Text("Select"),
-  //               onPressed: () {
-  //                 print("TODO");
-  //               },
-  //             ),
-  //           ],
-  //         );
-  //       });
-  // }
+  _invitePlayers(BuildContext context, DocumentSnapshot deck, List<DocumentSnapshot> friends){
+    showDialog(
+      context: context,
+      builder: (context){
+        return AlertDialog(
+          title: ListTile(
+            title: Text('Add Friends'),
+            leading: FlatButton(
+              onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => BrowseDecksScreen()),
+            );
+          }, child: Text('Cancel'),),
+            trailing: 
+            IconButton(
+              icon: Icon(FlutterIcons.search),
+              onPressed: (){
+                _searchplayers(context);
+              }
+              )),
+          content: 
+          Column(
+          children: [
+          Container(
+            height: 320.0,
+            width: 400.0,
+            child: ListView.builder(
+              shrinkWrap: true,
+              itemCount: friends.length,
+              itemBuilder: (context, index){
+                return ListTile(
+                  title: Text(friends[index].get('username')),
+                  leading:IconButton(
+                    icon: Icon(FlutterIcons.add_circle_outline),
+                    onPressed: () {
+                      _selectedFriends.add(friends[index]);
+                      print(friends[index].get('username'));
+                      print(_selectedFriends);
+                    }),
+                );
+              }),
+          ),
+          Container(
+            height: 100.0,
+            width: 400.0,
+            child: Column(
+              children: [
+              Text('Deck Selected: ${deck['name']}'),
+              ButtonTheme(
+                minWidth: 30.0,
+                height: 30.0,
+                child: RaisedButton(
+                  onPressed: (){
+                    Navigator.of(context).pop();
+                  },
+                  child: Text('edit'))
+              ),
+              Text('Friends Selected: '),
+            ],),
+          )
+          ],),
+          actions: [
+            FlatButton(
+              onPressed: (){
+                Navigator.of(context).pop();
+              },
+              child: Text('Back'),),
+            FlatButton(
+              child: Text('Start Playing'),
+              onPressed: null,),
+          ],
+        );
+      }
+    );
+  }
+
+QuerySnapshot searchSnapshot;
+  initiateSearch(){
+    databaseMethods.getUserbyUsername(usernameController.text)
+    .then((val){
+      print(val.toString());
+      setState(() {
+         searchSnapshot = val;
+      });
+    });
+  }
+
+  _searchplayers(BuildContext context){
+    showDialog(
+      context: context,
+      builder: (context){
+        return AlertDialog(
+          title: ListTile(
+            title: TextFormField(
+              controller: usernameController,
+              style: TextStyle(color: Colors.blueAccent),
+              decoration: InputDecoration(
+                hintText: "search username")
+            ),
+            trailing: 
+            IconButton(
+              icon: Icon(FlutterIcons.search),
+              onPressed: (){
+                initiateSearch();
+                }),
+            ),
+        content: searchSnapshot != null ?
+        Container(
+          height: 400.0,
+          width: 400.0,
+          child: ListView.builder(
+          itemCount: searchSnapshot.docs.length,
+          itemBuilder: (context, index){
+            return SearchTile(
+              userUsername: searchSnapshot.docs[index].get('username'),
+              userEmail: searchSnapshot.docs[index].get('email')
+            );
+          })
+         ) : Container(),
+        );
+    });
+  }
 }
+
+class SearchTile extends StatelessWidget {
+    final String userUsername;
+    final String userEmail;
+    SearchTile({this.userUsername, this.userEmail});
+
+    @override
+    Widget build(BuildContext context) {
+      return Container(
+        child: Row(
+          children: [
+            Column(
+              children: [
+                Text(userUsername),
+                Text(userEmail),
+                ],
+              ),
+              Spacer(),
+              Container(
+                
+              )
+          ],
+        )
+      );
+    }
+    */
+  }

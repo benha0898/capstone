@@ -1,7 +1,10 @@
 //import 'package:CapstoneProject/widgets/widgets.dart';
-import 'package:CapstoneProject/screens/user_file/user_search.dart';
+import 'package:CapstoneProject/screens/services/auth.dart';
+//import 'package:CapstoneProject/screens/user_file/user_search.dart';
 import 'package:CapstoneProject/theme/consts.dart';
 import 'package:flutter/material.dart';
+
+import '../../app.dart';
 
 class LoginEmptyForm extends StatefulWidget {
   @override
@@ -9,21 +12,59 @@ class LoginEmptyForm extends StatefulWidget {
 }
 
 class _LoginEmptyFormState extends State<LoginEmptyForm> {
+
+  bool isLoading = false;
+
+  AuthMethods authMethods = new AuthMethods();
+  final formKey = GlobalKey<FormState>();
+  TextEditingController passwordController = new TextEditingController();
+  TextEditingController emailController = new TextEditingController();
+
+  signInUser(){
+    if(formKey.currentState.validate()){
+      setState(() {
+        isLoading = true;
+      });
+
+      authMethods.signInWithEmailAndPassword(emailController.text, passwordController.text).then((val){
+        print("${val.userId}");
+
+        Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => CustomNavigatorHomePage(),
+            ));
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         backgroundColor: MyTheme.mainColor,
-        body: Container(
+        body: isLoading
+        ?Container(
+          child: Center(
+            child: CircularProgressIndicator()),
+            )
+        :Container(
           alignment: Alignment.bottomCenter,
           padding: EdgeInsets.symmetric(horizontal: 24),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              TextField(
+              TextFormField(
+                validator: (val){
+                    return RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+").hasMatch(val) ? null : "Please provide valid email";
+                  },
+                controller: emailController,
                 style: TextStyle(color: Colors.white),
-                decoration: InputDecoration(hintText: "Username"),
+                decoration: InputDecoration(hintText: "email"),
               ),
-              TextField(
+              TextFormField(
+                validator: (val){
+                    return val.length > 6 ? null : "Password needs to be longer than 6 characters";
+                  },
+                controller: passwordController,
                 obscureText: true,
                 style: TextStyle(color: Colors.white),
                 decoration: InputDecoration(hintText: "Password"),
@@ -41,9 +82,9 @@ class _LoginEmptyFormState extends State<LoginEmptyForm> {
               ),
               GestureDetector(
                 onTap: () {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(builder: (_) => UserSearch()),
-                  );
+                  print(emailController.text);
+                  signInUser();
+                  print(passwordController.text);
                 },
                 child: Container(
                   alignment: Alignment.center,
