@@ -9,6 +9,10 @@ import 'package:intl/intl.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 
 class ConversationsScreen extends StatefulWidget {
+  final User me;
+
+  const ConversationsScreen({Key key, this.me}) : super(key: key);
+
   @override
   _ConversationsScreenState createState() => _ConversationsScreenState();
 }
@@ -70,6 +74,7 @@ class _ConversationsScreenState extends State<ConversationsScreen> {
           style: TextStyle(fontSize: 20),
         ),
         centerTitle: true,
+        leading: SizedBox(),
         actions: [
           IconButton(
             icon: Icon(

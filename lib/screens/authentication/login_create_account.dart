@@ -1,5 +1,9 @@
 //import 'package:CapstoneProject/widgets/widgets.dart';
+import 'dart:async';
+
 import 'package:CapstoneProject/app.dart';
+import 'package:CapstoneProject/db.dart';
+import 'package:CapstoneProject/models/user.dart';
 import 'package:CapstoneProject/screens/services/auth.dart';
 import 'package:CapstoneProject/screens/services/database.dart';
 import 'package:CapstoneProject/theme/consts.dart';
@@ -12,6 +16,7 @@ class LoginCreateAccount extends StatefulWidget {
 }
 
 class _LoginCreateAccountState extends State<LoginCreateAccount> {
+  DatabaseService db = DatabaseService();
   bool isLoading = false;
 
   AuthMethods authMethods = new AuthMethods();
@@ -21,6 +26,15 @@ class _LoginCreateAccountState extends State<LoginCreateAccount> {
   TextEditingController emailController = new TextEditingController();
   TextEditingController passwordController = new TextEditingController();
   TextEditingController usernameController = new TextEditingController();
+  TextEditingController firstNameController = new TextEditingController();
+  TextEditingController lastNameController = new TextEditingController();
+
+  final ScrollController scrollController = ScrollController();
+  final FocusNode focusNode1 = FocusNode();
+  final FocusNode focusNode2 = FocusNode();
+  final FocusNode focusNode3 = FocusNode();
+  final FocusNode focusNode4 = FocusNode();
+  final FocusNode focusNode5 = FocusNode();
 
   signUpUser() {
     if (formKey.currentState.validate()) {
@@ -45,13 +59,92 @@ class _LoginCreateAccountState extends State<LoginCreateAccount> {
 
         databaseMethods.uploadUserInfo(userInfoMap);
 
-        Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(
-              builder: (context) => CustomNavigatorHomePage(),
-            ));
+        Map<String, dynamic> userInfo = {
+          "email": emailController.text,
+          "firstName": firstNameController.text,
+          "lastName": lastNameController.text,
+          "profilePicture": "",
+          "conversations": [""],
+        };
+
+        db.addUser(val.userId, userInfo).then((_) {
+          User user = User(
+            id: val.userId,
+            email: userInfo["email"],
+            firstName: userInfo["firstName"],
+            lastName: userInfo["lastName"],
+            profilePicture: userInfo["profilePicture"],
+            conversations: userInfo["conversations"],
+          );
+          Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(
+                builder: (context) => CustomNavigatorHomePage(me: user),
+              ),
+              ModalRoute.withName('/'));
+        });
       });
     }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+
+    focusNode1.addListener(() {
+      if (focusNode1.hasFocus)
+        Timer(
+          Duration(milliseconds: 500),
+          () {
+            _scrollToBottom();
+            print("I scrolled to ${scrollController.position.maxScrollExtent}");
+          },
+        );
+    });
+    focusNode2.addListener(() {
+      if (focusNode2.hasFocus)
+        Timer(
+          Duration(milliseconds: 500),
+          () {
+            _scrollToBottom();
+            print("I scrolled to ${scrollController.position.maxScrollExtent}");
+          },
+        );
+    });
+    focusNode3.addListener(() {
+      if (focusNode3.hasFocus)
+        Timer(
+          Duration(milliseconds: 500),
+          () {
+            _scrollToBottom();
+            print("I scrolled to ${scrollController.position.maxScrollExtent}");
+          },
+        );
+    });
+    focusNode4.addListener(() {
+      if (focusNode4.hasFocus)
+        Timer(
+          Duration(milliseconds: 500),
+          () {
+            _scrollToBottom();
+            print("I scrolled to ${scrollController.position.maxScrollExtent}");
+          },
+        );
+    });
+    focusNode5.addListener(() {
+      if (focusNode5.hasFocus)
+        Timer(
+          Duration(milliseconds: 500),
+          () {
+            _scrollToBottom();
+            print("I scrolled to ${scrollController.position.maxScrollExtent}");
+          },
+        );
+    });
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      FocusScope.of(context).requestFocus(focusNode1);
+    });
   }
 
   @override
@@ -62,93 +155,174 @@ class _LoginCreateAccountState extends State<LoginCreateAccount> {
       ),
       child: Scaffold(
           backgroundColor: Colors.transparent,
-          body: isLoading
-              ? Container(
-                  child: Center(child: CircularProgressIndicator()),
-                )
-              : Container(
-                  alignment: Alignment.bottomCenter,
-                  padding: EdgeInsets.symmetric(horizontal: 24),
+          body: GestureDetector(
+            onTap: () {
+              FocusScope.of(context).unfocus();
+            },
+            child: LayoutBuilder(builder: (context, constraint) {
+              return SingleChildScrollView(
+                controller: scrollController,
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(minHeight: constraint.maxHeight),
                   child: Column(
-                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    mainAxisSize: MainAxisSize.max,
                     children: [
-                      Form(
-                        key: formKey,
-                        child: Column(children: [
-                          TextFormField(
-                            controller: usernameController,
-                            style: TextStyle(color: Colors.white),
-                            decoration: InputDecoration(
-                              hintText: "username",
-                              hintStyle: TextStyle(
-                                color: MyTheme.whiteColor.withOpacity(0.5),
-                              ),
-                            ),
-                          ),
-                          TextFormField(
-                            validator: (val) {
-                              return RegExp(
-                                          r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
-                                      .hasMatch(val)
-                                  ? null
-                                  : "Please provide valid email";
-                            },
-                            controller: emailController,
-                            style: TextStyle(color: Colors.white),
-                            decoration: InputDecoration(
-                              hintText: "email",
-                              hintStyle: TextStyle(
-                                color: MyTheme.whiteColor.withOpacity(0.5),
-                              ),
-                            ),
-                          ),
-                          TextFormField(
-                            validator: (val) {
-                              return val.length > 6
-                                  ? null
-                                  : "Password needs to be longer than 6 characters";
-                            },
-                            controller: passwordController,
-                            obscureText: true,
-                            style: TextStyle(color: Colors.white),
-                            decoration: InputDecoration(
-                              hintText: "password",
-                              hintStyle: TextStyle(
-                                color: MyTheme.whiteColor.withOpacity(0.5),
-                              ),
-                            ),
-                          ),
-                        ]),
-                      ),
-                      SizedBox(
-                        height: 20,
-                      ),
-                      GestureDetector(
-                        onTap: () {
-                          print(passwordController.text);
-                          signUpUser();
-                          print(emailController.text);
-                        },
-                        child: Container(
-                          alignment: Alignment.center,
-                          width: MediaQuery.of(context).size.width,
-                          padding: EdgeInsets.symmetric(vertical: 20),
-                          decoration: BoxDecoration(
-                            gradient: LinearGradient(colors: [
-                              Colors.blueGrey,
-                              Colors.white54,
-                              Colors.blueGrey
-                            ]),
-                            borderRadius: BorderRadius.circular(30),
-                          ),
-                          child: Text("Submit",
-                              style: TextStyle(color: Colors.black)),
+                      Container(
+                        padding: EdgeInsets.only(
+                          top: 100.0,
+                          right: 50.0,
+                          bottom: 0.0,
+                          left: 50.0,
+                        ),
+                        child: Image.asset(
+                          "assets/logo.png",
                         ),
                       ),
-                      SizedBox(height: 50),
+                      isLoading
+                          ? Expanded(
+                              child: Center(child: CircularProgressIndicator()),
+                            )
+                          : Container(
+                              alignment: Alignment.bottomCenter,
+                              padding: EdgeInsets.symmetric(horizontal: 24),
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Form(
+                                    key: formKey,
+                                    child: Column(children: [
+                                      TextFormField(
+                                        focusNode: focusNode1,
+                                        textInputAction: TextInputAction.next,
+                                        controller: usernameController,
+                                        style: TextStyle(color: Colors.white),
+                                        decoration: InputDecoration(
+                                          hintText: "username",
+                                          hintStyle: TextStyle(
+                                            color: MyTheme.whiteColor
+                                                .withOpacity(0.5),
+                                          ),
+                                        ),
+                                      ),
+                                      TextFormField(
+                                        focusNode: focusNode2,
+                                        textInputAction: TextInputAction.next,
+                                        controller: firstNameController,
+                                        style: TextStyle(color: Colors.white),
+                                        decoration: InputDecoration(
+                                          hintText: "First name",
+                                          hintStyle: TextStyle(
+                                            color: MyTheme.whiteColor
+                                                .withOpacity(0.5),
+                                          ),
+                                        ),
+                                      ),
+                                      TextFormField(
+                                        focusNode: focusNode3,
+                                        textInputAction: TextInputAction.next,
+                                        controller: lastNameController,
+                                        style: TextStyle(color: Colors.white),
+                                        decoration: InputDecoration(
+                                          hintText: "Last name",
+                                          hintStyle: TextStyle(
+                                            color: MyTheme.whiteColor
+                                                .withOpacity(0.5),
+                                          ),
+                                        ),
+                                      ),
+                                      TextFormField(
+                                        focusNode: focusNode4,
+                                        textInputAction: TextInputAction.next,
+                                        validator: (val) {
+                                          return RegExp(
+                                                      r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
+                                                  .hasMatch(val)
+                                              ? null
+                                              : "Please provide valid email";
+                                        },
+                                        controller: emailController,
+                                        style: TextStyle(color: Colors.white),
+                                        decoration: InputDecoration(
+                                          hintText: "email",
+                                          hintStyle: TextStyle(
+                                            color: MyTheme.whiteColor
+                                                .withOpacity(0.5),
+                                          ),
+                                        ),
+                                      ),
+                                      TextFormField(
+                                        focusNode: focusNode5,
+                                        textInputAction: TextInputAction.done,
+                                        validator: (val) {
+                                          return val.length > 6
+                                              ? null
+                                              : "Password needs to be longer than 6 characters";
+                                        },
+                                        controller: passwordController,
+                                        obscureText: true,
+                                        style: TextStyle(color: Colors.white),
+                                        decoration: InputDecoration(
+                                          hintText: "password",
+                                          hintStyle: TextStyle(
+                                            color: MyTheme.whiteColor
+                                                .withOpacity(0.5),
+                                          ),
+                                        ),
+                                      ),
+                                    ]),
+                                  ),
+                                  SizedBox(
+                                    height: 20,
+                                  ),
+                                  SizedBox(
+                                    width: double.infinity,
+                                    child: RaisedButton(
+                                      onPressed: () {
+                                        Timer(
+                                          Duration(milliseconds: 100),
+                                          () {
+                                            FocusScope.of(context).unfocus();
+                                            print(emailController.text);
+                                            signUpUser();
+                                            print(passwordController.text);
+                                          },
+                                        );
+                                      },
+                                      color: MyTheme.whiteColor,
+                                      splashColor: MyTheme.orangeColor,
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(30),
+                                      ),
+                                      padding:
+                                          EdgeInsets.symmetric(vertical: 20.0),
+                                      child: Text("Create account",
+                                          style: TextStyle(
+                                            color: MyTheme.orangeColor,
+                                            fontWeight: FontWeight.w500,
+                                            fontSize: 16,
+                                          )),
+                                    ),
+                                  ),
+                                  SizedBox(height: 50),
+                                ],
+                              ),
+                            ),
                     ],
                   ),
-                )),
+                ),
+              );
+            }),
+          )),
+    );
+  }
+
+  _scrollToBottom() {
+    scrollController.animateTo(
+      scrollController.position.maxScrollExtent,
+      duration: Duration(milliseconds: 100),
+      curve: Curves.ease,
     );
   }
 }

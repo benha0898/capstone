@@ -1,5 +1,6 @@
 import 'package:CapstoneProject/db.dart';
 import 'package:CapstoneProject/models/conversation.dart';
+import 'package:CapstoneProject/models/user.dart';
 import 'package:CapstoneProject/screens/services/database.dart';
 //import 'package:CapstoneProject/theme/flutter_icons.dart';
 import 'package:CapstoneProject/models/deck.dart';
@@ -9,6 +10,10 @@ import 'package:flutter/material.dart';
 import 'package:CapstoneProject/theme/consts.dart';
 
 class BrowseDecksScreen extends StatefulWidget {
+  final User me;
+
+  const BrowseDecksScreen({Key key, this.me}) : super(key: key);
+
   @override
   _BrowseDecksScreenState createState() => _BrowseDecksScreenState();
 }

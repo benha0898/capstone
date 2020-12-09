@@ -1,4 +1,8 @@
 //import 'package:CapstoneProject/widgets/widgets.dart';
+import 'dart:async';
+
+import 'package:CapstoneProject/db.dart';
+import 'package:CapstoneProject/models/user.dart';
 import 'package:CapstoneProject/screens/services/auth.dart';
 //import 'package:CapstoneProject/screens/user_file/user_search.dart';
 import 'package:CapstoneProject/theme/consts.dart';
@@ -12,12 +16,16 @@ class LoginEmptyForm extends StatefulWidget {
 }
 
 class _LoginEmptyFormState extends State<LoginEmptyForm> {
+  DatabaseService db = DatabaseService();
   bool isLoading = false;
 
   AuthMethods authMethods = new AuthMethods();
   final formKey = GlobalKey<FormState>();
   TextEditingController passwordController = new TextEditingController();
   TextEditingController emailController = new TextEditingController();
+
+  final ScrollController scrollController = ScrollController();
+  final FocusNode focusNode = FocusNode();
 
   signInUser() {
     if (formKey.currentState.validate()) {
@@ -29,15 +37,40 @@ class _LoginEmptyFormState extends State<LoginEmptyForm> {
           .signInWithEmailAndPassword(
               emailController.text, passwordController.text)
           .then((val) {
-        print("${val.userId}");
+        print("Auth id: ${val.userId}");
 
-        Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(
-              builder: (context) => CustomNavigatorHomePage(),
-            ));
+        db.getUserById(val.userId).then((value) {
+          User user = User.fromSnapshot(value);
+          Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(
+                builder: (context) => CustomNavigatorHomePage(me: user),
+              ),
+              ModalRoute.withName('/'));
+        });
       });
     }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+
+    focusNode.addListener(() {
+      if (focusNode.hasFocus) {
+        Timer(
+          Duration(milliseconds: 500),
+          () {
+            _scrollToBottom();
+            print("I scrolled to ${scrollController.position.maxScrollExtent}");
+          },
+        );
+      }
+    });
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      FocusScope.of(context).requestFocus(focusNode);
+    });
   }
 
   @override
@@ -48,88 +81,145 @@ class _LoginEmptyFormState extends State<LoginEmptyForm> {
       ),
       child: Scaffold(
           backgroundColor: Colors.transparent,
-          body: isLoading
-              ? Container(
-                  child: Center(child: CircularProgressIndicator()),
-                )
-              : Container(
-                  alignment: Alignment.bottomCenter,
-                  padding: EdgeInsets.symmetric(horizontal: 24),
+          body: GestureDetector(
+            onTap: () {
+              FocusScope.of(context).unfocus();
+            },
+            child: LayoutBuilder(builder: (context, constraint) {
+              return SingleChildScrollView(
+                controller: scrollController,
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(minHeight: constraint.maxHeight),
                   child: Column(
-                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    mainAxisSize: MainAxisSize.max,
                     children: [
-                      TextFormField(
-                        validator: (val) {
-                          return RegExp(
-                                      r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
-                                  .hasMatch(val)
-                              ? null
-                              : "Please provide valid email";
-                        },
-                        controller: emailController,
-                        style: TextStyle(
-                          color: MyTheme.whiteColor,
-                        ),
-                        decoration: InputDecoration(
-                          hintText: "email",
-                          hintStyle: TextStyle(
-                            color: MyTheme.whiteColor.withOpacity(0.5),
-                          ),
-                        ),
-                      ),
-                      TextFormField(
-                        validator: (val) {
-                          return val.length > 6
-                              ? null
-                              : "Password needs to be longer than 6 characters";
-                        },
-                        controller: passwordController,
-                        obscureText: true,
-                        style: TextStyle(color: Colors.white),
-                        decoration: InputDecoration(
-                          hintText: "password",
-                          hintStyle: TextStyle(
-                            color: MyTheme.whiteColor.withOpacity(0.5),
-                          ),
-                        ),
-                      ),
-                      SizedBox(
-                        height: 20,
-                      ),
                       Container(
-                          child: Text(
-                        "Forgot Password?",
-                        style: TextStyle(color: Colors.white54),
-                      )),
-                      SizedBox(
-                        height: 20,
-                      ),
-                      GestureDetector(
-                        onTap: () {
-                          print(emailController.text);
-                          signInUser();
-                          print(passwordController.text);
-                        },
-                        child: Container(
-                          alignment: Alignment.center,
-                          width: MediaQuery.of(context).size.width,
-                          padding: EdgeInsets.symmetric(vertical: 20),
-                          decoration: BoxDecoration(
-                            gradient: LinearGradient(colors: [
-                              Colors.blueGrey,
-                              Colors.white54,
-                              Colors.blueGrey
-                            ]),
-                            borderRadius: BorderRadius.circular(30),
-                          ),
-                          child: Text("Submit",
-                              style: TextStyle(color: Colors.black)),
+                        padding: EdgeInsets.only(
+                          top: 100.0,
+                          right: 50.0,
+                          bottom: 0.0,
+                          left: 50.0,
+                        ),
+                        child: Image.asset(
+                          "assets/logo.png",
                         ),
                       ),
-                      SizedBox(height: 50),
+                      isLoading
+                          ? Container(
+                              padding: EdgeInsets.symmetric(vertical: 200.0),
+                              child: Center(
+                                child: CircularProgressIndicator(),
+                              ),
+                            )
+                          : Container(
+                              alignment: Alignment.bottomCenter,
+                              padding: EdgeInsets.symmetric(horizontal: 24),
+                              child: Form(
+                                key: formKey,
+                                child: Column(
+                                  children: [
+                                    TextFormField(
+                                      focusNode: focusNode,
+                                      textInputAction: TextInputAction.next,
+                                      validator: (val) {
+                                        return RegExp(
+                                                    r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
+                                                .hasMatch(val)
+                                            ? null
+                                            : "Please provide valid email";
+                                      },
+                                      controller: emailController,
+                                      style: TextStyle(
+                                        color: MyTheme.whiteColor,
+                                      ),
+                                      decoration: InputDecoration(
+                                        hintText: "email",
+                                        hintStyle: TextStyle(
+                                          color: MyTheme.whiteColor
+                                              .withOpacity(0.5),
+                                        ),
+                                      ),
+                                    ),
+                                    TextFormField(
+                                      textInputAction: TextInputAction.done,
+                                      validator: (val) {
+                                        return val.length > 6
+                                            ? null
+                                            : "Password needs to be longer than 6 characters";
+                                      },
+                                      controller: passwordController,
+                                      obscureText: true,
+                                      style: TextStyle(color: Colors.white),
+                                      decoration: InputDecoration(
+                                        hintText: "password",
+                                        hintStyle: TextStyle(
+                                          color: MyTheme.whiteColor
+                                              .withOpacity(0.5),
+                                        ),
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      height: 20,
+                                    ),
+                                    Container(
+                                        child: Text(
+                                      "Forgot Password?",
+                                      style: TextStyle(color: Colors.white54),
+                                    )),
+                                    SizedBox(
+                                      height: 20,
+                                    ),
+                                    SizedBox(
+                                      width: double.infinity,
+                                      child: RaisedButton(
+                                        onPressed: () {
+                                          Timer(
+                                            Duration(milliseconds: 100),
+                                            () {
+                                              FocusScope.of(context).unfocus();
+                                              print(emailController.text);
+                                              signInUser();
+                                              print(passwordController.text);
+                                            },
+                                          );
+                                        },
+                                        color: MyTheme.whiteColor,
+                                        splashColor: MyTheme.yellowColor,
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(30),
+                                        ),
+                                        padding: EdgeInsets.symmetric(
+                                            vertical: 20.0),
+                                        child: Text("Sign in",
+                                            style: TextStyle(
+                                              color: MyTheme.yellowColor,
+                                              fontWeight: FontWeight.w500,
+                                              fontSize: 16,
+                                            )),
+                                      ),
+                                    ),
+                                    SizedBox(height: 50),
+                                  ],
+                                ),
+                              ),
+                            ),
                     ],
                   ),
-                )),
+                ),
+              );
+            }),
+          )),
+    );
+  }
+
+  _scrollToBottom() {
+    scrollController.animateTo(
+      scrollController.position.maxScrollExtent,
+      duration: Duration(milliseconds: 100),
+      curve: Curves.ease,
     );
   }
 }

@@ -6,6 +6,7 @@ import 'package:CapstoneProject/screens/conversations/conversation_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:CapstoneProject/theme/consts.dart';
+import 'package:flutter/services.dart';
 
 //import 'app.dart';
 
@@ -19,6 +20,7 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    SystemChannels.textInput.invokeMethod('TextInput.hide');
     return FutureBuilder(
         future: _initialization,
         builder: (context, snapshot) {
@@ -30,7 +32,6 @@ class MyApp extends StatelessWidget {
               'select_deck': (context) => SelectDeckScreen(),
               'deck_view': (context) => DeckViewScreen(),
             },
-            initialRoute: '/',
             home: Container(
               decoration: BoxDecoration(
                 image: MyTheme.backgroundImage,
@@ -42,11 +43,9 @@ class MyApp extends StatelessWidget {
                         child: Text(snapshot.error.toString()),
                       )
                     : (snapshot.connectionState == ConnectionState.done)
-                        ? CustomNavigatorHomePage()
+                        ? LoginMain()
                         : Center(
-                            child: Text(
-                              "Loading...",
-                            ),
+                            child: Image.asset("assets/logo.png"),
                           ),
               ),
             ),
