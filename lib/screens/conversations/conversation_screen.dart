@@ -102,7 +102,7 @@ class _ConversationScreenState extends State<ConversationScreen> {
           stream: db.getQuestions(this.conversation.id),
           builder: (context, snapshot) {
             if (!snapshot.hasData) return CircularProgressIndicator();
-            if (snapshot.data.docs.length == 0)
+            if (snapshot.data.documents.length == 0)
               return Center(
                 child: RaisedButton(
                   onPressed: () {
@@ -128,8 +128,8 @@ class _ConversationScreenState extends State<ConversationScreen> {
                 ),
               );
             AsyncSnapshot<dynamic> questionSnapshot = snapshot;
-            latestQuestion =
-                GeneratedQuestion.fromSnapshot(questionSnapshot.data.docs.last);
+            latestQuestion = GeneratedQuestion.fromSnapshot(
+                questionSnapshot.data.documents.last);
             if (latestQuestion.color == MyTheme.yellowColor)
               accentColor = Color(0xFF094BF2).withOpacity(1);
             else if (latestQuestion.color == MyTheme.blueColor)
@@ -144,7 +144,7 @@ class _ConversationScreenState extends State<ConversationScreen> {
               stream: db.getPlayingDeck(this.conversation.id),
               builder: (context, snapshot) {
                 if (!snapshot.hasData) return CircularProgressIndicator();
-                if (snapshot.data.docs.length == 0)
+                if (snapshot.data.documents.length == 0)
                   return Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 12.0),
                     child: RaisedButton(
@@ -154,16 +154,17 @@ class _ConversationScreenState extends State<ConversationScreen> {
                   );
 
                 // Set up variables
-                playingDeck = GeneratedDeck.fromSnapshot(snapshot.data.docs[0]);
+                playingDeck =
+                    GeneratedDeck.fromSnapshot(snapshot.data.documents[0]);
 
                 return ListView.builder(
                   //reverse: true,
                   shrinkWrap: true,
-                  itemCount: questionSnapshot.data.docs.length + 1,
+                  itemCount: questionSnapshot.data.documents.length + 1,
                   addAutomaticKeepAlives: true,
                   itemBuilder: (context, index) {
                     // First, get Next Question button
-                    if (index == questionSnapshot.data.docs.length) {
+                    if (index == questionSnapshot.data.documents.length) {
                       if (!latestQuestion.answered) return SizedBox();
                       return Stack(
                         children: [
@@ -227,7 +228,7 @@ class _ConversationScreenState extends State<ConversationScreen> {
                     }
                     // Then, get all question containers
                     GeneratedQuestion question = GeneratedQuestion.fromSnapshot(
-                        questionSnapshot.data.docs[index]);
+                        questionSnapshot.data.documents[index]);
                     return Align(
                       alignment: Alignment.topCenter,
                       heightFactor: 0.8,

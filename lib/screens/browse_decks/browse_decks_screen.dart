@@ -192,6 +192,7 @@ getFriends() async {
                                   child: Container(
                                     decoration: (deck.graphic != "")
                                         ? BoxDecoration(
+                                            color: deck.color,
                                             image: DecorationImage(
                                               image: Image.network(
                                                 deck.graphic,
