@@ -80,20 +80,23 @@ class _QuestionCardExpandedState extends State<QuestionCardExpanded> {
                       color: Colors.transparent,
                       child: Container(
                         padding: EdgeInsets.all(10),
-                        decoration: BoxDecoration(
-                          color: question.color,
-                          borderRadius: BorderRadius.only(
-                              topLeft: Radius.circular(25.0),
-                              topRight: Radius.circular(25.0)),
-                          boxShadow: [
-                            BoxShadow(
-                              color: MyTheme.darkColor.withOpacity(0.5),
-                              spreadRadius: 5.0,
-                              blurRadius: 7.0,
-                              offset: Offset(0, 3),
-                            ),
-                          ],
-                        ),
+                        decoration: (question.background != "")
+                            ? BoxDecoration(
+                                image: DecorationImage(
+                                  image: Image.network(
+                                    question.background,
+                                  ).image,
+                                  fit: BoxFit.cover,
+                                ),
+                                borderRadius: BorderRadius.only(
+                                    topLeft: Radius.circular(35.0),
+                                    topRight: Radius.circular(35.0)))
+                            : BoxDecoration(
+                                color: question.color,
+                                borderRadius: BorderRadius.only(
+                                    topLeft: Radius.circular(35.0),
+                                    topRight: Radius.circular(35.0)),
+                              ),
                         child: Column(
                           children: [
                             // Card's header

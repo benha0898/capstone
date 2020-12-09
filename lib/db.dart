@@ -162,6 +162,7 @@ class DatabaseService {
       "number": deck.questionsGenerated + 1,
       "text": questionText,
       "timestamp": now,
+      "background": deck.background,
     };
     // 3. Add question to conversations/questions subcollection
     await _firestore
@@ -209,6 +210,7 @@ class DatabaseService {
       "questionsOrder": questionsOrder,
       "timestamp": now,
       "totalQuestions": deck.questions.length,
+      "background": deck.background,
     };
 
     // 3. Add generated deck to the conversation/decks subcollection
@@ -222,6 +224,7 @@ class DatabaseService {
       await _firestore.collection("conversations").doc(cid).update({
         "lastActivity": deck.name,
         "timestamp": now,
+        "color": deck.color.value,
       }).then((_) => print("Conversation doc $cid updated!"));
     });
     return newDeckRef.get();

@@ -25,6 +25,7 @@ class _ConversationScreenState extends State<ConversationScreen> {
   DatabaseService db = DatabaseService();
   User me;
   Conversation conversation;
+  Color accentColor;
 
   GeneratedDeck playingDeck;
   GeneratedQuestion latestQuestion;
@@ -129,6 +130,14 @@ class _ConversationScreenState extends State<ConversationScreen> {
             AsyncSnapshot<dynamic> questionSnapshot = snapshot;
             latestQuestion =
                 GeneratedQuestion.fromSnapshot(questionSnapshot.data.docs.last);
+            if (latestQuestion.color == MyTheme.yellowColor)
+              accentColor = Color(0xFF094BF2).withOpacity(1);
+            else if (latestQuestion.color == MyTheme.blueColor)
+              accentColor = Color(0xFFAA6F49).withOpacity(1);
+            else if (latestQuestion.color == MyTheme.redColor)
+              accentColor = Color(0xFF72EBE4).withOpacity(1);
+            else
+              accentColor = MyTheme.darkColor;
 
             return StreamBuilder(
               // Fetch current deck playing
@@ -164,7 +173,7 @@ class _ConversationScreenState extends State<ConversationScreen> {
                             decoration: BoxDecoration(
                               color: playingDeck.color,
                               borderRadius:
-                                  BorderRadius.all(Radius.circular(25.0)),
+                                  BorderRadius.all(Radius.circular(35.0)),
                               boxShadow: [
                                 BoxShadow(
                                   color: MyTheme.darkColor.withOpacity(0.5),
@@ -205,7 +214,7 @@ class _ConversationScreenState extends State<ConversationScreen> {
                               color: Colors.transparent,
                               child: InkWell(
                                 borderRadius:
-                                    BorderRadius.all(Radius.circular(25.0)),
+                                    BorderRadius.all(Radius.circular(35.0)),
                                 onTap: () {
                                   print("Hello");
                                   _addQuestion(playingDeck);
@@ -233,8 +242,8 @@ class _ConversationScreenState extends State<ConversationScreen> {
                                 decoration: BoxDecoration(
                                   color: question.color,
                                   borderRadius: BorderRadius.only(
-                                      topLeft: Radius.circular(25.0),
-                                      topRight: Radius.circular(25.0)),
+                                      topLeft: Radius.circular(35.0),
+                                      topRight: Radius.circular(35.0)),
                                   boxShadow: [
                                     BoxShadow(
                                       color: MyTheme.darkColor.withOpacity(0.5),
@@ -269,8 +278,9 @@ class _ConversationScreenState extends State<ConversationScreen> {
                                 child: Material(
                                   color: Colors.transparent,
                                   child: InkWell(
-                                    borderRadius:
-                                        BorderRadius.all(Radius.circular(25.0)),
+                                    borderRadius: BorderRadius.only(
+                                        topLeft: Radius.circular(35.0),
+                                        topRight: Radius.circular(35.0)),
                                     onTap: () {
                                       print("Question expand!");
                                       Navigator.push(
@@ -339,8 +349,7 @@ class _ConversationScreenState extends State<ConversationScreen> {
                       : Text(
                           "Click here to answer",
                           style: TextStyle(
-                              color: MyTheme.blueColor,
-                              fontWeight: FontWeight.w700),
+                              color: accentColor, fontWeight: FontWeight.w700),
                         ),
                 ],
               ),

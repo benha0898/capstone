@@ -23,7 +23,14 @@ class ChatTextFieldState extends State<ChatTextField> {
   void initState() {
     super.initState();
 
-    accentColor = widget.question.color.withBlue(150).withGreen(50);
+    if (widget.question.color == MyTheme.yellowColor)
+      accentColor = Color(0xFF094BF2).withOpacity(1);
+    else if (widget.question.color == MyTheme.blueColor)
+      accentColor = Color(0xFFAA6F49).withOpacity(1);
+    else if (widget.question.color == MyTheme.redColor)
+      accentColor = Color(0xFF72EBE4).withOpacity(1);
+    else
+      accentColor = MyTheme.darkColor;
 
     textController.addListener(() {
       setState(() {});
@@ -46,7 +53,7 @@ class ChatTextFieldState extends State<ChatTextField> {
             padding: EdgeInsets.symmetric(vertical: 6, horizontal: 12),
             clipBehavior: Clip.hardEdge,
             decoration: BoxDecoration(
-              color: MyTheme.darkColor,
+              color: MyTheme.whiteColor,
               borderRadius: BorderRadius.all(
                 Radius.circular(10),
               ),
@@ -66,11 +73,11 @@ class ChatTextFieldState extends State<ChatTextField> {
                           ? "Send a message"
                           : "Type your answer",
                       hintStyle: TextStyle(
-                        color: Colors.white30,
+                        color: MyTheme.greyAccentColor,
                       ),
                     ),
                     style: TextStyle(
-                      color: Colors.white,
+                      color: MyTheme.darkColor,
                     ),
                   ),
                 ),

@@ -15,7 +15,7 @@ class MyTheme {
   static const Color orangeColor = Color(0XFFE27937);
   static const DecorationImage backgroundImage = DecorationImage(
     image: AssetImage("assets/background-image.png"),
-    colorFilter: ColorFilter.mode(Color(0XFF525252), BlendMode.multiply),
+    //colorFilter: ColorFilter.mode(Color(0XFF525252), BlendMode.multiply),
     fit: BoxFit.cover,
     repeat: ImageRepeat.repeatY,
   );

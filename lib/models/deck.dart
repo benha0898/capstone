@@ -11,6 +11,7 @@ class Deck {
   final List<String> questions;
   final Color color;
   final String graphic;
+  final String background;
 
   Deck({
     this.id,
@@ -21,9 +22,11 @@ class Deck {
     questions,
     color,
     graphic,
+    background,
   })  : this.questions = questions ?? List<String>(),
         this.color = color ?? MyTheme.greyColor,
-        this.graphic = graphic ?? "";
+        this.graphic = graphic ?? "",
+        this.background = background ?? "";
 
   Deck.fromSnapshot(DocumentSnapshot snapshot)
       : this.id = snapshot.id,
@@ -33,5 +36,6 @@ class Deck {
         this.description = snapshot["description"],
         this.questions = snapshot["questions"].cast<String>(),
         this.color = Color(snapshot["color"]).withOpacity(1),
-        this.graphic = snapshot["graphic"];
+        this.graphic = snapshot["graphic"],
+        this.background = snapshot["background"];
 }

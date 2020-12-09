@@ -147,10 +147,15 @@ class _ConversationsScreenState extends State<ConversationsScreen> {
                                   borderRadius: BorderRadius.all(
                                     Radius.circular(100),
                                   ),
-                                  image: DecorationImage(
-                                    image: Image.network(
-                                            conversations[index].groupPicture)
-                                        .image,
+                                  gradient: LinearGradient(
+                                    begin: Alignment.centerLeft,
+                                    end: Alignment.centerRight,
+                                    colors: [
+                                      conversations[index].color,
+                                      conversations[index]
+                                          .color
+                                          .withOpacity(0.5),
+                                    ],
                                   ),
                                 ),
                               ),
