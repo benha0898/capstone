@@ -1,5 +1,6 @@
 import 'package:CapstoneProject/app.dart';
 import 'package:CapstoneProject/models/user.dart';
+import 'package:CapstoneProject/screens/services/constants.dart';
 //import 'package:CapstoneProject/screens/browse_decks/browse_decks_screen.dart';
 import 'package:CapstoneProject/screens/services/database.dart';
 import 'package:CapstoneProject/screens/services/search_friends_screen.dart';
@@ -254,7 +255,7 @@ class _UserListCheckboxState extends State<UserListCheckbox> {
 
   clearList() {
     isChecked.clear();
-    //isChecked.add();
+    isChecked.add(Constants.myUsername);
   }
 
 

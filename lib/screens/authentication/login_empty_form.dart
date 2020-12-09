@@ -124,7 +124,10 @@ class _LoginEmptyFormState extends State<LoginEmptyForm> {
                     ]),
                     borderRadius: BorderRadius.circular(30),
                   ),
+                  child: Text("Sign in",
+                      style: TextStyle(color: Colors.white)),
                 )),
+                SizedBox(height: 50),
             ])));
   }
 }

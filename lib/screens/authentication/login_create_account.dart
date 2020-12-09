@@ -99,7 +99,7 @@ class _LoginCreateAccountState extends State<LoginCreateAccount> {
                   controller: firstNameController,
                   style: TextStyle(color: Colors.white),
                   decoration: InputDecoration(
-                    hintText: "First Name"),
+                    hintText: "first name"),
                 ),
                 TextFormField(
                   validator: (val){
@@ -108,7 +108,7 @@ class _LoginCreateAccountState extends State<LoginCreateAccount> {
                   controller: lastNameController,
                   style: TextStyle(color: Colors.white),
                   decoration: InputDecoration(
-                    hintText: "Last Name"),
+                    hintText: "last name"),
                 ),
                 TextFormField(
                   controller: usernameController,
@@ -158,7 +158,10 @@ class _LoginCreateAccountState extends State<LoginCreateAccount> {
                     ]),
                     borderRadius: BorderRadius.circular(30),
                   ),
+                  child: Text("Sign Up",
+                      style: TextStyle(color: Colors.white)),
               )),
+              SizedBox(height: 50),
           ])));
   }
 }
