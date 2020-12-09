@@ -2,20 +2,20 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 
 class MyTheme {
-  static Color mainColor = Color(0XFF262624);
-  static Color darkColor = Color(0XFF1e1c26);
-  static Color greyColor = Color(0XFF5D5D5D);
-  static Color greyAccentColor = Color(0XFF838383);
-  static Color whiteColor = Colors.white;
-  static Color yellowColor = Color(0XFFF2B009);
-  static Color yellowAccentColor = Color(0XFFE27937);
-  static Color blueColor = Color(0XFF4984AA);
-  static Color blueAccentColor = Color(0XFF463CD9);
-  static Color redColor = Color(0XFFEB7279);
-  static Color orangeColor = Color(0XFFE27937);
-  static DecorationImage backgroundImage = DecorationImage(
+  static const Color mainColor = Color(0XFF262624);
+  static const Color darkColor = Color(0XFF1e1c26);
+  static const Color greyColor = Color(0XFF5D5D5D);
+  static const Color greyAccentColor = Color(0XFF838383);
+  static const Color whiteColor = Colors.white;
+  static const Color yellowColor = Color(0XFFF2B009);
+  static const Color yellowAccentColor = Color(0XFFE27937);
+  static const Color blueColor = Color(0XFF4984AA);
+  static const Color blueAccentColor = Color(0XFF463CD9);
+  static const Color redColor = Color(0XFFEB7279);
+  static const Color orangeColor = Color(0XFFE27937);
+  static const DecorationImage backgroundImage = DecorationImage(
     image: AssetImage("assets/background-image.png"),
-    colorFilter: ColorFilter.mode(Color(0XFF525252), BlendMode.multiply),
+    //colorFilter: ColorFilter.mode(Color(0XFF525252), BlendMode.multiply),
     fit: BoxFit.cover,
     repeat: ImageRepeat.repeatY,
   );

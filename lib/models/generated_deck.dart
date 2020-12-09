@@ -14,6 +14,7 @@ class GeneratedDeck {
   final List<int> questionsOrder;
   final int questionsGenerated;
   final Color color;
+  final String background;
 
   GeneratedDeck({
     this.id,
@@ -27,10 +28,12 @@ class GeneratedDeck {
     completed,
     questionsGenerated,
     color,
+    background,
   })  : this.timestamp = timestamp ?? DateTime.now(),
         this.completed = completed ?? false,
         this.questionsGenerated = questionsGenerated ?? 0,
-        this.color = MyTheme.greyColor;
+        this.color = color ?? MyTheme.greyColor,
+        this.background = background ?? "";
 
   GeneratedDeck.fromSnapshot(DocumentSnapshot snapshot)
       : this.id = snapshot.id,
@@ -43,5 +46,6 @@ class GeneratedDeck {
         this.completed = snapshot["completed"],
         this.questionsOrder = snapshot["questionsOrder"].cast<int>(),
         this.questionsGenerated = snapshot["questionsGenerated"],
-        this.color = Color(snapshot["color"]).withOpacity(1);
+        this.color = Color(snapshot["color"]).withOpacity(1),
+        this.background = snapshot["background"];
 }

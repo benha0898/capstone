@@ -5,23 +5,37 @@ import 'package:flutter/material.dart';
 class Deck {
   final String id;
   final String name;
+  final String category;
+  final String categoryID;
   final String description;
   final List<String> questions;
   final Color color;
+  final String graphic;
+  final String background;
 
   Deck({
     this.id,
     this.name,
+    this.category,
+    this.categoryID,
     this.description,
     questions,
     color,
+    graphic,
+    background,
   })  : this.questions = questions ?? List<String>(),
-        this.color = color ?? MyTheme.greyColor;
+        this.color = color ?? MyTheme.greyColor,
+        this.graphic = graphic ?? "",
+        this.background = background ?? "";
 
   Deck.fromSnapshot(DocumentSnapshot snapshot)
       : this.id = snapshot.id,
         this.name = snapshot["name"],
+        this.category = snapshot["category"],
+        this.categoryID = snapshot["categoryID"],
         this.description = snapshot["description"],
         this.questions = snapshot["questions"].cast<String>(),
-        this.color = Color(snapshot["color"]).withOpacity(1);
+        this.color = Color(snapshot["color"]).withOpacity(1),
+        this.graphic = snapshot["graphic"],
+        this.background = snapshot["background"];
 }

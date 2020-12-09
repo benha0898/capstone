@@ -1,27 +1,26 @@
 import 'package:CapstoneProject/db.dart';
 import 'package:CapstoneProject/models/conversation.dart';
-import 'package:CapstoneProject/models/user.dart';
 import 'package:CapstoneProject/screens/services/database.dart';
 //import 'package:CapstoneProject/theme/flutter_icons.dart';
 import 'package:CapstoneProject/models/deck.dart';
-import 'package:CapstoneProject/screens/browse_decks/deck_view_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 import 'package:CapstoneProject/theme/consts.dart';
 
 class SelectDeckScreen extends StatefulWidget {
-  final Conversation conversation;
-  final User me;
+  // final Conversation conversation;
+  // final User me;
 
-  const SelectDeckScreen({Key key, this.conversation, this.me})
-      : super(key: key);
+  // const SelectDeckScreen({Key key, this.conversation, this.me})
+  //     : super(key: key);
 
   @override
   _SelectDeckScreenState createState() => _SelectDeckScreenState();
 }
 
 class _SelectDeckScreenState extends State<SelectDeckScreen> {
+  Map<String, dynamic> arguments;
   DatabaseService db = DatabaseService();
 
   List<bool> _categorySelections;
@@ -37,10 +36,18 @@ class _SelectDeckScreenState extends State<SelectDeckScreen> {
   @override
   void initState() {
     super.initState();
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
       getData();
       //getFriends();
     });
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    arguments =
+        ModalRoute.of(context).settings.arguments as Map<String, dynamic>;
   }
 
   getData() async {
@@ -163,16 +170,37 @@ class _SelectDeckScreenState extends State<SelectDeckScreen> {
                                   child: InkWell(
                                     onTap: () {
                                       print(deck.name);
-                                      Navigator.of(context)
-                                          .push(MaterialPageRoute(
-                                        builder: (_) => DeckViewScreen(
-                                          me: widget.me,
-                                          deck: deck,
-                                          conversation: widget.conversation,
-                                        ),
-                                      ));
+                                      Navigator.pushNamed(context, 'deck_view',
+                                          arguments: {
+                                            "me": arguments["me"],
+                                            "deck": deck,
+                                            "conversation":
+                                                arguments["conversation"],
+                                          });
+                                      // Navigator.of(context)
+                                      //     .push(MaterialPageRoute(
+                                      //   builder: (_) => DeckViewScreen(
+                                      //     me: widget.me,
+                                      //     deck: deck,
+                                      //     conversation: widget.conversation,
+                                      //   ),
+                                      // ));
                                     },
                                     child: Container(
+                                      decoration: (deck.graphic != "")
+                                          ? BoxDecoration(
+                                              image: DecorationImage(
+                                                image: Image.network(
+                                                  deck.graphic,
+                                                ).image,
+                                              ),
+                                              borderRadius:
+                                                  BorderRadius.circular(20.0),
+                                            )
+                                          : BoxDecoration(
+                                              color: deck.color,
+                                              borderRadius:
+                                                  BorderRadius.circular(20.0)),
                                       padding: EdgeInsets.all(12.0),
                                       child: Align(
                                         alignment: Alignment.bottomLeft,

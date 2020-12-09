@@ -15,6 +15,7 @@ class GeneratedQuestion {
   List<Message> replies = List<Message>();
   bool answered;
   Color color;
+  String background;
 
   GeneratedQuestion({
     this.id,
@@ -28,11 +29,13 @@ class GeneratedQuestion {
     replies,
     answered,
     color,
+    background,
   })  : this.timestamp = timestamp ?? DateTime.now(),
         this.answers = answers ?? List<Map<String, dynamic>>(),
         this.replies = replies ?? List<Map<String, dynamic>>(),
         this.answered = answered ?? false,
-        this.color = color ?? MyTheme.greyColor;
+        this.color = color ?? MyTheme.greyColor,
+        this.background = background ?? "";
 
   GeneratedQuestion.fromSnapshot(DocumentSnapshot snapshot) {
     this.id = snapshot.id;
@@ -58,5 +61,6 @@ class GeneratedQuestion {
     }
     this.answered = snapshot["answered"];
     this.color = Color(snapshot["color"]).withOpacity(1);
+    this.background = snapshot["background"];
   }
 }
