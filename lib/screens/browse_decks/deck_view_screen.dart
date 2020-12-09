@@ -1,8 +1,4 @@
 import 'package:CapstoneProject/screens/services/invite_friends_screen.dart';
-import 'package:CapstoneProject/models/conversation.dart';
-import 'package:CapstoneProject/models/user.dart';
-import 'package:CapstoneProject/models/deck.dart';
-import 'package:CapstoneProject/screens/services/search_screen.dart';
 import 'package:CapstoneProject/theme/consts.dart';
 import 'package:flutter/material.dart';
 
@@ -136,7 +132,7 @@ class _DeckViewScreenState extends State<DeckViewScreen> {
                               onPressed: () {
                                 print("open invite friends screen");
                                 Navigator.of(context).push(MaterialPageRoute(
-                                  builder: (_) => SearchScreen(
+                                  builder: (_) => InviteFriends(
                                     deck: arguments["deck"],
                                   ),
                                 ));
@@ -147,25 +143,7 @@ class _DeckViewScreenState extends State<DeckViewScreen> {
               ),
             ],
           ),
-          actionsPadding: EdgeInsets.symmetric(horizontal: 8.0),
-          actions: [
-            RaisedButton(
-              color: MyTheme.whiteColor,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(5.0),
-              ),
-              child: Text("Select"),
-              onPressed: () {
-                print("open invite friends screen");
-                Navigator.of(context)
-                .push(MaterialPageRoute(
-                  builder: (_) => InviteFriends(
-                  deck: arguments["deck"],
-                ),
-                  ));
-              },
-            ),
-          ],
+          
         ),
       ),
     );

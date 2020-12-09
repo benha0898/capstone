@@ -5,4 +5,5 @@ class Constants{
   static String myLastName= "";
   static String myProfilePicture = "";
   static List<String> myConversations = [];
+  static String myID= "";
 }

@@ -5,6 +5,7 @@ import 'package:CapstoneProject/screens/services/constants.dart';
 import 'package:CapstoneProject/screens/services/database.dart';
 import 'package:CapstoneProject/screens/services/helper_functions.dart';
 import 'package:CapstoneProject/theme/consts.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 //import 'package:firebase_auth/firebase_auth.dart';
 
@@ -19,6 +20,7 @@ class _LoginCreateAccountState extends State<LoginCreateAccount> {
   AuthMethods authMethods = new AuthMethods();
   DatabaseMethods databaseMethods = new DatabaseMethods();
   HelperFunctions helperFunctions = new HelperFunctions();
+  QuerySnapshot snapshotUserInfo;
 
   final formKey = GlobalKey<FormState>();
   TextEditingController emailController = new TextEditingController();
@@ -53,6 +55,11 @@ class _LoginCreateAccountState extends State<LoginCreateAccount> {
       setState(() {
         isLoading = true;
       });
+
+      databaseMethods.getUserbyEmail(emailController.text)
+        .then((val){
+          snapshotUserInfo = val;
+        });
 
       authMethods
           .signUpWithEmailAndPassword(
