@@ -41,91 +41,100 @@ class _SearchScreenState extends State<SearchScreen> {
   @override
   Widget build(BuildContext context) {
     friendlist = _friends;
-    return AlertDialog(
-      backgroundColor: widget.deck.color,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.0)),
-      title: ListTile(
-        leading: IconButton(
-            padding: EdgeInsets.zero,
-            alignment: Alignment.centerLeft,
-            highlightColor: Colors.transparent,
-            icon: Icon(
-              Icons.arrow_back_ios_sharp,
-              color: MyTheme.mainColor,
-            ),
-            onPressed: () {
-              Navigator.of(context).pop();
-            }),
-        trailing: IconButton(
-          padding: EdgeInsets.zero,
-          alignment: Alignment.centerRight,
-          icon: Icon(
-            Icons.search,
-            color: MyTheme.mainColor,
-          ),
-          onPressed: () {},
-        ),
+    return Container(
+      decoration: BoxDecoration(
+        image: MyTheme.backgroundImage,
       ),
-      content: SingleChildScrollView(
-        child: AspectRatio(
-          aspectRatio: 5 / 7,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              Text(
-                "Invite Friends",
-                style: Theme.of(context).textTheme.headline2,
-              ),
-              Expanded(
-                child: ListView.builder(
-                    //shrinkWrap: true,
-                    itemCount: friendlist.length,
-                    itemBuilder: (context, index) {
-                      return ListTile(
-                        title: Text(friendlist[index].get('username')),
-                        leading: IconButton(
-                          icon: Icon(FlutterIcons.add_circle_outline),
-                          onPressed: () {
-                            print(
-                                "user: ${friendlist[index].get('username')} clicked");
-                          },
-                        ),
-                      );
-                    }),
-              ),
-              Container(
-                child: Column(
-                  children: [
-                    Text(
-                      'Deck Selected: ${widget.deck.name}',
-                    ),
-                    ButtonTheme(
-                      minWidth: 30.0,
-                      height: 30.0,
-                      child: RaisedButton(
-                        onPressed: () {
-                          print('go back to card description');
-                        },
-                        child: Text("edit"),
-                      ),
-                    ),
-                    Text("Friends Selected: ")
-                  ],
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        body: AlertDialog(
+          backgroundColor: widget.deck.color,
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.0)),
+          title: ListTile(
+            leading: IconButton(
+                padding: EdgeInsets.zero,
+                alignment: Alignment.centerLeft,
+                highlightColor: Colors.transparent,
+                icon: Icon(
+                  Icons.arrow_back_ios_sharp,
+                  color: MyTheme.mainColor,
                 ),
-              ),
-              SizedBox(height: 20),
-              RaisedButton(
-                color: MyTheme.whiteColor,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(5.0),
-                ),
-                child: Text("Start Playing"),
                 onPressed: () {
-                  print('start new conversation');
-                },
+                  Navigator.of(context).pop();
+                }),
+            trailing: IconButton(
+              padding: EdgeInsets.zero,
+              alignment: Alignment.centerRight,
+              icon: Icon(
+                Icons.search,
+                color: MyTheme.mainColor,
               ),
-            ],
+              onPressed: () {},
+            ),
+          ),
+          content: SingleChildScrollView(
+            child: AspectRatio(
+              aspectRatio: 5 / 7,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Text(
+                    "Invite Friends",
+                    style: Theme.of(context).textTheme.headline2,
+                  ),
+                  Expanded(
+                    child: ListView.builder(
+                        //shrinkWrap: true,
+                        itemCount: friendlist.length,
+                        itemBuilder: (context, index) {
+                          return ListTile(
+                            title: Text(friendlist[index].get('username')),
+                            leading: IconButton(
+                              icon: Icon(FlutterIcons.add_circle_outline),
+                              onPressed: () {
+                                print(
+                                    "user: ${friendlist[index].get('username')} clicked");
+                              },
+                            ),
+                          );
+                        }),
+                  ),
+                  Container(
+                    child: Column(
+                      children: [
+                        Text(
+                          'Deck Selected: ${widget.deck.name}',
+                        ),
+                        ButtonTheme(
+                          minWidth: 30.0,
+                          height: 30.0,
+                          child: RaisedButton(
+                            onPressed: () {
+                              print('go back to card description');
+                            },
+                            child: Text("edit"),
+                          ),
+                        ),
+                        Text("Friends Selected: ")
+                      ],
+                    ),
+                  ),
+                  SizedBox(height: 20),
+                  RaisedButton(
+                    color: MyTheme.whiteColor,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(5.0),
+                    ),
+                    child: Text("Start Playing"),
+                    onPressed: () {
+                      print('start new conversation');
+                    },
+                  ),
+                ],
+              ),
+            ),
           ),
         ),
       ),

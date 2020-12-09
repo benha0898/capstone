@@ -1,3 +1,4 @@
+import 'package:CapstoneProject/models/generated_question.dart';
 import 'package:CapstoneProject/theme/consts.dart';
 import 'package:flutter/material.dart';
 
@@ -6,32 +7,44 @@ class ChatTextField extends StatefulWidget {
   ChatTextFieldState createState() => ChatTextFieldState();
 
   final void Function(String text) parentAction;
-  final bool questionAnswered;
+  final GeneratedQuestion question;
 
-  const ChatTextField({Key key, this.parentAction, this.questionAnswered})
+  const ChatTextField({Key key, this.parentAction, this.question})
       : super(key: key);
 }
 
 class ChatTextFieldState extends State<ChatTextField> {
   final textController = TextEditingController();
+  final FocusNode focusNode = FocusNode();
+  Color accentColor;
+  int maxLines = 6;
 
   @override
   void initState() {
     super.initState();
 
+    accentColor = widget.question.color.withBlue(150).withGreen(50);
+
     textController.addListener(() {
       setState(() {});
+    });
+    focusNode.addListener(() {
+      setState(() {
+        maxLines = (focusNode.hasFocus) ? 6 : 1;
+      });
     });
   }
 
   @override
   Widget build(BuildContext context) {
+    print("Chatfield rebuilt");
     return Row(
       children: [
         Expanded(
           child: Container(
             margin: EdgeInsets.all(12),
             padding: EdgeInsets.symmetric(vertical: 6, horizontal: 12),
+            clipBehavior: Clip.hardEdge,
             decoration: BoxDecoration(
               color: MyTheme.darkColor,
               borderRadius: BorderRadius.all(
@@ -43,10 +56,13 @@ class ChatTextFieldState extends State<ChatTextField> {
               children: [
                 Expanded(
                   child: TextField(
+                    minLines: 1,
+                    maxLines: maxLines,
                     controller: textController,
+                    focusNode: focusNode,
                     decoration: InputDecoration(
                       border: InputBorder.none,
-                      hintText: (widget.questionAnswered)
+                      hintText: (widget.question.answered)
                           ? "Send a message"
                           : "Type your answer",
                       hintStyle: TextStyle(
@@ -61,7 +77,7 @@ class ChatTextFieldState extends State<ChatTextField> {
                 IconButton(
                   icon: Icon(
                     Icons.sentiment_satisfied_alt_outlined,
-                    color: MyTheme.blueColor,
+                    color: accentColor,
                   ),
                   onPressed: null,
                 ),
@@ -71,19 +87,41 @@ class ChatTextFieldState extends State<ChatTextField> {
         ),
         if (textController.text != '')
           Padding(
-            padding: EdgeInsets.only(right: 12.0),
+            padding: EdgeInsets.only(right: 0.0),
             child: IconButton(
               icon: Icon(
                 Icons.send,
-                color: MyTheme.blueColor,
+                color: accentColor,
               ),
               onPressed: () {
                 widget.parentAction(textController.text);
                 setState(() {
-                  FocusScope.of(context).unfocus();
                   textController.clear();
                 });
               },
+            ),
+          )
+        else if (!widget.question.answered)
+          Padding(
+            padding: EdgeInsets.only(right: 0.0),
+            child: MaterialButton(
+              elevation: 5,
+              onPressed: () {
+                print("PASS!!!");
+                widget.parentAction("");
+                setState(() {
+                  textController.clear();
+                });
+              },
+              color: accentColor,
+              shape: CircleBorder(),
+              padding: EdgeInsets.all(22.0),
+              child: Text(
+                "PASS",
+                style: TextStyle(
+                  color: MyTheme.whiteColor,
+                ),
+              ),
             ),
           ),
       ],

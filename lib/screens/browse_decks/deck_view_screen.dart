@@ -1,23 +1,37 @@
-import 'package:CapstoneProject/models/conversation.dart';
-import 'package:CapstoneProject/models/user.dart';
-import 'package:CapstoneProject/models/deck.dart';
 import 'package:CapstoneProject/screens/services/search_screen.dart';
 import 'package:CapstoneProject/theme/consts.dart';
 import 'package:flutter/material.dart';
 
 class DeckViewScreen extends StatefulWidget {
-  final Deck deck;
-  final User me;
-  final Conversation conversation;
+  // final Deck deck;
+  // final User me;
+  // final Conversation conversation;
 
-  const DeckViewScreen({Key key, this.deck, this.me, this.conversation})
-      : super(key: key);
+  // const DeckViewScreen({Key key, this.deck, this.me, this.conversation})
+  //     : super(key: key);
 
   @override
   _DeckViewScreenState createState() => _DeckViewScreenState();
 }
 
 class _DeckViewScreenState extends State<DeckViewScreen> {
+  Map<String, dynamic> arguments;
+
+  @override
+  void initState() {
+    super.initState();
+
+    // arguments =
+    //     ModalRoute.of(context).settings.arguments as Map<String, dynamic>;
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    arguments =
+        ModalRoute.of(context).settings.arguments as Map<String, dynamic>;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -27,7 +41,7 @@ class _DeckViewScreenState extends State<DeckViewScreen> {
       child: Scaffold(
         backgroundColor: Colors.transparent,
         body: AlertDialog(
-          backgroundColor: widget.deck.color,
+          backgroundColor: arguments["deck"].color,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(20.0),
           ),
@@ -55,15 +69,15 @@ class _DeckViewScreenState extends State<DeckViewScreen> {
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
                       Text(
-                        widget.deck.name,
+                        arguments["deck"].name,
                         style: Theme.of(context).textTheme.headline2,
                       ),
                       SizedBox(height: 10),
                       Text(
-                        widget.deck.description,
+                        arguments["deck"].description,
                       ),
                       SizedBox(height: 20),
-                      (widget.conversation != null)
+                      (arguments["conversation"] != null)
                           ? Stack(
                               children: [
                                 FractionallySizedBox(
@@ -93,7 +107,16 @@ class _DeckViewScreenState extends State<DeckViewScreen> {
                                       borderRadius: BorderRadius.all(
                                           Radius.circular(25.0)),
                                       onTap: () {
-                                        print("Hello");
+                                        Navigator.popUntil(context, (route) {
+                                          if (route.settings.name ==
+                                              'conversation') {
+                                            (route.settings.arguments
+                                                    as Map)["deck"] =
+                                                arguments["deck"];
+                                            return true;
+                                          }
+                                          return false;
+                                        });
                                       },
                                     ),
                                   ),
@@ -110,7 +133,7 @@ class _DeckViewScreenState extends State<DeckViewScreen> {
                                 print("open invite friends screen");
                                 Navigator.of(context).push(MaterialPageRoute(
                                   builder: (_) => SearchScreen(
-                                    deck: widget.deck,
+                                    deck: arguments["deck"],
                                   ),
                                 ));
                               }),

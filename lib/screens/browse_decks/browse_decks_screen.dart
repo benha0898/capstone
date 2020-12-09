@@ -3,7 +3,6 @@ import 'package:CapstoneProject/models/conversation.dart';
 import 'package:CapstoneProject/screens/services/database.dart';
 //import 'package:CapstoneProject/theme/flutter_icons.dart';
 import 'package:CapstoneProject/models/deck.dart';
-import 'package:CapstoneProject/screens/browse_decks/deck_view_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
@@ -174,12 +173,16 @@ getFriends() async {
                                 child: InkWell(
                                   onTap: () {
                                     print(deck.name);
-                                    Navigator.of(context)
-                                        .push(MaterialPageRoute(
-                                      builder: (_) => DeckViewScreen(
-                                        deck: deck,
-                                      ),
-                                    ));
+                                    Navigator.pushNamed(context, 'deck_view',
+                                        arguments: {
+                                          "deck": deck,
+                                        });
+                                    // Navigator.of(context)
+                                    //     .push(MaterialPageRoute(
+                                    //   builder: (_) => DeckViewScreen(
+                                    //     deck: deck,
+                                    //   ),
+                                    // ));
                                   },
                                   child: Container(
                                     decoration: (deck.graphic != "")

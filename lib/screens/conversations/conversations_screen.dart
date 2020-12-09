@@ -2,7 +2,6 @@ import 'package:CapstoneProject/db.dart';
 import 'package:CapstoneProject/theme/consts.dart';
 import 'package:CapstoneProject/models/user.dart';
 import 'package:CapstoneProject/models/conversation.dart';
-import 'package:CapstoneProject/screens/conversations/conversation_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'package:flutter/material.dart';
@@ -128,13 +127,18 @@ class _ConversationsScreenState extends State<ConversationsScreen> {
                             ),
                             child: ListTile(
                               onTap: () {
-                                Navigator.of(context).push(
-                                  MaterialPageRoute(
-                                    builder: (_) => ConversationScreen(
-                                        conversation: conversations[index],
-                                        me: me),
-                                  ),
-                                );
+                                Navigator.pushNamed(context, 'conversation',
+                                    arguments: {
+                                      "me": me,
+                                      "conversation": conversations[index],
+                                    });
+                                // Navigator.of(context).push(
+                                //   MaterialPageRoute(
+                                //     builder: (_) => ConversationScreen(
+                                //         conversation: conversations[index],
+                                //         me: me),
+                                //   ),
+                                // );
                               },
                               leading: Container(
                                 width: 50,
