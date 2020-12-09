@@ -82,6 +82,7 @@ class _QuestionCardExpandedState extends State<QuestionCardExpanded> {
                         padding: EdgeInsets.all(10),
                         decoration: (question.background != "")
                             ? BoxDecoration(
+                                color: question.color,
                                 image: DecorationImage(
                                   image: Image.network(
                                     question.background,

@@ -28,14 +28,8 @@ class DatabaseService {
     return _firestore.collection("users").doc(id).get();
   }
 
-  Future<void> addUser() async {
-    await _firestore.collection("users").add({
-      "email": "example@example.com",
-      "firstName": "John",
-      "lastName": "Doe",
-      "profilePicture": "",
-      "conversations": List<String>(),
-    }).then((value) => print("New user id: ${value.id}"));
+  Future<void> addUser(String uid, Map<String, dynamic> user) async {
+    await _firestore.collection("users").doc(uid).set(user);
   }
 
   Future<QuerySnapshot> getCategories() {
