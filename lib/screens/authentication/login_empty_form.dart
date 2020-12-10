@@ -4,8 +4,11 @@ import 'dart:async';
 import 'package:CapstoneProject/db.dart';
 import 'package:CapstoneProject/models/user.dart';
 import 'package:CapstoneProject/screens/services/auth.dart';
+import 'package:CapstoneProject/screens/services/database.dart';
+import 'package:CapstoneProject/screens/services/helper_functions.dart';
 //import 'package:CapstoneProject/screens/user_file/user_search.dart';
 import 'package:CapstoneProject/theme/consts.dart';
+//import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 import '../../app.dart';
@@ -20,6 +23,9 @@ class _LoginEmptyFormState extends State<LoginEmptyForm> {
   bool isLoading = false;
 
   AuthMethods authMethods = new AuthMethods();
+  DatabaseMethods dbMethods = new DatabaseMethods();
+  HelperFunctions helperFunctions = new HelperFunctions();
+
   final formKey = GlobalKey<FormState>();
   TextEditingController passwordController = new TextEditingController();
   TextEditingController emailController = new TextEditingController();

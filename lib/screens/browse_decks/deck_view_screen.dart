@@ -1,4 +1,4 @@
-import 'package:CapstoneProject/screens/services/search_screen.dart';
+import 'package:CapstoneProject/screens/services/invite_friends_screen.dart';
 import 'package:CapstoneProject/theme/consts.dart';
 import 'package:flutter/material.dart';
 
@@ -132,7 +132,7 @@ class _DeckViewScreenState extends State<DeckViewScreen> {
                               onPressed: () {
                                 print("open invite friends screen");
                                 Navigator.of(context).push(MaterialPageRoute(
-                                  builder: (_) => SearchScreen(
+                                  builder: (_) => InviteFriends(
                                     deck: arguments["deck"],
                                   ),
                                 ));
@@ -143,6 +143,7 @@ class _DeckViewScreenState extends State<DeckViewScreen> {
               ),
             ],
           ),
+          
         ),
       ),
     );

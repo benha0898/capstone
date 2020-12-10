@@ -5,8 +5,11 @@ import 'package:CapstoneProject/app.dart';
 import 'package:CapstoneProject/db.dart';
 import 'package:CapstoneProject/models/user.dart';
 import 'package:CapstoneProject/screens/services/auth.dart';
+import 'package:CapstoneProject/screens/services/constants.dart';
 import 'package:CapstoneProject/screens/services/database.dart';
+import 'package:CapstoneProject/screens/services/helper_functions.dart';
 import 'package:CapstoneProject/theme/consts.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 //import 'package:firebase_auth/firebase_auth.dart';
 
@@ -21,6 +24,8 @@ class _LoginCreateAccountState extends State<LoginCreateAccount> {
 
   AuthMethods authMethods = new AuthMethods();
   DatabaseMethods databaseMethods = new DatabaseMethods();
+  HelperFunctions helperFunctions = new HelperFunctions();
+  QuerySnapshot snapshotUserInfo;
 
   final formKey = GlobalKey<FormState>();
   TextEditingController emailController = new TextEditingController();
@@ -36,26 +41,44 @@ class _LoginCreateAccountState extends State<LoginCreateAccount> {
   final FocusNode focusNode4 = FocusNode();
   final FocusNode focusNode5 = FocusNode();
 
-  signUpUser() {
-    if (formKey.currentState.validate()) {
+  setConstants(){
+    Constants.myFirstName = firstNameController.text;
+    Constants.myLastName = lastNameController.text;
+    Constants.myEmail = emailController.text;
+    Constants.myUsername = usernameController.text;
+  }
+
+  signUpUser(){
+    if(formKey.currentState.validate()){
+
+      Map<String, dynamic> userInfoMap = {
+          "username" : usernameController.text,
+          "email" : emailController.text,
+          "firstName" : firstNameController.text,
+          "lastName" : lastNameController.text,
+          "profilePicture" : "",
+          "conversations": [],
+      };
+
+      //HelperFunctions.saveUserNameSP(usernameController.text);
+      //HelperFunctions.saveUserEmailSP(emailController.text);
+      setConstants();
+      
       setState(() {
         isLoading = true;
       });
+
+      databaseMethods.getUserbyEmail(emailController.text)
+        .then((val){
+          snapshotUserInfo = val;
+        });
 
       authMethods
           .signUpWithEmailAndPassword(
               emailController.text, passwordController.text)
           .then((val) {
         print("${val.userId}");
-
-        Map<String, dynamic> userInfoMap = {
-          "username": usernameController.text,
-          "email": emailController.text,
-          "firstName": "",
-          "lastName": "",
-          "profilePicture": "",
-          "conversations": [],
-        };
+        print(Constants.myUsername);
 
         databaseMethods.uploadUserInfo(userInfoMap);
 
