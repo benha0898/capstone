@@ -23,6 +23,27 @@ class InviteFriends extends StatefulWidget {
 
 class _InviteFriendsState extends State<InviteFriends> {
   TextEditingController searchController = new TextEditingController();
+  List<QueryDocumentSnapshot> friends = List<QueryDocumentSnapshot>();
+  List<DocumentSnapshot> invitedFriendsList = List<DocumentSnapshot>();
+
+  DatabaseMethods dbMethods = new DatabaseMethods();
+
+  List<String> isChecked = [];
+
+  User me;
+
+  getList() {
+    dbMethods.getUsers().then((val) {
+      setState(() {
+        friends = val.docs;
+      });
+    });
+  }
+
+  clearList() {
+    isChecked.clear();
+    isChecked.add(Constants.myUsername);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -173,62 +194,6 @@ class _InviteFriendsState extends State<InviteFriends> {
     );
   }
 }
-
-/*
-class UserListTile extends StatefulWidget {
-  @override
-  _UserListTileState createState() => _UserListTileState();
-}
-
-class _UserListTileState extends State<UserListTile> {
-  List<QueryDocumentSnapshot> friends = List<QueryDocumentSnapshot>();
-  List<DocumentSnapshot> invitedFriendsList = List<DocumentSnapshot>();
-
-  DatabaseMethods dbMethods = new DatabaseMethods();
-
-  getList() {
-    dbMethods.getUsers().then((val) {
-      setState(() {
-        friends = val.docs;
-      });
-    });
-  }
-
-  @override
-  void initState() {
-    getList();
-    super.initState();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      child: Expanded(
-        child: ListView.builder(
-            shrinkWrap: true,
-            itemCount: friends.length,
-            itemBuilder: (BuildContext context, index) {
-              return ListTile(
-                title: Text(
-                  friends[index].get('username'),
-                  style: Theme.of(context).textTheme.bodyText1,
-                ),
-                leading: IconButton(
-                  icon: Icon(
-                    FlutterIcons.add_circle_outline,
-                    color: Colors.grey,
-                  ),
-                  onPressed: () {
-                    print('${friends[index].get('username')} selected');
-                  },
-                ),
-              );
-            }),
-      ),
-    );
-  }
-}
-*/
 
 class UserListCheckbox extends StatefulWidget {
   @override

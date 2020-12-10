@@ -8,7 +8,7 @@ import 'package:CapstoneProject/screens/services/database.dart';
 import 'package:CapstoneProject/screens/services/helper_functions.dart';
 //import 'package:CapstoneProject/screens/user_file/user_search.dart';
 import 'package:CapstoneProject/theme/consts.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+//import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 import '../../app.dart';

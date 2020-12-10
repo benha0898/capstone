@@ -1,6 +1,6 @@
 import 'package:CapstoneProject/models/user.dart';
 import 'package:flutter/material.dart';
-import 'package:CapstoneProject/theme/consts.dart';
+//import 'package:CapstoneProject/theme/consts.dart';
 
 class SettingsScreen extends StatefulWidget {
   final User me;
