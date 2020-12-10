@@ -1,6 +1,5 @@
 import 'package:CapstoneProject/models/user_info.dart';
 import 'package:CapstoneProject/theme/consts.dart';
-import 'package:CapstoneProject/theme/flutter_icons.dart';
 //import 'package:CapstoneProject/models/conversation.dart';
 //import 'package:CapstoneProject/screens/conversations/conversation_screen.dart';
 
@@ -94,7 +93,7 @@ class _UserSearchState extends State<UserSearch> {
                     ],
                   ),
                   trailing: Icon(
-                    FlutterIcons.add_circle_outline,
+                    Icons.add_circle_outline_rounded,
                     color: Colors.white,
                     size: 35,
                   ),

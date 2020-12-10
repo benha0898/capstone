@@ -1,4 +1,7 @@
+import 'dart:async';
+
 import 'package:CapstoneProject/models/user.dart';
+import 'package:CapstoneProject/theme/consts.dart';
 import 'package:flutter/material.dart';
 
 class SettingsScreen extends StatefulWidget {
@@ -13,6 +16,7 @@ class SettingsScreen extends StatefulWidget {
 class _SettingsScreenState extends State<SettingsScreen> {
   @override
   Widget build(BuildContext context) {
+    final Size size = MediaQuery.of(context).size;
     return Scaffold(
       backgroundColor: Colors.transparent,
       appBar: AppBar(
@@ -20,8 +24,51 @@ class _SettingsScreenState extends State<SettingsScreen> {
         centerTitle: true,
         leading: SizedBox(),
       ),
-      body: Center(
-        child: Text("Hello ${widget.me.name}"),
+      body: Container(
+        alignment: Alignment.center,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              "Hello ${widget.me.name}",
+              style: TextStyle(
+                fontFamily: "DottiesChocolate",
+                fontSize: 32,
+                color: MyTheme.yellowColor,
+              ),
+            ),
+            SizedBox(height: 50),
+            Container(
+              width: size.width * 0.7,
+              child: RaisedButton(
+                onPressed: () {
+                  Timer(
+                    Duration(milliseconds: 100),
+                    () {
+                      print("Logging Out");
+                      Navigator.popUntil(
+                        context,
+                        ModalRoute.withName('/'),
+                      );
+                    },
+                  );
+                },
+                color: MyTheme.whiteColor,
+                splashColor: MyTheme.yellowColor,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(30),
+                ),
+                padding: EdgeInsets.symmetric(vertical: 20.0),
+                child: Text("Log out",
+                    style: TextStyle(
+                      color: MyTheme.yellowColor,
+                      fontWeight: FontWeight.w500,
+                      fontSize: 16,
+                    )),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

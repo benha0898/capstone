@@ -75,28 +75,29 @@ getFriends() async {
           style: TextStyle(fontSize: 20),
         ),
         centerTitle: true,
-        leading: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: ToggleButtons(
-            color: MyTheme.greyAccentColor,
-            selectedColor: MyTheme.yellowAccentColor,
-            fillColor: MyTheme.yellowColor,
-            constraints: BoxConstraints(minHeight: 40.0, minWidth: 40.0),
-            children: [
-              Icon(Icons.view_module_rounded),
-              Icon(Icons.view_list_rounded),
-            ],
-            isSelected: _viewSelections,
-            onPressed: (int index) {
-              setState(() {
-                for (var i = 0; i < _viewSelections.length; i++) {
-                  _viewSelections[i] = (i == index);
-                }
-              });
-            },
-          ),
-        ),
-        leadingWidth: 100,
+        leading: SizedBox(),
+        // leading: Padding(
+        //   padding: const EdgeInsets.all(8.0),
+        //   child: ToggleButtons(
+        //     color: MyTheme.greyAccentColor,
+        //     selectedColor: MyTheme.yellowAccentColor,
+        //     fillColor: MyTheme.yellowColor,
+        //     constraints: BoxConstraints(minHeight: 40.0, minWidth: 40.0),
+        //     children: [
+        //       Icon(Icons.view_module_rounded),
+        //       Icon(Icons.view_list_rounded),
+        //     ],
+        //     isSelected: _viewSelections,
+        //     onPressed: (int index) {
+        //       setState(() {
+        //         for (var i = 0; i < _viewSelections.length; i++) {
+        //           _viewSelections[i] = (i == index);
+        //         }
+        //       });
+        //     },
+        //   ),
+        // ),
+        // leadingWidth: 100,
         actions: [
           IconButton(
             icon: Icon(

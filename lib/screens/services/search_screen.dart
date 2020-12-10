@@ -1,6 +1,5 @@
 import 'package:CapstoneProject/models/user.dart';
 import 'package:CapstoneProject/screens/services/database.dart';
-import 'package:CapstoneProject/theme/flutter_icons.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:CapstoneProject/models/deck.dart';
@@ -92,7 +91,7 @@ class _SearchScreenState extends State<SearchScreen> {
                           return ListTile(
                             title: Text(friendlist[index].get('username')),
                             leading: IconButton(
-                              icon: Icon(FlutterIcons.add_circle_outline),
+                              icon: Icon(Icons.add_circle_outline_rounded),
                               onPressed: () {
                                 print(
                                     "user: ${friendlist[index].get('username')} clicked");
