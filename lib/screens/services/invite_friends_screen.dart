@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:CapstoneProject/db.dart';
 import 'package:CapstoneProject/models/user.dart';
 //import 'package:CapstoneProject/screens/browse_decks/browse_decks_screen.dart';
-import 'package:CapstoneProject/screens/services/search_friends_screen.dart';
 //import 'package:CapstoneProject/theme/flutter_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:CapstoneProject/models/deck.dart';

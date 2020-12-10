@@ -90,7 +90,7 @@ class DatabaseService {
         .collection("conversations")
         .doc(cid)
         .collection("decks")
-        .where("completed", isEqualTo: false)
+        .orderBy("timestamp", descending: true)
         .limit(1)
         .snapshots();
   }

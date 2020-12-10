@@ -38,4 +38,15 @@ class Deck {
         this.color = Color(snapshot["color"]).withOpacity(1),
         this.graphic = snapshot["graphic"],
         this.background = snapshot["background"];
+
+  Deck.from(Deck deck)
+      : this.id = deck.id,
+        this.name = deck.name,
+        this.category = deck.category,
+        this.categoryID = deck.categoryID,
+        this.description = deck.description,
+        this.questions = new List<String>.from(deck.questions),
+        this.color = Color(deck.color.value).withOpacity(1),
+        this.graphic = deck.graphic,
+        this.background = deck.background;
 }

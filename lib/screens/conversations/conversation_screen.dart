@@ -60,6 +60,8 @@ class _ConversationScreenState extends State<ConversationScreen> {
       print("New deck: ${arguments['deck'].name}");
       Deck deck = arguments["deck"];
       arguments["deck"] = null;
+      print(
+          "------------- RUNNING START NEW DECK FROM didChangeDependencies ---------------");
       _startNewDeck(deck);
     } else {
       print("No new deck passed to arguments");
@@ -113,25 +115,7 @@ class _ConversationScreenState extends State<ConversationScreen> {
           builder: (context, snapshot) {
             if (!snapshot.hasData || snapshot.data.documents.length == 0)
               return Center(child: CircularProgressIndicator());
-            // if (snapshot.data.documents.length == 0)
-            //   return Center(
-            //     child: RaisedButton(
-            //       onPressed: () {
-            //         print("Start new conversation!");
-            //         Navigator.pushNamed(context, 'select_deck', arguments: {
-            //           "me": this.me,
-            //           "conversation": this.conversation,
-            //         }).then((_) {
-            //           final result = ModalRoute.of(context).settings.arguments
-            //               as Map<String, dynamic>;
-            //           if (result != null && result['deck'] != null)
-            //             print("Returned deck: ${result['deck'].name}");
-            //           _startNewDeck(result['deck']);
-            //         });
-            //       },
-            //       child: Text("Start new conversation"),
-            //     ),
-            //   );
+
             AsyncSnapshot<dynamic> questionSnapshot = snapshot;
             latestQuestion = GeneratedQuestion.fromSnapshot(
                 questionSnapshot.data.documents.last);
@@ -148,16 +132,7 @@ class _ConversationScreenState extends State<ConversationScreen> {
               // Fetch current deck playing
               stream: db.getPlayingDeck(this.conversation.id),
               builder: (context, snapshot) {
-                if (!snapshot.hasData || snapshot.data.documents.length == 0)
-                  return CircularProgressIndicator();
-                if (snapshot.data.documents.length == 0)
-                  return Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 12.0),
-                    child: RaisedButton(
-                      onPressed: () => print("Start new conversation!"),
-                      child: Text("Start new conversation"),
-                    ),
-                  );
+                if (!snapshot.hasData) return CircularProgressIndicator();
 
                 // Set up variables
                 playingDeck =
@@ -171,14 +146,20 @@ class _ConversationScreenState extends State<ConversationScreen> {
                   itemBuilder: (context, index) {
                     // First, get Next Question button
                     if (index == questionSnapshot.data.documents.length) {
+                      print("latestQuestion: ${latestQuestion.id}");
+                      print("current Deck: ${playingDeck.id}");
                       if (!latestQuestion.answered) return SizedBox();
+                      bool completed = playingDeck.completed;
+                      print("completed: $completed");
                       return Stack(
                         children: [
                           Container(
                             width: size.width,
                             padding: EdgeInsets.all(50),
                             decoration: BoxDecoration(
-                              color: playingDeck.color,
+                              color: (!completed)
+                                  ? playingDeck.color
+                                  : MyTheme.whiteColor,
                               borderRadius:
                                   BorderRadius.all(Radius.circular(35.0)),
                               boxShadow: [
@@ -197,22 +178,27 @@ class _ConversationScreenState extends State<ConversationScreen> {
                                 Container(
                                   margin: EdgeInsets.only(bottom: 10.0),
                                   child: Text(
-                                    "Next Question",
+                                    (!completed)
+                                        ? "Next Question"
+                                        : "Start a new deck",
                                     style: TextStyle(
                                       fontFamily: "DottiesChocolate",
                                       fontSize: 22.0,
-                                      color: MyTheme.whiteColor,
+                                      color: (!completed)
+                                          ? MyTheme.whiteColor
+                                          : MyTheme.darkColor,
                                       fontWeight: FontWeight.w600,
                                     ),
                                   ),
                                 ),
-                                Text(
-                                  "${playingDeck.name}",
-                                  style: TextStyle(
-                                    color: MyTheme.whiteColor,
-                                    fontStyle: FontStyle.italic,
+                                if (!completed)
+                                  Text(
+                                    "${playingDeck.name}",
+                                    style: TextStyle(
+                                      color: MyTheme.whiteColor,
+                                      fontStyle: FontStyle.italic,
+                                    ),
                                   ),
-                                ),
                               ],
                             ),
                           ),
@@ -222,10 +208,33 @@ class _ConversationScreenState extends State<ConversationScreen> {
                               child: InkWell(
                                 borderRadius:
                                     BorderRadius.all(Radius.circular(35.0)),
-                                onTap: () {
-                                  print("Hello");
-                                  _addQuestion(playingDeck);
-                                },
+                                onTap: (!completed)
+                                    ? () {
+                                        _addQuestion(playingDeck);
+                                      }
+                                    : () {
+                                        Navigator.pushNamed(
+                                            context, 'select_deck',
+                                            arguments: {
+                                              "me": this.me,
+                                              "conversation": this.conversation,
+                                            }).then((_) {
+                                          final result = ModalRoute.of(context)
+                                                  .settings
+                                                  .arguments
+                                              as Map<String, dynamic>;
+                                          if (result != null &&
+                                              result['deck'] != null)
+                                            print(
+                                                "Returned deck: ${result['deck'].name}");
+                                          Deck deck =
+                                              new Deck.from(result['deck']);
+                                          (ModalRoute.of(context)
+                                              .settings
+                                              .arguments as Map)["deck"] = null;
+                                          _startNewDeck(deck);
+                                        });
+                                      },
                               ),
                             ),
                           ),
@@ -235,81 +244,11 @@ class _ConversationScreenState extends State<ConversationScreen> {
                     // Then, get all question containers
                     GeneratedQuestion question = GeneratedQuestion.fromSnapshot(
                         questionSnapshot.data.documents[index]);
-                    return Align(
-                      alignment: Alignment.topCenter,
-                      heightFactor: 0.8,
-                      child: Hero(
-                        tag: question.id,
-                        child: Material(
-                          color: Colors.transparent,
-                          child: Stack(
-                            children: [
-                              Container(
-                                padding: EdgeInsets.all(10),
-                                decoration: BoxDecoration(
-                                  color: question.color,
-                                  borderRadius: BorderRadius.only(
-                                      topLeft: Radius.circular(35.0),
-                                      topRight: Radius.circular(35.0)),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: MyTheme.darkColor.withOpacity(0.5),
-                                      spreadRadius: 5.0,
-                                      blurRadius: 7.0,
-                                      offset: Offset(0, 3),
-                                    ),
-                                  ],
-                                ),
-                                child: ListTile(
-                                  title: Container(
-                                    margin: EdgeInsets.only(bottom: 20.0),
-                                    child: Text(
-                                      question.text,
-                                      style: TextStyle(
-                                        fontFamily: "DottiesChocolate",
-                                        fontSize: 22.0,
-                                        color: MyTheme.whiteColor,
-                                        fontWeight: FontWeight.w600,
-                                      ),
-                                    ),
-                                    // color: Colors.white,
-                                  ),
-                                  subtitle: _setSubtitle(question),
-                                  trailing: Icon(
-                                    Icons.keyboard_arrow_down_rounded,
-                                    color: MyTheme.whiteColor,
-                                  ),
-                                ),
-                              ),
-                              Positioned.fill(
-                                child: Material(
-                                  color: Colors.transparent,
-                                  child: InkWell(
-                                    borderRadius: BorderRadius.only(
-                                        topLeft: Radius.circular(35.0),
-                                        topRight: Radius.circular(35.0)),
-                                    onTap: () {
-                                      print("Question expand!");
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) {
-                                            return QuestionCardExpanded(
-                                              me: this.me,
-                                              question: question,
-                                              conversation: this.conversation,
-                                            );
-                                          },
-                                        ),
-                                      );
-                                    },
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
+                    return QuestionCard(
+                      me: me,
+                      question: question,
+                      conversation: conversation,
+                      accentColor: accentColor,
                     );
                   },
                 );
@@ -320,6 +259,134 @@ class _ConversationScreenState extends State<ConversationScreen> {
       ),
     );
   }
+
+  void _addQuestion(GeneratedDeck deck) {
+    db.addQuestion(this.conversation.id, deck).then((value) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) {
+            return QuestionCardExpanded(
+              me: this.me,
+              question: latestQuestion,
+              conversation: this.conversation,
+            );
+          },
+        ),
+      );
+    });
+  }
+
+  void _startNewDeck(Deck deck) {
+    Deck newDeck = new Deck.from(deck);
+    db.addDeck(this.conversation.id, newDeck).then((value) {
+      print("Returned value: $value");
+      print("New playingDeck: ${this.playingDeck.id}");
+      GeneratedDeck generatedDeck = GeneratedDeck.fromSnapshot(value);
+      _addQuestion(generatedDeck);
+    });
+  }
+}
+
+class QuestionCard extends StatefulWidget {
+  final User me;
+  final GeneratedQuestion question;
+  final Conversation conversation;
+  final Color accentColor;
+
+  const QuestionCard(
+      {Key key, this.me, this.question, this.conversation, this.accentColor})
+      : super(key: key);
+
+  @override
+  _QuestionCardState createState() => _QuestionCardState();
+}
+
+class _QuestionCardState extends State<QuestionCard>
+    with AutomaticKeepAliveClientMixin {
+  @override
+  Widget build(BuildContext context) {
+    super.build(context);
+    return Align(
+      alignment: Alignment.topCenter,
+      heightFactor: 0.8,
+      child: Hero(
+        tag: widget.question.id,
+        child: Material(
+          color: Colors.transparent,
+          child: Stack(
+            children: [
+              Container(
+                padding: EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: widget.question.color,
+                  borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(35.0),
+                      topRight: Radius.circular(35.0)),
+                  boxShadow: [
+                    BoxShadow(
+                      color: MyTheme.darkColor.withOpacity(0.5),
+                      spreadRadius: 5.0,
+                      blurRadius: 7.0,
+                      offset: Offset(0, 3),
+                    ),
+                  ],
+                ),
+                child: ListTile(
+                  title: Container(
+                    margin: EdgeInsets.only(bottom: 20.0),
+                    child: Text(
+                      widget.question.text,
+                      style: TextStyle(
+                        fontFamily: "DottiesChocolate",
+                        fontSize: 22.0,
+                        color: MyTheme.whiteColor,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    // color: Colors.white,
+                  ),
+                  subtitle: _setSubtitle(widget.question),
+                  trailing: Icon(
+                    Icons.keyboard_arrow_down_rounded,
+                    color: MyTheme.whiteColor,
+                  ),
+                ),
+              ),
+              Positioned.fill(
+                child: Material(
+                  color: Colors.transparent,
+                  child: InkWell(
+                    borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(35.0),
+                        topRight: Radius.circular(35.0)),
+                    onTap: () {
+                      print("Question expand!");
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) {
+                            return QuestionCardExpanded(
+                              me: widget.me,
+                              question: widget.question,
+                              conversation: widget.conversation,
+                            );
+                          },
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  @override
+  bool get wantKeepAlive => true;
 
   Widget _setSubtitle(GeneratedQuestion question) {
     return Column(
@@ -341,7 +408,7 @@ class _ConversationScreenState extends State<ConversationScreen> {
             : Row(
                 children: [
                   Text(
-                    "${question.answers.length}/${this.conversation.users.length} answered. ",
+                    "${question.answers.length}/${widget.conversation.users.length} answered. ",
                     style: TextStyle(
                       color: MyTheme.whiteColor,
                     ),
@@ -356,7 +423,8 @@ class _ConversationScreenState extends State<ConversationScreen> {
                       : Text(
                           "Click here to answer",
                           style: TextStyle(
-                              color: accentColor, fontWeight: FontWeight.w700),
+                              color: widget.accentColor,
+                              fontWeight: FontWeight.w700),
                         ),
                 ],
               ),
@@ -366,32 +434,6 @@ class _ConversationScreenState extends State<ConversationScreen> {
 
   bool _answeredByMe(GeneratedQuestion question) {
     return question.answers
-        .any((element) => element.sender["id"] == this.me.id);
-  }
-
-  void _addQuestion(GeneratedDeck deck) {
-    db.addQuestion(this.conversation.id, deck).then((value) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) {
-            return QuestionCardExpanded(
-              me: this.me,
-              question: latestQuestion,
-              conversation: this.conversation,
-            );
-          },
-        ),
-      );
-    });
-  }
-
-  void _startNewDeck(Deck deck) {
-    db.addDeck(this.conversation.id, deck).then((value) {
-      print("Returned value: $value");
-      print("New playingDeck: ${this.playingDeck}");
-      GeneratedDeck newDeck = GeneratedDeck.fromSnapshot(value);
-      _addQuestion(newDeck);
-    });
+        .any((element) => element.sender["id"] == widget.me.id);
   }
 }
