@@ -1,4 +1,3 @@
-import 'package:CapstoneProject/app.dart';
 import 'package:CapstoneProject/screens/authentication/login_main.dart';
 import 'package:CapstoneProject/screens/browse_decks/deck_view_screen.dart';
 import 'package:CapstoneProject/screens/browse_decks/select_deck_screen.dart';

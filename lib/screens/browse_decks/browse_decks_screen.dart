@@ -21,7 +21,6 @@ class BrowseDecksScreen extends StatefulWidget {
 class _BrowseDecksScreenState extends State<BrowseDecksScreen> {
   DatabaseService db = DatabaseService();
 
-  List<bool> _viewSelections = [true, false];
   List<bool> _categorySelections;
   List<QueryDocumentSnapshot> _categories = List<QueryDocumentSnapshot>();
   QueryDocumentSnapshot _selectedCategory;
