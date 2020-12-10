@@ -11,8 +11,6 @@ import 'package:CapstoneProject/theme/consts.dart';
 //import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
-import '../../app.dart';
-
 class LoginEmptyForm extends StatefulWidget {
   @override
   _LoginEmptyFormState createState() => _LoginEmptyFormState();
@@ -47,12 +45,10 @@ class _LoginEmptyFormState extends State<LoginEmptyForm> {
 
         db.getUserById(val.userId).then((value) {
           User user = User.fromSnapshot(value);
-          Navigator.pushAndRemoveUntil(
-              context,
-              MaterialPageRoute(
-                builder: (context) => CustomNavigatorHomePage(me: user),
-              ),
-              ModalRoute.withName('/'));
+          Navigator.pushReplacementNamed(context, 'navigation', arguments: {
+            "me": user,
+            "loggedIn": true,
+          });
         });
       });
     }

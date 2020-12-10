@@ -2,7 +2,6 @@ import 'package:CapstoneProject/db.dart';
 import 'package:CapstoneProject/theme/consts.dart';
 import 'package:CapstoneProject/models/user.dart';
 import 'package:CapstoneProject/models/conversation.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -26,210 +25,223 @@ class _ConversationsScreenState extends State<ConversationsScreen> {
   void initState() {
     super.initState();
 
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      getData();
-    });
+    me = widget.me;
+
+    // WidgetsBinding.instance.addPostFrameCallback((_) {
+    //   getData();
+    // });
   }
 
-  getData() async {
-    await FirebaseFirestore.instance
-        .collection("users")
-        .doc("Avqp7v0qZE2iZ0yyrRO6")
-        .get()
-        .then((value) => setState(() {
-              me = User.fromSnapshot(value);
-              // conversations = List<Conversation>();
-              // if (me.conversations.length > 0) {
-              //   print("I have ${me.conversations.length} conversations!");
-              //   for (int i = 0; 10 * i <= me.conversations.length; i++) {
-              //     List<String> temp = me.conversations.sublist(
-              //         i,
-              //         (i + 10 <= me.conversations.length)
-              //             ? i + 10
-              //             : me.conversations.length);
-              //     FirebaseFirestore.instance
-              //         .collection("conversations")
-              //         .where(FieldPath.documentId, whereIn: temp)
-              //         .snapshots()
-              //         .listen((data) => setState(() {
-              //               conversations.addAll(List.generate(
-              //                   data.docs.length,
-              //                   (index) => Conversation.fromSnapshot(
-              //                       data.docs[index])));
-              //             }));
-              //   }
-              // }
-            }));
-  }
+  // getData() async {
+  //   await FirebaseFirestore.instance
+  //       .collection("users")
+  //       .doc("Avqp7v0qZE2iZ0yyrRO6")
+  //       .get()
+  //       .then(
+  //         (value) => setState(() {
+  //           me = User.fromSnapshot(value);
+  //         }),
+  //       );
+  // }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.transparent,
-      appBar: AppBar(
-        elevation: 0,
-        backgroundColor: MyTheme.mainColor,
-        title: Text(
-          "Conversations",
-          style: TextStyle(fontSize: 20),
-        ),
-        centerTitle: true,
-        leading: SizedBox(),
-        actions: [
-          IconButton(
-            icon: Icon(
-              Icons.search_rounded,
-              color: MyTheme.whiteColor,
-            ),
-            onPressed: () {},
+    final Size size = MediaQuery.of(context).size;
+    return WillPopScope(
+      onWillPop: () async => false,
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        appBar: AppBar(
+          elevation: 0,
+          backgroundColor: MyTheme.mainColor,
+          title: Text(
+            "Conversations",
+            style: TextStyle(fontSize: 20),
           ),
-        ],
-      ),
-      body: (me == null)
-          ? Center(child: CircularProgressIndicator())
-          : Column(
-              children: [
-                // Container(
-                //   // Search bar
-                //   margin: EdgeInsets.all(16),
-                //   padding: EdgeInsets.all(6),
-                //   decoration: BoxDecoration(
-                //     color: Colors.black45,
-                //     borderRadius: BorderRadius.all(Radius.circular(10)),
-                //   ),
-                //   child: TextField(
-                //     decoration: InputDecoration(
-                //       prefixIcon: Icon(
-                //         Icons.search,
-                //         color: Colors.white30,
-                //       ),
-                //       hintText: "Search",
-                //       hintStyle: TextStyle(
-                //         color: Colors.white30,
-                //       ),
-                //     ),
-                //   ),
-                // ),
-                StreamBuilder(
-                  stream: db.getConversations(me),
-                  builder: (context, snapshot) {
-                    if (!snapshot.hasData)
-                      return Expanded(
-                          child: Center(child: CircularProgressIndicator()));
-                    List<Conversation> conversations = List.generate(
-                        snapshot.data.documents.length,
-                        (index) => Conversation.fromSnapshot(
-                            snapshot.data.documents[index]));
-                    return Expanded(
-                      child: ListView.builder(
-                        itemCount: conversations.length,
-                        itemBuilder: (context, index) {
-                          return Container(
-                            decoration: BoxDecoration(
-                              color: (index % 2 == 0)
-                                  ? Color(0xFFE2E2E2)
-                                  : Color(0xFFD9D9D9),
+          centerTitle: true,
+          leading: SizedBox(),
+          actions: [
+            IconButton(
+              icon: Icon(
+                Icons.search_rounded,
+                color: MyTheme.whiteColor,
+              ),
+              onPressed: () {},
+            ),
+          ],
+        ),
+        body: (me == null)
+            ? Center(child: CircularProgressIndicator())
+            : Column(
+                children: [
+                  // Container(
+                  //   // Search bar
+                  //   margin: EdgeInsets.all(16),
+                  //   padding: EdgeInsets.all(6),
+                  //   decoration: BoxDecoration(
+                  //     color: Colors.black45,
+                  //     borderRadius: BorderRadius.all(Radius.circular(10)),
+                  //   ),
+                  //   child: TextField(
+                  //     decoration: InputDecoration(
+                  //       prefixIcon: Icon(
+                  //         Icons.search,
+                  //         color: Colors.white30,
+                  //       ),
+                  //       hintText: "Search",
+                  //       hintStyle: TextStyle(
+                  //         color: Colors.white30,
+                  //       ),
+                  //     ),
+                  //   ),
+                  // ),
+                  StreamBuilder(
+                    stream: db.getConversations(me),
+                    builder: (context, snapshot) {
+                      if (!snapshot.hasData)
+                        return Expanded(
+                            child: Center(child: CircularProgressIndicator()));
+                      List<Conversation> conversations = List.generate(
+                          snapshot.data.documents.length,
+                          (index) => Conversation.fromSnapshot(
+                              snapshot.data.documents[index]));
+                      if (conversations == null || conversations.length == 0)
+                        return Expanded(
+                          child: Container(
+                            alignment: Alignment.center,
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Container(
+                                  width: size.width * 0.6,
+                                  child: Text(
+                                    'Hi ${me.firstName}!\nYour meaningful conversations will appear here. Go to Browse Decks to start one :)',
+                                    style: TextStyle(
+                                      color:
+                                          MyTheme.whiteColor.withOpacity(0.6),
+                                      fontSize: 20,
+                                      height: 1.5,
+                                    ),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ),
+                              ],
                             ),
-                            child: ListTile(
-                              onTap: () {
-                                Navigator.pushNamed(context, 'conversation',
-                                    arguments: {
-                                      "me": me,
-                                      "conversation": conversations[index],
-                                    });
-                                // Navigator.of(context).push(
-                                //   MaterialPageRoute(
-                                //     builder: (_) => ConversationScreen(
-                                //         conversation: conversations[index],
-                                //         me: me),
-                                //   ),
-                                // );
-                              },
-                              leading: Container(
-                                width: 50,
-                                height: 50,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.all(
-                                    Radius.circular(100),
-                                  ),
-                                  gradient: LinearGradient(
-                                    begin: Alignment.centerLeft,
-                                    end: Alignment.centerRight,
-                                    colors: [
-                                      conversations[index].color,
-                                      conversations[index]
-                                          .color
-                                          .withOpacity(0.5),
-                                    ],
-                                  ),
-                                ),
+                          ),
+                        );
+                      return Expanded(
+                        child: ListView.builder(
+                          itemCount: conversations.length,
+                          itemBuilder: (context, index) {
+                            return Container(
+                              decoration: BoxDecoration(
+                                color: (index % 2 == 0)
+                                    ? Color(0xFFE2E2E2)
+                                    : Color(0xFFD9D9D9),
                               ),
-                              title: Text(
-                                conversations[index].users.length > 2
-                                    ? conversations[index]
-                                        .users
-                                        .where(
-                                            (element) => element["id"] != me.id)
-                                        .map((element) => element["firstName"])
-                                        .join(", ")
-                                    : conversations[index]
-                                        .users
-                                        .where(
-                                            (element) => element["id"] != me.id)
-                                        .map((element) =>
-                                            element["firstName"] +
-                                            " " +
-                                            element["lastName"])
-                                        .join(", "),
-                                style: TextStyle(
-                                  color: MyTheme.mainColor,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
-                              subtitle: conversations[index].typing["isTyping"]
-                                  ? Row(
-                                      children: [
-                                        SpinKitThreeBounce(
-                                          color: MyTheme.blueColor,
-                                          size: 20.0,
-                                        ),
-                                      ],
-                                    )
-                                  : Row(
-                                      children: [
-                                        Text(
-                                          conversations[index].lastActivity,
-                                          style: TextStyle(
-                                            color: MyTheme.mainColor,
-                                            fontWeight: FontWeight.w400,
-                                            fontStyle: FontStyle.italic,
-                                          ),
-                                        ),
+                              child: ListTile(
+                                onTap: () {
+                                  Navigator.pushNamed(context, 'conversation',
+                                      arguments: {
+                                        "me": me,
+                                        "conversation": conversations[index],
+                                      });
+                                  // Navigator.of(context).push(
+                                  //   MaterialPageRoute(
+                                  //     builder: (_) => ConversationScreen(
+                                  //         conversation: conversations[index],
+                                  //         me: me),
+                                  //   ),
+                                  // );
+                                },
+                                leading: Container(
+                                  width: 50,
+                                  height: 50,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.all(
+                                      Radius.circular(100),
+                                    ),
+                                    gradient: LinearGradient(
+                                      begin: Alignment.centerLeft,
+                                      end: Alignment.centerRight,
+                                      colors: [
+                                        conversations[index].color,
+                                        conversations[index]
+                                            .color
+                                            .withOpacity(0.5),
                                       ],
                                     ),
-                              trailing: Text(
-                                (isToday(conversations[index].timestamp))
-                                    ? DateFormat.jm()
-                                        .format(conversations[index].timestamp)
-                                    : (isWithinAWeek(
-                                            conversations[index].timestamp))
-                                        ? DateFormat.E().format(
-                                            conversations[index].timestamp)
-                                        : DateFormat.MMMd().format(
-                                            conversations[index].timestamp),
-                                style: TextStyle(
-                                  color: MyTheme.mainColor,
+                                  ),
+                                ),
+                                title: Text(
+                                  conversations[index].users.length > 2
+                                      ? conversations[index]
+                                          .users
+                                          .where((element) =>
+                                              element["id"] != me.id)
+                                          .map(
+                                              (element) => element["firstName"])
+                                          .join(", ")
+                                      : conversations[index]
+                                          .users
+                                          .where((element) =>
+                                              element["id"] != me.id)
+                                          .map((element) =>
+                                              element["firstName"] +
+                                              " " +
+                                              element["lastName"])
+                                          .join(", "),
+                                  style: TextStyle(
+                                    color: MyTheme.mainColor,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                                subtitle: conversations[index]
+                                        .typing["isTyping"]
+                                    ? Row(
+                                        children: [
+                                          SpinKitThreeBounce(
+                                            color: MyTheme.blueColor,
+                                            size: 20.0,
+                                          ),
+                                        ],
+                                      )
+                                    : Row(
+                                        children: [
+                                          Text(
+                                            conversations[index].lastActivity,
+                                            style: TextStyle(
+                                              color: MyTheme.mainColor,
+                                              fontWeight: FontWeight.w400,
+                                              fontStyle: FontStyle.italic,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                trailing: Text(
+                                  (isToday(conversations[index].timestamp))
+                                      ? DateFormat.jm().format(
+                                          conversations[index].timestamp)
+                                      : (isWithinAWeek(
+                                              conversations[index].timestamp))
+                                          ? DateFormat.E().format(
+                                              conversations[index].timestamp)
+                                          : DateFormat.MMMd().format(
+                                              conversations[index].timestamp),
+                                  style: TextStyle(
+                                    color: MyTheme.mainColor,
+                                  ),
                                 ),
                               ),
-                            ),
-                          );
-                        },
-                      ),
-                    );
-                  },
-                ),
-              ],
-            ),
+                            );
+                          },
+                        ),
+                      );
+                    },
+                  ),
+                ],
+              ),
+      ),
     );
   }
 

@@ -35,6 +35,7 @@ class _ConversationScreenState extends State<ConversationScreen> {
   void initState() {
     super.initState();
 
+    print("1. Init state called!");
     // users = widget.conversation.users
     //     .where((element) => element["id"] != widget.me.id)
     //     .toList();
@@ -48,12 +49,21 @@ class _ConversationScreenState extends State<ConversationScreen> {
   void didChangeDependencies() {
     super.didChangeDependencies();
 
-    final arguments =
+    print("2. Dependencies changed!");
+    Map<String, dynamic> arguments =
         ModalRoute.of(context).settings.arguments as Map<String, dynamic>;
     conversation = arguments["conversation"];
     me = arguments["me"];
     users =
         conversation.users.where((element) => element["id"] != me.id).toList();
+    if (arguments["deck"] != null) {
+      print("New deck: ${arguments['deck'].name}");
+      Deck deck = arguments["deck"];
+      arguments["deck"] = null;
+      _startNewDeck(deck);
+    } else {
+      print("No new deck passed to arguments");
+    }
   }
 
   // getData() async {
@@ -62,7 +72,7 @@ class _ConversationScreenState extends State<ConversationScreen> {
   @override
   Widget build(BuildContext context) {
     final Size size = MediaQuery.of(context).size;
-    print("Conversation Screen is built");
+    print("3. Conversation Screen is built");
     return Container(
       decoration: BoxDecoration(
         image: MyTheme.backgroundImage,
@@ -101,32 +111,27 @@ class _ConversationScreenState extends State<ConversationScreen> {
           // Fetch all questions
           stream: db.getQuestions(this.conversation.id),
           builder: (context, snapshot) {
-            if (!snapshot.hasData) return CircularProgressIndicator();
-            if (snapshot.data.documents.length == 0)
-              return Center(
-                child: RaisedButton(
-                  onPressed: () {
-                    print("Start new conversation!");
-                    Navigator.pushNamed(context, 'select_deck', arguments: {
-                      "me": this.me,
-                      "conversation": this.conversation,
-                    }).then((_) {
-                      final result = ModalRoute.of(context).settings.arguments
-                          as Map<String, dynamic>;
-                      if (result != null && result['deck'] != null)
-                        print("Returned deck: ${result['deck'].name}");
-                      _startNewDeck(result['deck']);
-                    });
-                    // Navigator.of(context).push(MaterialPageRoute(
-                    //   builder: (_) => SelectDeckScreen(
-                    //     me: this.me,
-                    //     conversation: this.conversation,
-                    //   ),
-                    // ));
-                  },
-                  child: Text("Start new conversation"),
-                ),
-              );
+            if (!snapshot.hasData || snapshot.data.documents.length == 0)
+              return Center(child: CircularProgressIndicator());
+            // if (snapshot.data.documents.length == 0)
+            //   return Center(
+            //     child: RaisedButton(
+            //       onPressed: () {
+            //         print("Start new conversation!");
+            //         Navigator.pushNamed(context, 'select_deck', arguments: {
+            //           "me": this.me,
+            //           "conversation": this.conversation,
+            //         }).then((_) {
+            //           final result = ModalRoute.of(context).settings.arguments
+            //               as Map<String, dynamic>;
+            //           if (result != null && result['deck'] != null)
+            //             print("Returned deck: ${result['deck'].name}");
+            //           _startNewDeck(result['deck']);
+            //         });
+            //       },
+            //       child: Text("Start new conversation"),
+            //     ),
+            //   );
             AsyncSnapshot<dynamic> questionSnapshot = snapshot;
             latestQuestion = GeneratedQuestion.fromSnapshot(
                 questionSnapshot.data.documents.last);
@@ -143,7 +148,8 @@ class _ConversationScreenState extends State<ConversationScreen> {
               // Fetch current deck playing
               stream: db.getPlayingDeck(this.conversation.id),
               builder: (context, snapshot) {
-                if (!snapshot.hasData) return CircularProgressIndicator();
+                if (!snapshot.hasData || snapshot.data.documents.length == 0)
+                  return CircularProgressIndicator();
                 if (snapshot.data.documents.length == 0)
                   return Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 12.0),
@@ -256,7 +262,7 @@ class _ConversationScreenState extends State<ConversationScreen> {
                                 ),
                                 child: ListTile(
                                   title: Container(
-                                    margin: EdgeInsets.only(bottom: 10.0),
+                                    margin: EdgeInsets.only(bottom: 20.0),
                                     child: Text(
                                       question.text,
                                       style: TextStyle(

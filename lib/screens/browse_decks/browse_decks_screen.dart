@@ -64,169 +64,211 @@ getFriends() async {
 */
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.transparent,
-      appBar: AppBar(
-        elevation: 0,
-        backgroundColor: MyTheme.mainColor,
-        title: Text(
-          "Browse Decks",
-          style: TextStyle(fontSize: 20),
-        ),
-        centerTitle: true,
-        leading: SizedBox(),
-        // leading: Padding(
-        //   padding: const EdgeInsets.all(8.0),
-        //   child: ToggleButtons(
-        //     color: MyTheme.greyAccentColor,
-        //     selectedColor: MyTheme.yellowAccentColor,
-        //     fillColor: MyTheme.yellowColor,
-        //     constraints: BoxConstraints(minHeight: 40.0, minWidth: 40.0),
-        //     children: [
-        //       Icon(Icons.view_module_rounded),
-        //       Icon(Icons.view_list_rounded),
-        //     ],
-        //     isSelected: _viewSelections,
-        //     onPressed: (int index) {
-        //       setState(() {
-        //         for (var i = 0; i < _viewSelections.length; i++) {
-        //           _viewSelections[i] = (i == index);
-        //         }
-        //       });
-        //     },
-        //   ),
-        // ),
-        // leadingWidth: 100,
-        actions: [
-          IconButton(
-            icon: Icon(
-              Icons.search_rounded,
-              color: MyTheme.whiteColor,
-            ),
-            onPressed: () {},
+    return WillPopScope(
+      onWillPop: () async => false,
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        appBar: AppBar(
+          elevation: 0,
+          backgroundColor: MyTheme.mainColor,
+          title: Text(
+            "Browse Decks",
+            style: TextStyle(fontSize: 20),
           ),
-        ],
-      ),
-      body: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: _categorySelections != null
-                  ? ToggleButtons(
-                      renderBorder: false,
-                      color: MyTheme.greyColor,
-                      selectedColor: MyTheme.whiteColor,
-                      fillColor: Colors.transparent,
-                      // splashColor: Colors.transparent,
-                      textStyle: Theme.of(context).textTheme.headline4,
-                      children: List<Widget>.generate(
-                        _categories.length,
-                        (index) => Padding(
-                          padding: const EdgeInsets.all(16.0),
-                          child: Text(
-                            _categories[index]['name'],
-                            style: TextStyle(
-                              fontSize: 24,
-                              fontWeight: FontWeight.bold,
-                              // color: Color(_categories[index]['color']).withOpacity(1),
+          centerTitle: true,
+          leading: SizedBox(),
+          // leading: Padding(
+          //   padding: const EdgeInsets.all(8.0),
+          //   child: ToggleButtons(
+          //     color: MyTheme.greyAccentColor,
+          //     selectedColor: MyTheme.yellowAccentColor,
+          //     fillColor: MyTheme.yellowColor,
+          //     constraints: BoxConstraints(minHeight: 40.0, minWidth: 40.0),
+          //     children: [
+          //       Icon(Icons.view_module_rounded),
+          //       Icon(Icons.view_list_rounded),
+          //     ],
+          //     isSelected: _viewSelections,
+          //     onPressed: (int index) {
+          //       setState(() {
+          //         for (var i = 0; i < _viewSelections.length; i++) {
+          //           _viewSelections[i] = (i == index);
+          //         }
+          //       });
+          //     },
+          //   ),
+          // ),
+          // leadingWidth: 100,
+          actions: [
+            IconButton(
+              icon: Icon(
+                Icons.search_rounded,
+                color: MyTheme.whiteColor,
+              ),
+              onPressed: () {},
+            ),
+          ],
+        ),
+        body: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: _categorySelections != null
+                    ? ToggleButtons(
+                        renderBorder: false,
+                        color: MyTheme.greyColor,
+                        selectedColor: MyTheme.whiteColor,
+                        fillColor: Colors.transparent,
+                        // splashColor: Colors.transparent,
+                        textStyle: Theme.of(context).textTheme.headline4,
+                        children: List<Widget>.generate(
+                          _categories.length,
+                          (index) => Padding(
+                            padding: const EdgeInsets.all(16.0),
+                            child: Text(
+                              _categories[index]['name'],
+                              style: TextStyle(
+                                fontSize: 24,
+                                fontWeight: FontWeight.bold,
+                                // color: Color(_categories[index]['color']).withOpacity(1),
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                      isSelected: _categorySelections,
-                      onPressed: (int index) {
-                        setState(() {
-                          for (var i = 0; i < _categorySelections.length; i++) {
-                            _categorySelections[i] = (i == index);
-                          }
-                          _selectedCategory = _categories[index];
-                        });
-                      },
-                    )
-                  : SizedBox(),
+                        isSelected: _categorySelections,
+                        onPressed: (int index) {
+                          setState(() {
+                            for (var i = 0;
+                                i < _categorySelections.length;
+                                i++) {
+                              _categorySelections[i] = (i == index);
+                            }
+                            _selectedCategory = _categories[index];
+                          });
+                        },
+                      )
+                    : SizedBox(),
+              ),
             ),
-          ),
-          _selectedCategory != null
-              ? Expanded(
-                  child: StreamBuilder(
-                      stream: db.getDecksByCategory(_selectedCategory['name']),
-                      builder: (context, snapshot) {
-                        if (!snapshot.hasData)
-                          return Center(child: CircularProgressIndicator());
-                        return GridView.builder(
-                          itemCount: snapshot.data.documents.length,
-                          padding: EdgeInsets.symmetric(horizontal: 50.0),
-                          gridDelegate:
-                              new SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 1,
-                            childAspectRatio: 5 / 7,
-                          ),
-                          itemBuilder: (context, index) {
-                            Deck deck = Deck.fromSnapshot(
-                                snapshot.data.documents[index]);
-                            return Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Card(
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(20.0),
-                                ),
-                                color: deck.color,
-                                elevation: 10.0,
-                                shadowColor: Colors.black,
-                                child: InkWell(
-                                  onTap: () {
-                                    print(deck.name);
-                                    Navigator.pushNamed(context, 'deck_view',
-                                        arguments: {
-                                          "deck": deck,
-                                        });
-                                    // Navigator.of(context)
-                                    //     .push(MaterialPageRoute(
-                                    //   builder: (_) => DeckViewScreen(
-                                    //     deck: deck,
-                                    //   ),
-                                    // ));
-                                  },
-                                  child: Container(
-                                    decoration: (deck.graphic != "")
-                                        ? BoxDecoration(
-                                            color: deck.color,
-                                            image: DecorationImage(
-                                              image: Image.network(
-                                                deck.graphic,
-                                              ).image,
-                                            ),
-                                            borderRadius:
-                                                BorderRadius.circular(20.0),
-                                          )
-                                        : BoxDecoration(
-                                            color: deck.color,
-                                            borderRadius:
-                                                BorderRadius.circular(20.0)),
-                                    padding: EdgeInsets.all(12.0),
-                                    child: Align(
-                                      alignment: Alignment.bottomLeft,
-                                      child: Text(
-                                        deck.name,
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .headline2,
+            _selectedCategory != null
+                ? Expanded(
+                    child: StreamBuilder(
+                        stream:
+                            db.getDecksByCategory(_selectedCategory['name']),
+                        builder: (context, snapshot) {
+                          if (!snapshot.hasData)
+                            return Center(child: CircularProgressIndicator());
+                          return GridView.builder(
+                            itemCount: snapshot.data.documents.length,
+                            padding: EdgeInsets.symmetric(horizontal: 50.0),
+                            gridDelegate:
+                                new SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: 1,
+                              childAspectRatio: 5 / 7,
+                            ),
+                            itemBuilder: (context, index) {
+                              Deck deck = Deck.fromSnapshot(
+                                  snapshot.data.documents[index]);
+                              return Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Card(
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(20.0),
+                                  ),
+                                  color: deck.color,
+                                  elevation: 10.0,
+                                  shadowColor: Colors.black,
+                                  child: InkWell(
+                                    onTap: () {
+                                      print(deck.name);
+                                      Navigator.pushNamed(context, 'deck_view',
+                                          arguments: {
+                                            "deck": deck,
+                                            "me": widget.me,
+                                          }).then((_) {
+                                        final result = ModalRoute.of(context)
+                                            .settings
+                                            .arguments as Map<String, dynamic>;
+                                        if (result != null &&
+                                            result["friends"] != null) {
+                                          print("SUCCESS!");
+                                          print(result["friends"]);
+                                          List<User> friends =
+                                              new List<User>.from(
+                                                  result["friends"]);
+                                          (ModalRoute.of(context)
+                                                  .settings
+                                                  .arguments
+                                              as Map)["friends"] = null;
+                                          _createConversation(
+                                              widget.me, deck, friends);
+                                        } else {
+                                          print("NO DECK RETURNED!");
+                                        }
+                                      });
+                                      // Navigator.of(context)
+                                      //     .push(MaterialPageRoute(
+                                      //   builder: (_) => DeckViewScreen(
+                                      //     deck: deck,
+                                      //   ),
+                                      // ));
+                                    },
+                                    child: Container(
+                                      decoration: (deck.graphic != "")
+                                          ? BoxDecoration(
+                                              color: deck.color,
+                                              image: DecorationImage(
+                                                image: Image.network(
+                                                  deck.graphic,
+                                                ).image,
+                                              ),
+                                              borderRadius:
+                                                  BorderRadius.circular(20.0),
+                                            )
+                                          : BoxDecoration(
+                                              color: deck.color,
+                                              borderRadius:
+                                                  BorderRadius.circular(20.0)),
+                                      padding: EdgeInsets.all(12.0),
+                                      child: Align(
+                                        alignment: Alignment.bottomLeft,
+                                        child: Text(
+                                          deck.name,
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .headline2,
+                                        ),
                                       ),
                                     ),
                                   ),
                                 ),
-                              ),
-                            );
-                          },
-                        );
-                      }),
-                )
-              : Expanded(child: Center(child: CircularProgressIndicator())),
-        ],
+                              );
+                            },
+                          );
+                        }),
+                  )
+                : Expanded(child: Center(child: CircularProgressIndicator())),
+          ],
+        ),
       ),
     );
+  }
+
+  _createConversation(User me, Deck deck, List<User> friends) {
+    // 1. Create a conversation
+    List<User> members = new List<User>.from(friends);
+    members.add(me);
+    db.createConversation(members).then((value) {
+      Conversation conversation = Conversation.fromSnapshot(value);
+      // 2. Go to conversation
+      Navigator.pushNamed(context, 'conversation', arguments: {
+        "me": me,
+        "conversation": conversation,
+        "deck": deck,
+      });
+    });
   }
 /*
   _showDeckDescription(BuildContext context, DocumentSnapshot deck, List<DocumentSnapshot> friends){

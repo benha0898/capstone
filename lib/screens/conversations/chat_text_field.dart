@@ -18,6 +18,7 @@ class ChatTextFieldState extends State<ChatTextField> {
   final FocusNode focusNode = FocusNode();
   Color accentColor;
   int maxLines = 6;
+  bool isEmpty = true;
 
   @override
   void initState() {
@@ -33,12 +34,16 @@ class ChatTextFieldState extends State<ChatTextField> {
       accentColor = MyTheme.darkColor;
 
     textController.addListener(() {
-      setState(() {});
+      if (isEmpty && textController.text.length > 0)
+        setState(() => isEmpty = false);
+      else if (!isEmpty && textController.text.length == 0)
+        setState(() => isEmpty = true);
     });
     focusNode.addListener(() {
-      setState(() {
-        maxLines = (focusNode.hasFocus) ? 6 : 1;
-      });
+      if (maxLines == 6 && !focusNode.hasFocus)
+        setState(() => maxLines = 1);
+      else if (maxLines == 1 && focusNode.hasFocus)
+        setState(() => maxLines = 6);
     });
   }
 
@@ -92,7 +97,7 @@ class ChatTextFieldState extends State<ChatTextField> {
             ),
           ),
         ),
-        if (textController.text != '')
+        if (!isEmpty)
           Padding(
             padding: EdgeInsets.only(right: 0.0),
             child: IconButton(

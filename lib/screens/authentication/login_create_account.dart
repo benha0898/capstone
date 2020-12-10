@@ -1,7 +1,6 @@
 //import 'package:CapstoneProject/widgets/widgets.dart';
 import 'dart:async';
 
-import 'package:CapstoneProject/app.dart';
 import 'package:CapstoneProject/db.dart';
 import 'package:CapstoneProject/models/user.dart';
 import 'package:CapstoneProject/screens/services/auth.dart';
@@ -41,37 +40,35 @@ class _LoginCreateAccountState extends State<LoginCreateAccount> {
   final FocusNode focusNode4 = FocusNode();
   final FocusNode focusNode5 = FocusNode();
 
-  setConstants(){
+  setConstants() {
     Constants.myFirstName = firstNameController.text;
     Constants.myLastName = lastNameController.text;
     Constants.myEmail = emailController.text;
     Constants.myUsername = usernameController.text;
   }
 
-  signUpUser(){
-    if(formKey.currentState.validate()){
-
+  signUpUser() {
+    if (formKey.currentState.validate()) {
       Map<String, dynamic> userInfoMap = {
-          "username" : usernameController.text,
-          "email" : emailController.text,
-          "firstName" : firstNameController.text,
-          "lastName" : lastNameController.text,
-          "profilePicture" : "",
-          "conversations": [],
+        "username": usernameController.text,
+        "email": emailController.text,
+        "firstName": firstNameController.text,
+        "lastName": lastNameController.text,
+        "profilePicture": "",
+        "conversations": [],
       };
 
       //HelperFunctions.saveUserNameSP(usernameController.text);
       //HelperFunctions.saveUserEmailSP(emailController.text);
       setConstants();
-      
+
       setState(() {
         isLoading = true;
       });
 
-      databaseMethods.getUserbyEmail(emailController.text)
-        .then((val){
-          snapshotUserInfo = val;
-        });
+      databaseMethods.getUserbyEmail(emailController.text).then((val) {
+        snapshotUserInfo = val;
+      });
 
       authMethods
           .signUpWithEmailAndPassword(
@@ -99,12 +96,10 @@ class _LoginCreateAccountState extends State<LoginCreateAccount> {
             profilePicture: userInfo["profilePicture"],
             conversations: userInfo["conversations"],
           );
-          Navigator.pushAndRemoveUntil(
-              context,
-              MaterialPageRoute(
-                builder: (context) => CustomNavigatorHomePage(me: user),
-              ),
-              ModalRoute.withName('/'));
+          Navigator.pushReplacementNamed(context, 'navigation', arguments: {
+            "me": user,
+            "loggedIn": true,
+          });
         });
       });
     }
@@ -204,8 +199,11 @@ class _LoginCreateAccountState extends State<LoginCreateAccount> {
                         ),
                       ),
                       isLoading
-                          ? Expanded(
-                              child: Center(child: CircularProgressIndicator()),
+                          ? Container(
+                              padding: EdgeInsets.symmetric(vertical: 200.0),
+                              child: Center(
+                                child: CircularProgressIndicator(),
+                              ),
                             )
                           : Container(
                               alignment: Alignment.bottomCenter,

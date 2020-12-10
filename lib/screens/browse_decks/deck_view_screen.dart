@@ -1,4 +1,3 @@
-import 'package:CapstoneProject/screens/services/invite_friends_screen.dart';
 import 'package:CapstoneProject/theme/consts.dart';
 import 'package:flutter/material.dart';
 
@@ -56,7 +55,9 @@ class _DeckViewScreenState extends State<DeckViewScreen> {
                   color: MyTheme.mainColor,
                 ),
                 onPressed: () {
-                  Navigator.of(context).pop();
+                  (ModalRoute.of(context).settings.arguments
+                      as Map)["friends"] = null;
+                  Navigator.pop(context);
                 }),
           ),
           content: Stack(
@@ -131,11 +132,14 @@ class _DeckViewScreenState extends State<DeckViewScreen> {
                               child: Text("Select"),
                               onPressed: () {
                                 print("open invite friends screen");
-                                Navigator.of(context).push(MaterialPageRoute(
-                                  builder: (_) => InviteFriends(
-                                    deck: arguments["deck"],
-                                  ),
-                                ));
+                                Navigator.pushNamed(
+                                  context,
+                                  'invite_friends',
+                                  arguments: {
+                                    "me": arguments["me"],
+                                    "deck": arguments["deck"],
+                                  },
+                                );
                               }),
                     ],
                   ),
@@ -143,7 +147,6 @@ class _DeckViewScreenState extends State<DeckViewScreen> {
               ),
             ],
           ),
-          
         ),
       ),
     );

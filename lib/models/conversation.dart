@@ -1,3 +1,4 @@
+import 'package:CapstoneProject/theme/consts.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
@@ -30,6 +31,8 @@ class Conversation {
     this.users = List<Map<String, String>>();
     this.users.addAll(List.generate(snapshot["users"].length,
         (index) => Map<String, String>.from(snapshot["users"][index])));
-    this.color = Color(snapshot["color"]).withOpacity(1);
+    this.color = snapshot.data().containsKey("color")
+        ? Color(snapshot["color"]).withOpacity(1)
+        : MyTheme.greyColor;
   }
 }

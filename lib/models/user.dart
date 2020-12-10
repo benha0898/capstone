@@ -35,4 +35,10 @@ class User {
         "lastName": this.lastName,
         "profilePicture": this.profilePicture,
       };
+
+  Map<String, String> get infoShort => {
+        "id": this.id,
+        "firstName": this.firstName,
+        "lastName": this.lastName,
+      };
 }

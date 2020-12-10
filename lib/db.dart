@@ -20,8 +20,12 @@ class DatabaseService {
 
   DatabaseService._internal();
 
-  Future<QuerySnapshot> getUsers() {
-    return _firestore.collection("users").get();
+  // Get all users, EXCEPT current user
+  Future<QuerySnapshot> getUsers(String id) {
+    return _firestore
+        .collection("users")
+        .where(FieldPath.documentId, isNotEqualTo: id)
+        .get();
   }
 
   Future<DocumentSnapshot> getUserById(String id) {
@@ -222,5 +226,32 @@ class DatabaseService {
       }).then((_) => print("Conversation doc $cid updated!"));
     });
     return newDeckRef.get();
+  }
+
+  Future<DocumentSnapshot> createConversation(List<User> members) async {
+    DocumentReference conversationRef;
+    // 1. Prepare conversation to be added
+    DateTime now = DateTime.now();
+
+    Map<String, dynamic> conversation = {
+      "groupPicture": "",
+      "lastActivity": "",
+      "timestamp": now,
+      "typing": {
+        "isTyping": false,
+      },
+      "users":
+          List.generate(members.length, (index) => members[index].infoShort),
+    };
+
+    // 2. Add conversation to Conversations collection
+    await _firestore
+        .collection("conversations")
+        .add(conversation)
+        .then((value) async {
+      print("New conversation created! ${value.id}");
+      conversationRef = value;
+    });
+    return conversationRef.get();
   }
 }

@@ -1,7 +1,10 @@
+import 'package:CapstoneProject/app.dart';
 import 'package:CapstoneProject/screens/authentication/login_main.dart';
+import 'package:CapstoneProject/screens/browse_decks/browse_decks_screen.dart';
 import 'package:CapstoneProject/screens/browse_decks/deck_view_screen.dart';
 import 'package:CapstoneProject/screens/browse_decks/select_deck_screen.dart';
 import 'package:CapstoneProject/screens/conversations/conversation_screen.dart';
+import 'package:CapstoneProject/screens/services/invite_friends_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:CapstoneProject/theme/consts.dart';
@@ -30,6 +33,9 @@ class MyApp extends StatelessWidget {
               'conversation': (context) => ConversationScreen(),
               'select_deck': (context) => SelectDeckScreen(),
               'deck_view': (context) => DeckViewScreen(),
+              'invite_friends': (context) => InviteFriends(),
+              'browse_decks': (context) => BrowseDecksScreen(),
+              'navigation': (context) => CustomNavigatorHomePage(),
             },
             home: Container(
               decoration: BoxDecoration(
